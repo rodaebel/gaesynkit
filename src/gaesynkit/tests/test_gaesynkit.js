@@ -23,7 +23,10 @@ $(document).ready(function(){
   test("api", function()
   {
     expect(1);
+
+    // Check gaesynkit version
     equals(gaesynkit.api.VERSION, "1.0.0a1", "getting gaesynkit version");
+
   });
 
   test("rpc", function()
@@ -52,6 +55,7 @@ $(document).ready(function(){
     // Try to make a JSON-RPC with invalid data
     raises(function() {gaesynkit.rpc.makeAsyncCall(["foobar", 7], callback)},
            "invalid JSON-RPC request throws an error")
+
   });
 
   test("util.base64", function()
@@ -68,9 +72,25 @@ $(document).ready(function(){
 
   });
 
+  test("db.Key", function()
+  {
+    expect(3);
+
+    // Create parent key
+    ok(john = gaesynkit.db.Key.from_path("Person", "john"), "creating key");
+
+    // Create ancestor key
+    ok(paul = gaesynkit.db.Key.from_path("Person", "paul", john),
+       "creating key");
+
+    equals(gaesynkit.util.base64.decode(paul.value()),
+           "Person\bjohn\tPerson\bpaul", "checking key value");
+
+  });
+
   test("db.Entity", function()
   {
-    expect(17);
+    expect(18);
 
     // Create a Person entity
     ok(entity = new gaesynkit.db.Entity("Person", name="john"),
@@ -98,9 +118,12 @@ $(document).ready(function(){
     ok(entity.update({"name": "John Dowe", "birthdate": new gaesynkit.db.Datetime("1982-10-04 00:00:00")}),
        "updating entitiy properties");
 
+    // Get property names
+    equals(entity.keys().join(','), "name,birthdate", "getting property names");
+
     // Update entity with a list property
     ok(entity.update({"tags": ["nice", "educated"]}), "more properties");
-    equals(entity.tags[0], "nice", "getting property value");
+    equals(entity.tags.join(','), "nice,educated", "getting property value");
 
     // Retrieve a property value
     equals(entity.name, "John Dowe", "getting property value");
@@ -127,6 +150,7 @@ $(document).ready(function(){
     equals(JSON.stringify(entity.toJSON()),
            "{\"kind\":\"Person\",\"name\":\"john\",\"properties\":[{\"name\":\"name\",\"value\":\"John Dowe\"},{\"name\":\"tags\",\"value\":[\"nice\",\"educated\"]}]}",
            "getting properties as JSON");
+
   });
 
   test("db.Storage", function()

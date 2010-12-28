@@ -83,6 +83,7 @@
   gaesynkit.util = {};
 
   // Base64 encode/decode
+  // TODO This should rather belong to the internal API
   gaesynkit.util.base64 = {
 
     // Private property
@@ -159,7 +160,8 @@
  
     // Private method for UTF-8 encoding
     _utf8_encode: function(str) {
-      str = str.replace(/\r\n/g,"\n");
+
+      str = str.replace(/\r\n/g, "\n");
       var utftext = "";
  
       for (var n = 0; n < str.length; n++) {
@@ -184,6 +186,7 @@
  
     // Private method for UTF-8 decoding
     _utf8_decode: function(utftext) {
+
       var str = "";
       var i = 0;
       var c = c1 = c2 = 0;
@@ -230,21 +233,69 @@
   //   http://www.w3.org/2005/Atom
   //   http://schemas.google.com/g/2005
 
+  // Base type
+  gaesynkit.db.Type = function(value) {
+    this._type = undefined;
+    this._value = value;
+  }
+
+  // Return the type string
+  gaesynkit.db.Type.prototype.type = function() {
+    return this._type;
+  }
+
+  // Return the value
+  gaesynkit.db.Type.prototype.value = function() {
+    return this._value;
+  }
+
   // Date
   gaesynkit.db.Datetime = function(value) {
     
     // http://code.google.com/apis/gdata/docs/1.0/elements.html#gdWhen
-    this.type = "gd:when";
-    this.value = value;
+    this._type = "gd:when";
+    this._value = value;
   }
 
-  // TODO: More types
+  gaesynkit.db.Datetime.prototype = new gaesynkit.db.Type;
+
+  // Entity key
+  gaesynkit.db.Key = function(encoded) {
+
+    // http://code.google.com/appengine/docs/python/datastore/keyclass.html
+    // http://code.google.com/appengine/docs/python/datastore/keysandentitygroups.html#Entity_Groups_Ancestors_and_Paths
+    // http://code.google.com/appengine/articles/storage_breakdown.html#anc-entitiestable
+    this._type = "key";
+    this._value = encoded;
+  }
+
+  gaesynkit.db.Key.prototype = new gaesynkit.db.Type;
+
+  // Classmethod to create key from path
+  gaesynkit.db.Key.from_path = function(kind, id_or_name, parent_, namespace) {
+
+    var path = kind + "\b" + id_or_name;
+    var p;
+
+    if (parent_ && parent_ instanceof gaesynkit.db.Key) {
+      p = parent_.value();
+    }
+    else if (parent_ && typeof(parent_) == "string") {
+      p = parent_;
+    }
+
+    path = (p) ? gaesynkit.util.base64.decode(p) + "\t" + path : path;
+
+    return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
+  }
+
+  // TODO More types
 
   // An Entity holds the client-side representation of a GAE Datastore
   // entity. It can be dumped as a JSON string.
 
   // Entity constructor
-  gaesynkit.db.Entity = function(kind, name, id, namespace) {
+  gaesynkit.db.Entity = function(kind, name, id, parent_, namespace) {
 
     if (!kind || typeof(kind) != "string")
       throw "Entity kind missing or not a string";
@@ -255,7 +306,11 @@
     this._kind = kind;
     this._name = name;
     this._id = id;
+    this._parent = parent_;
     this._namespace = namespace;
+
+    // The entity key
+    this._key = undefined;
 
     // Private attribute to store properties
     this._properties = new Object;
@@ -276,21 +331,28 @@
     return true;
   }
 
+  // Return this entity's primary key, a Key instance
+  gaesynkit.db.Entity.prototype.key = function() {
+    return this._key;
+  }
+
   // Return the entity kind
   gaesynkit.db.Entity.prototype.kind = function() {
     return this._kind;
   };
 
-  // Return an array of entity keys
+  // Return an array of property names
+  // We're aware of the fact that 'keys' might be confusing, but we need to be
+  // consistent with the google.appengine.api.datastore.Entity API.
   gaesynkit.db.Entity.prototype.keys = function() {
 
-    var keys = new Array;
+    var names = new Array;
 
-    for (var key in this._properties) {
-      keys.push(key);
+    for (var n in this._properties) {
+      names.push(n);
     }
 
-    return keys;
+    return names;
   };
 
   // Return JSON representation of this entity
@@ -332,7 +394,12 @@
     function makeGetter(key) {
       func = function() {
         prop = this._properties[key];
-        return prop.value || prop;
+        if (typeof(prop.value) == "function") {
+          return prop.value();
+        }
+        else {
+          return prop;
+        }
       };
       return func;
     }
@@ -353,10 +420,11 @@
     this._storage = window.localStorage;
   };
 
-  // Put a given entity
+  // Put a given entity or list of entities
   gaesynkit.db.Storage.prototype.put = function(entity) {
-    return "key";
-  }
+    // TODO Implement putting entities
+    return true;
+  };
 
   /* Exporting the public API */
   gaesynkit.exportSymbol("gaesynkit.api", gaesynkit.api);  
