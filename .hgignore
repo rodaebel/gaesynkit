@@ -1,0 +1,18 @@
+syntax: glob
+
+Makefile
+config.log
+*.egg-info
+*.pyc
+*.swp
+.coverage
+.installed.cfg
+
+syntax: regexp
+
+^bin/
+^develop-eggs/
+^eggs/
+^google_appengine/
+^htmlcov/
+^parts/
