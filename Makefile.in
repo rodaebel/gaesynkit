@@ -1,0 +1,39 @@
+PYTHON=@PYTHON@
+GAE_SDK=@GAE_SDK@
+CWD=$(shell pwd)
+
+TESTS= $(shell find src -name [a-z]\*.py ! -name \test_*.py ! -name \testing.py)
+
+
+all: bin/python
+
+bin/buildout: buildout.cfg
+	$(PYTHON) bootstrap.py --distribute
+
+bin/python: bin/buildout setup.py
+	bin/buildout -NU
+
+bin/coverage: bin/python
+
+test: bin/python
+	bin/python setup.py test --gae-sdk=$(GAE_SDK)
+
+testjs:
+	$(shell $(PYTHON) $(GAE_SDK)/dev_appserver.py --debug src/gaesynkit)
+
+coverage: bin/coverage
+	bin/coverage erase
+	bin/coverage run bin/python setup.py test --gae-sdk=$(GAE_SDK)
+	bin/coverage combine
+	bin/coverage html $(TESTS)
+	bin/coverage report -m $(TESTS)
+
+dist: bin/python
+	bin/python setup.py sdist
+
+distclean:
+	rm -rf .coverage .installed.cfg bin/ develop-eggs/ dist/ eggs/ htmlcov/ parts/
+	for f in `find . -name "*.pyc"`; do (rm -f $$f); done
+	for f in `find . -name "*.egg-info"`; do (rm -rf $$f); done
+	rm -f Makefile
+	rm config.log

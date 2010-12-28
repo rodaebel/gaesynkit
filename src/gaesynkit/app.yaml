@@ -1,0 +1,25 @@
+application: gaesynkittests
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /favicon.ico
+  static_files: qunit/favicon.ico
+  upload: qunit/favicon.ico
+
+- url: /qunit/(.*\.(css|js))
+  static_files: qunit/\1
+  upload: qunit/(.*\.(css|js))
+  expiration: 5h
+
+- url: /tests/(.*\.js)
+  static_files: tests/\1
+  upload: tests/(.*\.js)
+
+- url: /gaesynkit/.*
+  script: handlers.py
+
+- url: /
+  script: testing.py

@@ -1,0 +1,108 @@
+#!/bin/sh
+
+PWD=`pwd`
+BASENAME=`basename $0`
+PACKAGE=gaesynkit
+LOGFILE=config.log
+GAE_SDK=/usr/local/google_appengine
+
+usage() {
+   echo "Usage: $BASENAME [options]";
+}
+
+log() {
+   printf "$1"
+   printf "$1" >> $LOGFILE
+}
+
+error_exit() {
+   msg="$BASENAME: error: $2"
+   echo "$msg" 1>&2
+   echo "$msg" >> $LOGFILE
+   exit $1
+}
+
+for _option
+do
+
+   # If the previous option needs an argument, assign it.
+   if test -n "$_prev"; then
+      eval "$_prev=\$_option"
+      _prev=
+      continue
+   fi
+
+   case "$_option" in
+   -*=*) _optarg=`echo "$_option" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+   *) _optarg= ;;
+   esac
+
+   case "$_option" in
+
+   --gae-sdk=*)
+      GAE_SDK="$_optarg" ;;
+
+   --help | -h)
+      usage;
+      cat << EOF
+
+Options:
+   -h,--help                display this message
+      --gae-sdk=PATH        path to the Google App Engine SDK
+      --with-python=PATH    use this Python interpreter
+
+EOF
+   exit 0;;
+
+   --with-python=*)
+      PYTHON="$_optarg" ;;
+
+   --* | -* ) { echo "$BASENAME: error: $_option: invalid option; use --help to show usage" 1>&2; exit 1; };;
+   * )
+      args="$args$_option " ;;
+
+   esac
+done
+
+cat >$LOGFILE << EOF
+Created by $PACKAGE configure.
+
+$ $0 $@
+
+EOF
+
+#
+# Check Google App Engine SDK version
+#
+log "checking for Google App Engine SDK ... "
+if (! `test -d "$GAE_SDK"`); then
+   error_exit 1 "no Google App Engine SDK found";
+fi
+GAE_SDK=`(cd $GAE_SDK; pwd; cd ${PWD})`
+GAE_SDK_VERSION=`grep release ${GAE_SDK}/VERSION | sed -e 's,\(^release: \)"\(.*\)",\2,'`
+log "${GAE_SDK_VERSION}\n"
+
+#
+# Check Python version
+#
+if [ "$PYTHON" = "" ]; then
+   PYTHON=`which python`
+fi
+log "checking for Python version ... "
+if (! `test -x "$PYTHON"` || [ "$PYTHON" = "" ]); then
+   error_exit 1 "no Python interpreter found";
+fi
+PYTHON_VERSION=`${PYTHON} -c "import sys; print ('%s.%s.%s'%sys.version_info[:3])"`
+log "${PYTHON_VERSION}\n"
+
+#
+# Create Makefile
+#
+log "creating: Makefile\n";
+cat Makefile.in | sed \
+   -e "s,@PACKAGE@,${PACKAGE}," \
+   -e "s,@GAE_SDK@,${GAE_SDK}," \
+   -e "s,@PYTHON@,${PYTHON}," \
+   > Makefile
+
+exit 0;
