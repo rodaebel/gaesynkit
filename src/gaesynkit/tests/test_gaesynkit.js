@@ -141,7 +141,7 @@ $(document).ready(function(){
        "update properties");
 
     // Instantiate storage
-    ok(storage = new gaesynkit.db.Storage, "instantiate Storage");
+    ok(storage = new gaesynkit.db.Storage, "instantiate storage");
 
     // Put entity
     ok(key = storage.put(entity), "put entity");
