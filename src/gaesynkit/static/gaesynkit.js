@@ -22,6 +22,11 @@
   var gaesynkit = gaesynkit || {};
   gaesynkit.global = this;
 
+  // Private constants
+  gaesynkit._KIND_ID_SEP   = "\n";
+  gaesynkit._KIND_NAME_SEP = "\b";
+  gaesynkit._PATH_SEP      = "\t";
+
   /* Internal API */
   gaesynkit.exportSymbol = function(name, opt_object, opt_objectToExportTo) {
 
@@ -274,8 +279,17 @@
   // Classmethod to create key from path
   gaesynkit.db.Key.from_path = function(kind, id_or_name, parent_, namespace) {
 
-    var path = kind + "\b" + id_or_name;
-    var p;
+    var path, p;
+
+    if (typeof(id_or_name) == "number") {
+      path = kind + gaesynkit._KIND_ID_SEP + id_or_name;
+    }
+    else if (typeof(id_or_name) == "string") {
+      path = kind + gaesynkit._KIND_NAME_SEP + id_or_name;
+    }
+    else {
+      throw Error("Id or name of wrong type; only number or string allowed");
+    }
 
     if (parent_ && parent_ instanceof gaesynkit.db.Key) {
       p = parent_.value();
@@ -284,7 +298,8 @@
       p = parent_;
     }
 
-    path = (p) ? gaesynkit.util.base64.decode(p) + "\t" + path : path;
+    path = ((p) ? gaesynkit.util.base64.decode(p) + gaesynkit._PATH_SEP + path
+                : path);
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
   }
