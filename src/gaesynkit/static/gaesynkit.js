@@ -23,10 +23,20 @@
   gaesynkit.global = this;
 
   // Private constants
+
+  // This is the default namespace for entities
   gaesynkit._DEFAULT_NAMESPACE = "default";
+
+  // String to separate entity kind from numerical id
   gaesynkit._KIND_ID_SEP   = "\n";
+
+  // String to separate entity kind from key name
   gaesynkit._KIND_NAME_SEP = "\b";
+
+  // The namespace separator
   gaesynkit._NAMESPACE_SEP = "!!";
+
+  // String to separate path elements
   gaesynkit._PATH_SEP      = "\t";
 
   /* Internal API */
@@ -266,12 +276,31 @@
 
   gaesynkit.db.Datetime.prototype = new gaesynkit.db.Type;
 
-  // Entity key
+  // Keys represent unique keys for datastore entities.
+  //
+  // Every entity that has been put in the storage has a unique key that
+  // represents it. The key() method of an entity returns the Key object for
+  // the entity. If the entity has never been put() in the storage, key()
+  // raises an Error.
+  //
+  // When the application creates an entity, it can assign another entity as
+  // the parent of the new entity, using the parent argument in the Entity
+  // constructor.
+  //
+  // A key is a base64 encoded string containing the namespace and the path.
+  // The path consists of one or more path elements where each represents an
+  // entity. Every path begins with the key of the root entity which may be
+  // the current entity itself.
+  //
+  // Example:
+  //   some_namespace!!RootEntityKind\n50001\tMyEntityKind\bmy_key_name
+  //         |                |          |          |           |
+  //     Namespace          Parent    Num. ID     Entity     Key name
+  //
+  // The first component of a key is the entity kind. The next component is a
+  // numerical ID or key name. Note that entities can have a numerical ID or
+  // key name but not both.
   gaesynkit.db.Key = function(encoded) {
-
-    // http://code.google.com/appengine/docs/python/datastore/keyclass.html
-    // http://code.google.com/appengine/docs/python/datastore/keysandentitygroups.html#Entity_Groups_Ancestors_and_Paths
-    // http://code.google.com/appengine/articles/storage_breakdown.html#anc-entitiestable
     this._type = "key";
     this._value = encoded;
   }
