@@ -285,10 +285,12 @@
 
     var _namespace = namespace || gaesynkit._DEFAULT_NAMESPACE;
 
-    if (typeof(id_or_name) == "number") {
+    var _id_or_name = id_or_name || 0;
+
+    if (typeof(_id_or_name) == "number") {
       path = kind + gaesynkit._KIND_ID_SEP + id_or_name;
     }
-    else if (typeof(id_or_name) == "string") {
+    else if (typeof(_id_or_name) == "string") {
       path = kind + gaesynkit._KIND_NAME_SEP + id_or_name;
     }
     else {
