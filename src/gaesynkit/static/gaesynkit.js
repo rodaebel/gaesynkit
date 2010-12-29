@@ -292,7 +292,7 @@
       path = kind + gaesynkit._KIND_NAME_SEP + id_or_name;
     }
     else {
-      throw Error("Id or name of wrong type; only number or string allowed");
+      throw new Error("Id or name of wrong type; expected number or string");
     }
 
     if (parent_ && parent_ instanceof gaesynkit.db.Key) {
@@ -306,7 +306,7 @@
                 : _namespace + gaesynkit._NAMESPACE_SEP + path);
 
     if (_namespace != path.split(gaesynkit._NAMESPACE_SEP)[0])
-      throw Error("Parent uses different namespace");
+      throw new Error("Parent uses different namespace");
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
   }
@@ -320,10 +320,10 @@
   gaesynkit.db.Entity = function(kind, name, id, parent_, namespace) {
 
     if (!kind || typeof(kind) != "string")
-      throw "Entity kind missing or not a string";
+      throw new Error("Entity kind missing or not a string");
 
     if (name && id)
-      throw "An Entity can have either a name or an id; not both";
+      throw new Error("An Entity can have either a name or an id; not both");
 
     this._kind = kind;
     this._name = name;
@@ -342,10 +342,10 @@
   gaesynkit.db.Entity.prototype.deleteProperty = function(name) {
 
     if (!name || typeof(name) != "string")
-      throw "Property name missing or not a string";
+      throw new Error("Property name missing or not a string");
 
     if (!this._properties[name])
-      throw "Unknown property";
+      throw new Error("Unknown property");
 
     delete this._properties[name];
     delete this[name];
