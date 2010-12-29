@@ -313,6 +313,30 @@
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
   }
 
+  // Return true if the entity has either a name or a numeric ID
+  gaesynkit.db.Key.prototype.has_id_or_name = function() {
+  }
+
+  // Return the id
+  gaesynkit.db.Key.prototype.id = function() {
+  }
+
+  // Return the kind
+  gaesynkit.db.Key.prototype.kind = function() {
+  }
+
+  // Return the key name
+  gaesynkit.db.Key.prototype.name = function() {
+  }
+
+  // Return the namespace
+  gaesynkit.db.Key.prototype.namespace = function() {
+  }
+
+  // Return the parent
+  gaesynkit.db.Key.prototype.parent = function() {
+  }
+
   // TODO More types
 
   // An Entity holds the client-side representation of a GAE Datastore
