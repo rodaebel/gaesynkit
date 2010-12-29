@@ -23,8 +23,10 @@
   gaesynkit.global = this;
 
   // Private constants
+  gaesynkit._DEFAULT_NAMESPACE = "default";
   gaesynkit._KIND_ID_SEP   = "\n";
   gaesynkit._KIND_NAME_SEP = "\b";
+  gaesynkit._NAMESPACE_SEP = "!!";
   gaesynkit._PATH_SEP      = "\t";
 
   /* Internal API */
@@ -281,6 +283,8 @@
 
     var path, p;
 
+    var _namespace = namespace || gaesynkit._DEFAULT_NAMESPACE;
+
     if (typeof(id_or_name) == "number") {
       path = kind + gaesynkit._KIND_ID_SEP + id_or_name;
     }
@@ -299,7 +303,10 @@
     }
 
     path = ((p) ? gaesynkit.util.base64.decode(p) + gaesynkit._PATH_SEP + path
-                : path);
+                : _namespace + gaesynkit._NAMESPACE_SEP + path);
+
+    if (_namespace != path.split(gaesynkit._NAMESPACE_SEP)[0])
+      throw Error("Parent uses different namespace");
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
   }

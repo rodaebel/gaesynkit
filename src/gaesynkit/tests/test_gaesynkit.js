@@ -74,21 +74,25 @@ $(document).ready(function(){
 
   test("db.Key", function()
   {
-    expect(4);
+    expect(5);
 
     // Create parent key
     ok(john = gaesynkit.db.Key.from_path("Person", 42), "creating key");
 
     // Create ancestor key
-    ok(paul = gaesynkit.db.Key.from_path("Person", "paul", john),
+    ok(paul = gaesynkit.db.Key.from_path("Song", "imagine", john),
        "creating key");
 
     equals(gaesynkit.util.base64.decode(paul.value()),
-           "Person\n42\tPerson\bpaul", "checking key value");
+           "default!!Person\n42\tSong\bimagine", "checking key value");
 
     // Use an invalid id
     raises(function() {gaesynkit.db.Key.from_path("Person", ["bar"]);},
-           "trying to crete a key with an invalid id");
+           "trying to create a key with an invalid id");
+
+    // Try to add a parent with a different namespace
+    raises(function() {gaesynkit.db.Key.from_path("Song", "Ram", john, "foo");},
+           "trying to add a parent with a different namespace");
 
   });
 
