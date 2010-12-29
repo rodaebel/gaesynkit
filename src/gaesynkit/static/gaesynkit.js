@@ -313,28 +313,80 @@
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
   }
 
-  // Return true if the entity has either a name or a numeric ID
+  // Return true if the key has either a name or a numeric ID
   gaesynkit.db.Key.prototype.has_id_or_name = function() {
+    return ((this.id() || this.name()) != undefined) ? true : false;
+  }
+
+  // Return the id
+  gaesynkit.db.Key.prototype.toJSON = function() {
+
+    var key = new Object;
+    var decoded_key = gaesynkit.util.base64.decode(this._value);
+    var parts = decoded_key.split(gaesynkit._NAMESPACE_SEP);
+    var path_elems = parts[1].split(gaesynkit._PATH_SEP);
+
+    key.namespace = parts[0];
+    key.elements = new Array;
+
+    function pushPathElem(elems, str) {
+
+      var e = new Object;
+     
+      var elem_parts = str.split(gaesynkit._KIND_ID_SEP)
+
+      if (elem_parts.length == 2) {
+        e.id = parseInt(elem_parts[1]);
+      }
+      else {
+        elem_parts = str.split(gaesynkit._KIND_NAME_SEP)
+        if (elem_parts.length == 2) {
+          e.name = elem_parts[1];
+        }
+      }
+
+      e.kind = elem_parts[0];
+
+      elems.push(e);
+    }
+
+    for (i in path_elems) pushPathElem(key.elements, path_elems[i]);
+
+    return key;
   }
 
   // Return the id
   gaesynkit.db.Key.prototype.id = function() {
+    return this.toJSON().elements.pop().id;
   }
 
   // Return the kind
   gaesynkit.db.Key.prototype.kind = function() {
+    return this.toJSON().elements.pop().kind;
   }
 
   // Return the key name
   gaesynkit.db.Key.prototype.name = function() {
+    return this.toJSON().elements.pop().name;
   }
 
   // Return the namespace
   gaesynkit.db.Key.prototype.namespace = function() {
+    return this.toJSON().namespace;
   }
 
   // Return the parent
   gaesynkit.db.Key.prototype.parent = function() {
+
+    var decoded_key = gaesynkit.util.base64.decode(this._value);
+    var parts = decoded_key.split(gaesynkit._PATH_SEP);
+
+    if (parts.length == 1)
+      return null;
+
+    var parent_str = parts.slice(0, parts.length-1).join(gaesynkit._PATH_SEP);
+
+    return new gaesynkit.db.Key(gaesynkit.util.base64.encode(parent_str));
   }
 
   // TODO More types

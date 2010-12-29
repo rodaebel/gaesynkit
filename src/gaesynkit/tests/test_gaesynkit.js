@@ -74,17 +74,39 @@ $(document).ready(function(){
 
   test("db.Key", function()
   {
-    expect(5);
+    expect(12);
 
-    // Create parent key
-    ok(john = gaesynkit.db.Key.from_path("Person", 42), "creating key");
+    // Create root key
+    ok(john = gaesynkit.db.Key.from_path("Person", 42), "creating root key");
 
-    // Create ancestor key
-    ok(paul = gaesynkit.db.Key.from_path("Song", "imagine", john),
-       "creating key");
+    // Create child key
+    ok(song = gaesynkit.db.Key.from_path("Song", "imagine", john),
+       "creating child key");
 
-    equals(gaesynkit.util.base64.decode(paul.value()),
+    equals(gaesynkit.util.base64.decode(song.value()),
            "default!!Person\n42\tSong\bimagine", "checking key value");
+
+    // Check if the key has either a numeric id or a name
+    equals(john.has_id_or_name(), true,
+           "checking if the key has either an id or a name");
+
+    // Obtain the key id
+    equals(john.id(), 42, "obtaining the root key id");
+
+    // Get the kind
+    equals(song.kind(), "Song", "getting the kind");
+
+    // Obtain the key name
+    equals(song.name(), "imagine", "obtaining the key name");
+
+    // Get the namespace 
+    equals(song.namespace(), "default", "getting the namespace");
+
+    // try to get the parent 
+    equals(john.parent(), null, "getting the parent");
+
+    // try to get the parent 
+    equals(song.parent().id(), john.id(), "getting the parent");
 
     // Use an invalid id
     raises(function() {gaesynkit.db.Key.from_path("Person", ["bar"]);},
