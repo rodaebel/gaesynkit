@@ -8,10 +8,10 @@ TESTS= $(shell find src -name [a-z]\*.py ! -name \test_*.py ! -name \testing.py)
 all: bin/python
 
 bin/buildout: buildout.cfg
-	$(PYTHON) bootstrap.py --distribute
+	$(PYTHON) bootstrap.py
 
 bin/python: bin/buildout setup.py
-	bin/buildout -NU
+	bin/buildout
 
 bin/coverage: bin/python
 
