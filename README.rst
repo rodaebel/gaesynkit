@@ -3,8 +3,9 @@ gaesynkit - Google App Engine Datastore/Local Storage Synchronization
 =====================================================================
 
 The gaesynkit framework enables Google App Engine application developers to
-create entities offline in the local storage of a web client and synchronize
-them with the server-side Datastore.
+create entities in the local storage of a web client and synchronize them with
+the server-side Datastore at a later point of time. So, offline editing becomes
+easier and more secure through a high level API.
 
 
 Author
