@@ -28,7 +28,7 @@
   gaesynkit._DEFAULT_NAMESPACE = "default";
 
   // String to separate entity kind from numerical id
-  gaesynkit._KIND_ID_SEP   = "\n";
+  gaesynkit._KIND_ID_SEP = "\n";
 
   // String to separate entity kind from key name
   gaesynkit._KIND_NAME_SEP = "\b";
@@ -37,7 +37,11 @@
   gaesynkit._NAMESPACE_SEP = "!!";
 
   // String to separate path elements
-  gaesynkit._PATH_SEP      = "\t";
+  gaesynkit._PATH_SEP = "\t";
+
+  // Row id to store the next numerical id
+  gaesynkit._NEXT_ID = "_NextId";
+
 
   /* Internal API */
   gaesynkit.exportSymbol = function(name, opt_object, opt_objectToExportTo) {
@@ -46,7 +50,7 @@
 
     !(parts[0] in cur) && cur.execScript && cur.execScript("var " + parts[0]);
 
-    for(var part;parts.length && (part = parts.shift());) {
+    for(var part; parts.length && (part = parts.shift());) {
       if(!parts.length && gaesynkit.isDef(opt_object)) {
         cur[part] = opt_object
       } else {
@@ -379,7 +383,7 @@
       elems.push(e);
     }
 
-    for (i in path_elems) pushPathElem(key.elements, path_elems[i]);
+    for (var i in path_elems) pushPathElem(key.elements, path_elems[i]);
 
     return key;
   }
@@ -432,14 +436,10 @@
     if (name && id)
       throw new Error("An Entity can have either a name or an id; not both");
 
-    this._kind = kind;
-    this._name = name;
-    this._id = id;
-    this._parent = parent_;
-    this._namespace = namespace;
-
-    // The entity key
-    this._key = undefined;
+    // Create entity key
+    var id_or_name = name || 0;
+    this._key = gaesynkit.db.Key.from_path(
+                                    kind, id_or_name, parent_, namespace);
 
     // Private attribute to store properties
     this._properties = new Object;
@@ -467,7 +467,7 @@
 
   // Return the entity kind
   gaesynkit.db.Entity.prototype.kind = function() {
-    return this._kind;
+    return this._key.kind();
   };
 
   // Return an array of property names
@@ -489,21 +489,24 @@
 
     var entity = new Object;
 
-    entity["kind"] = this._kind;
+    entity["kind"] = this._key.kind();
 
-    if (this._name) {
-      entity["name"] = this._name;
+    if (this._key.name()) {
+      entity["name"] = this._key.name();
     }
-    else if (this._id) {
-      entity["id"] = this._id;
+    else if (this._key.id()) {
+      entity["id"] = this._key.id();
     }
 
     entity["properties"] = new Array;
 
     for (var key in this._properties) {
+
       var prop = new Object;
+
       prop["name"] = key;
       prop["value"] = this._properties[key];
+
       entity.properties.push(prop);
     }
 
@@ -533,7 +536,7 @@
       return func;
     }
 
-    for (key in obj) {
+    for (var key in obj) {
       // Store property
       this._properties[key] = obj[key];
       // Define setter and getter for new property
@@ -549,9 +552,75 @@
     this._storage = window.localStorage;
   };
 
+  // Obtain the next numerical id
+  gaesynkit.db.Storage.prototype.getNextId = function() {
+
+    var id = 1;
+    var next_id = this._storage[gaesynkit._NEXT_ID];
+
+    if (next_id) id = parseInt(next_id);
+
+    this._storage[gaesynkit._NEXT_ID] = id + 1;
+    
+    return id;
+  }
+
+  // Get entity by a given key or encoded key string
+  //
+  // Constructs a new Entity from JSON and returns it.
+  gaesynkit.db.Storage.prototype.get = function(k) {
+
+    var key, json, entity, prop, json_prop;
+
+    key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
+    try {
+      json = JSON.parse(this._storage[key.value()]);
+    }
+    catch (e) {
+      throw Error("Entity not found");
+    }
+
+    entity = new gaesynkit.db.Entity(
+            key.kind(), key.id(), key.name(), key.parent(), key.namespace());
+
+    for (var i in json.properties) {
+
+      prop = new Object;
+      json_prop = json.properties[i];
+
+      // TODO Evaluate property type
+      prop[json_prop["name"]] = json_prop["value"];
+      
+      entity.update(prop);
+    }
+
+    return entity;
+  }
+
   // Put a given entity or list of entities
   gaesynkit.db.Storage.prototype.put = function(entity) {
-    // TODO Implement putting entities
+
+    var key = entity.key();
+    var id_or_name = (!key.name()) ? this.getNextId() : key.name();
+
+    var new_key = gaesynkit.db.Key.from_path(
+                        key.kind(), id_or_name, key.parent(), key.namespace());
+
+    delete entity._key;
+    entity._key = new_key;
+
+    this._storage[new_key.value()] = JSON.stringify(entity.toJSON());
+
+    return new_key;
+  };
+
+  // Delete entity by a given key or list of keys
+  gaesynkit.db.Storage.prototype.delete = function(k) {
+
+    var key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
+
+    delete this._storage[key.value()];
+
     return true;
   };
 

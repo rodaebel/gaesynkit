@@ -145,8 +145,10 @@ $(document).ready(function(){
     equals(entity.kind(), "Person", "getting entity kind");
 
     // Update entity properties
-    ok(entity.update({"name": "John Dowe", "birthdate": new gaesynkit.db.Datetime("1982-10-04 00:00:00")}),
-       "updating entitiy properties");
+    ok(entity.update({
+        "name": "John Dowe",
+        "birthdate": new gaesynkit.db.Datetime("1982-10-04 00:00:00")}
+      ), "updating entitiy properties");
 
     // Get property names
     equals(entity.keys().join(','), "name,birthdate", "getting property names");
@@ -185,7 +187,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(4);
+    expect(10);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -195,10 +197,34 @@ $(document).ready(function(){
        "update properties");
 
     // Instantiate storage
-    ok(storage = new gaesynkit.db.Storage, "instantiate storage");
+    ok(storage = new gaesynkit.db.Storage, "instantiating storage");
+
+    // Get next numerical id
+    equals(storage.getNextId(), 1, "getting next numerical id");
 
     // Put entity
-    ok(key = storage.put(entity), "put entity");
+    ok(key = storage.put(entity), "putting entity");
+
+    // Get entity
+    ok(entity = storage.get(key), "getting entity");
+
+    // Get the entity's kind
+    equals(entity.kind(), "Book", "getting the entity's kind");
+
+    // Get property value
+    equals(entity.title, "The Adventures Of Tom Sawyer",
+           "getting property value");
+
+    // Delete entity
+    ok(storage.delete(key), "deleting entity");
+
+    // Try to retrieve an entity by an invalid key
+    raises(function() {
+        storage.get(gaesynkit.db.Key.from_path("Foo", "foo"));
+      }, "trying to retrieve an entity by an invalid key");
+
+    // Clean up loacal storage
+    delete localStorage["_NextId"];
     
   });
 
