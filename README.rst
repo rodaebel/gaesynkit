@@ -86,8 +86,42 @@ The gaesynkit library provides an API to create entities and synchronize data
 between a web client and the `server-side` Datastore.
 
 
-Entities
---------
+Storing Entities
+----------------
+
+The gaesynkit Client Storage API is mostly designed after the low-level GAE
+Datastore API. The follwing sample shows how to create, put and get an entity
+with Javascript::
+
+  var entity, db, key
+
+  entity = new gaesynkit.db.Entity("Person");
+
+  entity.update({"name": "John Dowe", "age": 42});
+
+  db = new gaesynkit.db.Storage;
+
+  key = db.put(entity);
+
+  entity = db.get(key);
+
+  entity["name"]; // -> "John Dowe"
+
+The equivalent GAE Python API looks like this::
+
+  from google.appengine.api import datastore
+
+  entity = datastore.Entity("Person")
+
+  entity.update({"name": "John Dowe", "age": 42})
+
+  key = datastore.Put(entity)
+
+  entity = datastore.Get(key)
+
+  entity["name"] # -> "John Dowe"
+
+Nearly identical, isn't it. In order to understand how we store entities, let's now take a look at some lower level details of the GAE Datastore.
 
 Unlike a relational database, Google App Engine implements a `schemaless`
 Datastore that stores and performs queries over data objects, known as
@@ -230,14 +264,6 @@ shows a simplified version of how we do it::
       super(JSONEncoder, self).default(obj)
 
   json_entity = simplejson.dumps(entity, cls=JSONEncoder)
-
-Creating an entity with Javascript::
-
-  entity = new gaesynkit.storage.Entity("Person");
-
-  entity.update({"name": "John Dowe"});
-
-  entity["name"]; // -> "John Dowe"
 
 
 Synchronization
