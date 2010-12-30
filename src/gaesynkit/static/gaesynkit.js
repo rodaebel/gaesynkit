@@ -260,9 +260,26 @@
     this._value = value;
   }
 
+  // Private method to guess the value type
+  var _guessType = function(value) {
+    // TODO Guess more complex types
+    return typeof(value);
+  }
+
+  // Generate JSON output
+  gaesynkit.db.Type.prototype.toJSON = function() {
+
+    var type = (this._type) ? this._type : _guessType(this._value);
+
+    return {"type": type, "value": this._value};
+  }
+
   // Return the type string
   gaesynkit.db.Type.prototype.type = function() {
-    return this._type;
+
+    var type = (this._type) ? this._type : _guessType(this._value);
+
+    return type;
   }
 
   // Return the value
@@ -459,6 +476,18 @@
     return true;
   }
 
+  // Get original property
+  gaesynkit.db.Entity.prototype.getProperty = function(name) {
+
+    if (!name || typeof(name) != "string")
+      throw new Error("Property name missing or not a string");
+
+    if (!this._properties[name])
+      throw new Error("Unknown property");
+
+    return this._properties[name];
+  }
+
   // Return this entity's primary key, a Key instance
   gaesynkit.db.Entity.prototype.key = function() {
     return this._key;
@@ -490,6 +519,8 @@
 
     entity["kind"] = this._key.kind();
 
+    entity["key"] = this._key.value();
+
     if (this._key.name()) {
       entity["name"] = this._key.name();
     }
@@ -497,16 +528,10 @@
       entity["id"] = this._key.id();
     }
 
-    entity["properties"] = new Array;
+    entity["properties"] = new Object;
 
     for (var key in this._properties) {
-
-      var prop = new Object;
-
-      prop["name"] = key;
-      prop["value"] = this._properties[key];
-
-      entity.properties.push(prop);
+      entity.properties[key] = this._properties[key];
     }
 
     return entity;
@@ -519,28 +544,31 @@
 
     // Using closures as setter and getter factories
     function makeSetter(key) {
-      return function(val) { this._properties[key]=val; };
+      return function(val) {
+        var new_val;
+        if (!(val instanceof gaesynkit.db.Type)) {
+          new_val = new gaesynkit.db.Type(val);
+        }
+        else {
+          new_val = val;
+        }
+        this._properties[key] = new_val;
+      };
     }
 
     function makeGetter(key) {
       func = function() {
-        prop = this._properties[key];
-        if (typeof(prop.value) == "function") {
-          return prop.value();
-        }
-        else {
-          return prop;
-        }
+        var prop = this._properties[key];
+        return prop.value();
       };
       return func;
     }
 
     for (var key in obj) {
-      // Store property
-      this._properties[key] = obj[key];
       // Define setter and getter for new property
       this.__defineSetter__(key, makeSetter(key));
       this.__defineGetter__(key, makeGetter(key));
+      this[key] = obj[key];
     }
 
     return this;
@@ -582,21 +610,18 @@
     entity = new gaesynkit.db.Entity(
             key.kind(), key.id(), key.name(), key.parent(), key.namespace());
 
-    for (var i in json.properties) {
+    for (var key in json.properties) {
 
       prop = new Object;
-      json_prop = json.properties[i];
 
-      // TODO Evaluate property type
-      prop[json_prop["name"]] = json_prop["value"];
-      
+      prop[key] = json.properties[key].value;
       entity.update(prop);
     }
 
     return entity;
   }
 
-  // Put a given entity or list of entities
+  // Put a given entity
   gaesynkit.db.Storage.prototype.put = function(entity) {
 
     var key = entity.key();
@@ -613,7 +638,7 @@
     return new_key;
   };
 
-  // Delete entity by a given key or list of keys
+  // Delete entity by a given key
   gaesynkit.db.Storage.prototype.deleteEntityWithKey = function(k) {
 
     var key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);

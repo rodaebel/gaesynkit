@@ -72,6 +72,36 @@ $(document).ready(function(){
 
   });
 
+  test("db.Type", function()
+  {
+    expect(6);
+
+    // Test the basic property data type object
+    ok(data = new gaesynkit.db.Type("foo"), "creating a data type instance");
+
+    // Check the value
+    equals(data.value(), "foo", "checking the value");
+
+    // Check JSON output
+    equals(JSON.stringify(data.toJSON()),
+           "{\"type\":\"string\",\"value\":\"foo\"}",
+           "checking JSON output");
+
+    // Create a datetime object
+    ok(date = new gaesynkit.db.Datetime("2010-12-30T15:38:00"),
+       "creating a datetime object")
+
+    // Check if the given type is inherited from base type
+    ok((date instanceof gaesynkit.db.Type),
+       "checking if datetime is inherited from our base type");
+
+    // Check JSON output
+    equals(JSON.stringify(date.toJSON()),
+           "{\"type\":\"gd:when\",\"value\":\"2010-12-30T15:38:00\"}",
+           "checking JSON output for datetime");
+
+  });
+
   test("db.Key", function()
   {
     expect(12);
@@ -120,7 +150,7 @@ $(document).ready(function(){
 
   test("db.Entity", function()
   {
-    expect(18);
+    expect(20);
 
     // Create a Person entity
     ok(entity = new gaesynkit.db.Entity("Person", name="john"),
@@ -160,7 +190,15 @@ $(document).ready(function(){
     // Retrieve a property value
     equals(entity.name, "John Dowe", "getting property value");
 
-    equals(entity["birthdate"], "1982-10-04 00:00:00", "getting another value");
+    equals(entity["birthdate"], "1982-10-04 00:00:00",
+           "getting another value");
+
+    // Update a single property
+    ok(entity.birthdate = new gaesynkit.db.Datetime("1982-10-04 13:00:00"),
+       "updating a single property");
+
+    equals(entity["birthdate"], "1982-10-04 13:00:00",
+           "getting updated value");
 
     // Try to update properties with an invalid data type
     raises(function() {entity.update("foobar");},
@@ -180,14 +218,14 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"name\":\"john\",\"properties\":[{\"name\":\"name\",\"value\":\"John Dowe\"},{\"name\":\"tags\",\"value\":[\"nice\",\"educated\"]}]}",
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"tags\":{\"type\":\"object\",\"value\":[\"nice\",\"educated\"]}}}",
            "getting properties as JSON");
 
   });
 
   test("db.Storage", function()
   {
-    expect(17);
+    expect(19);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -211,9 +249,17 @@ $(document).ready(function(){
     // Get the entity's kind
     equals(entity.kind(), "Book", "getting the entity's kind");
 
+    // Get property type
+    equals(entity.getProperty("title").type(), "string",
+           "getting property type");
+
     // Get property value
     equals(entity.title, "The Adventures Of Tom Sawyer",
            "getting property value");
+
+    // Get original property with invalid property name
+    raises(function() {entity.getProperty("foo")},
+           "trying to get non-existent property");
 
     // Delete entity
     ok(storage.deleteEntityWithKey(key), "deleting entity");
