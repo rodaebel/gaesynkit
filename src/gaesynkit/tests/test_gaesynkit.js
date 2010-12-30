@@ -187,7 +187,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(10);
+    expect(15);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -223,7 +223,24 @@ $(document).ready(function(){
         storage.get(gaesynkit.db.Key.from_path("Foo", "foo"));
       }, "trying to retrieve an entity by an invalid key");
 
-    // Clean up loacal storage
+    // Test ancestors; create root entity
+    ok(entity_a = new gaesynkit.db.Entity("A", "a"), "creating root entity");
+
+    // Store root entity
+    ok(key_a = storage.put(entity_a), "putting root entity");
+
+    // Create child entity
+    ok(entity_b = new gaesynkit.db.Entity("B", "b", 0, key_a),
+       "creating child entity");
+
+    // Put child entity
+    ok(key_b = storage.put(entity_b), "putting child entity");
+
+    // Get the child entity and ask for the parent key
+    equals(storage.get(key_b).key().parent().name(), "a",
+           "getting ancestor");
+
+    // Clean up local storage
     delete localStorage["_NextId"];
     
   });
