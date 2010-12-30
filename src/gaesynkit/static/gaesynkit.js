@@ -25,22 +25,22 @@
   // Private constants
 
   // This is the default namespace for entities
-  gaesynkit._DEFAULT_NAMESPACE = "default";
+  var _DEFAULT_NAMESPACE = "default";
 
   // String to separate entity kind from numerical id
-  gaesynkit._KIND_ID_SEP = "\n";
+  var _KIND_ID_SEP = "\n";
 
   // String to separate entity kind from key name
-  gaesynkit._KIND_NAME_SEP = "\b";
+  var _KIND_NAME_SEP = "\b";
 
   // The namespace separator
-  gaesynkit._NAMESPACE_SEP = "!!";
+  var _NAMESPACE_SEP = "!!";
 
   // String to separate path elements
-  gaesynkit._PATH_SEP = "\t";
+  var _PATH_SEP = "\t";
 
   // Row id to store the next numerical id
-  gaesynkit._NEXT_ID = "_NextId";
+  var _NEXT_ID = "_NextId";
 
 
   /* Internal API */
@@ -316,15 +316,15 @@
 
     var path, p;
 
-    var _namespace = namespace || gaesynkit._DEFAULT_NAMESPACE;
+    var _namespace = namespace || _DEFAULT_NAMESPACE;
 
     var _id_or_name = id_or_name || 0;
 
     if (typeof(_id_or_name) == "number") {
-      path = kind + gaesynkit._KIND_ID_SEP + id_or_name;
+      path = kind + _KIND_ID_SEP + id_or_name;
     }
     else if (typeof(_id_or_name) == "string") {
-      path = kind + gaesynkit._KIND_NAME_SEP + id_or_name;
+      path = kind + _KIND_NAME_SEP + id_or_name;
     }
     else {
       throw new Error("Id or name of wrong type; expected number or string");
@@ -337,10 +337,10 @@
       p = parent_;
     }
 
-    path = ((p) ? gaesynkit.util.base64.decode(p) + gaesynkit._PATH_SEP + path
-                : _namespace + gaesynkit._NAMESPACE_SEP + path);
+    path = ((p) ? gaesynkit.util.base64.decode(p) + _PATH_SEP + path
+                : _namespace + _NAMESPACE_SEP + path);
 
-    if (_namespace != path.split(gaesynkit._NAMESPACE_SEP)[0])
+    if (_namespace != path.split(_NAMESPACE_SEP)[0])
       throw new Error("Parent uses different namespace");
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
@@ -356,8 +356,8 @@
 
     var key = new Object;
     var decoded_key = gaesynkit.util.base64.decode(this._value);
-    var parts = decoded_key.split(gaesynkit._NAMESPACE_SEP);
-    var path_elems = parts[1].split(gaesynkit._PATH_SEP);
+    var parts = decoded_key.split(_NAMESPACE_SEP);
+    var path_elems = parts[1].split(_PATH_SEP);
 
     key.namespace = parts[0];
     key.elements = new Array;
@@ -366,13 +366,13 @@
 
       var e = new Object;
      
-      var elem_parts = str.split(gaesynkit._KIND_ID_SEP)
+      var elem_parts = str.split(_KIND_ID_SEP)
 
       if (elem_parts.length == 2) {
         e.id = parseInt(elem_parts[1]);
       }
       else {
-        elem_parts = str.split(gaesynkit._KIND_NAME_SEP)
+        elem_parts = str.split(_KIND_NAME_SEP)
         if (elem_parts.length == 2) {
           e.name = elem_parts[1];
         }
@@ -412,12 +412,12 @@
   gaesynkit.db.Key.prototype.parent = function() {
 
     var decoded_key = gaesynkit.util.base64.decode(this._value);
-    var parts = decoded_key.split(gaesynkit._PATH_SEP);
+    var parts = decoded_key.split(_PATH_SEP);
 
     if (parts.length == 1)
       return null;
 
-    var parent_str = parts.slice(0, parts.length-1).join(gaesynkit._PATH_SEP);
+    var parent_str = parts.slice(0, parts.length-1).join(_PATH_SEP);
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(parent_str));
   }
@@ -437,9 +437,8 @@
       throw new Error("An Entity can have either a name or an id; not both");
 
     // Create entity key
-    var id_or_name = name || 0;
-    this._key = gaesynkit.db.Key.from_path(
-                                    kind, id_or_name, parent_, namespace);
+    var name = name || 0;
+    this._key = gaesynkit.db.Key.from_path(kind, name, parent_, namespace);
 
     // Private attribute to store properties
     this._properties = new Object;
@@ -556,11 +555,11 @@
   gaesynkit.db.Storage.prototype.getNextId = function() {
 
     var id = 1;
-    var next_id = this._storage[gaesynkit._NEXT_ID];
+    var next_id = this._storage[_NEXT_ID];
 
     if (next_id) id = parseInt(next_id);
 
-    this._storage[gaesynkit._NEXT_ID] = id + 1;
+    this._storage[_NEXT_ID] = id + 1;
     
     return id;
   }
