@@ -615,7 +615,7 @@
   };
 
   // Delete entity by a given key or list of keys
-  gaesynkit.db.Storage.prototype.delete = function(k) {
+  gaesynkit.db.Storage.prototype.deleteEntityWithKey = function(k) {
 
     var key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
 

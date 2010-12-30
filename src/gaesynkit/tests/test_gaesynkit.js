@@ -216,7 +216,7 @@ $(document).ready(function(){
            "getting property value");
 
     // Delete entity
-    ok(storage.delete(key), "deleting entity");
+    ok(storage.deleteEntityWithKey(key), "deleting entity");
 
     // Try to retrieve an entity by an invalid key
     raises(function() {
