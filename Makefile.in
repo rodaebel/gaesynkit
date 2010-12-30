@@ -31,6 +31,9 @@ coverage: bin/coverage
 dist: bin/python
 	bin/python setup.py sdist
 
+deploy:
+	$(PYTHON) $(GAE_SDK)/appcfg.py update src/gaesynkit
+
 distclean:
 	rm -rf .coverage .installed.cfg bin/ develop-eggs/ dist/ eggs/ htmlcov/ parts/
 	for f in `find . -name "*.pyc"`; do (rm -f $$f); done
