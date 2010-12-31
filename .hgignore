@@ -13,6 +13,7 @@ syntax: regexp
 ^Makefile
 ^bin/
 ^develop-eggs/
+^doc/build/ *
 ^eggs/
 ^google_appengine/
 ^htmlcov/
