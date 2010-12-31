@@ -34,7 +34,11 @@ class JsonRpcHandler(RPC.JsonRpcHandler):
 
     @RPC.ServiceMethod
     def test(self, param):
-        """For testing only."""
+        """For testing only.
+
+        Args:
+            param: Arbitrary parameter.
+        """
         return param
 
 

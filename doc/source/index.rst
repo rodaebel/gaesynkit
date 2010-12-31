@@ -9,18 +9,21 @@ create entities in the local storage of a web client and synchronize them with
 the server-side Datastore at a later point of time. So, offline editing becomes
 easier and more secure through a high level API.
 
+**Copyright and License:**
+
 Copyright © 2010 Tobias Rodäbel
 
-This software is released under the Apache License, Version 2.0.
-You may obtain a copy of the License at
+This software is released under the Apache License, Version 2.0. You may
+obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-  http://www.apache.org/licenses/LICENSE-2.0
+The gaesynkit Documentation is licensed under a `Creative Commons Attribution 3.0 Unported License <http://creativecommons.org/licenses/by/3.0/>`_.
 
 Google App Engine is a trademark of Google Inc.
 
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
 
    quickstart
    overview

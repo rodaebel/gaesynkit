@@ -24,7 +24,7 @@ install the development environment by typing following commands::
   $ ./configure
   $ make
 
-The ``configure`` command takes a number of options::
+The :command:`configure` command takes a number of options::
 
   Usage: configure [options]
 
@@ -48,7 +48,7 @@ Getting a test coverage report::
 
   $ make coverage
 
-The coverage HTML report will be placed into the ``htmlcov`` directory.
+An HTML coverage report will be placed into the :file:`htmlcov` directory.
 
 In order to run the Javascript unit tests, enter following command and open
 http://localhost:8080 with your web browser::

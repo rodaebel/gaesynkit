@@ -16,8 +16,8 @@
 """JsonRpcHandler webapp.RequestHandler for TyphoonAE and Google App Engine.
 
 See specs:
-  http://groups.google.com/group/json-rpc/web/json-rpc-2-0
-  http://groups.google.com/group/json-rpc/web/json-rpc-over-http
+  - http://groups.google.com/group/json-rpc/web/json-rpc-2-0
+  - http://groups.google.com/group/json-rpc/web/json-rpc-over-http
 
 This version does not support:
   - *args, **kwargs and default-values are not allowed for Service Methods
