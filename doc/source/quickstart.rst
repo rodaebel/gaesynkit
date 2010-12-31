@@ -1,4 +1,8 @@
-.. gaesynkit installation guide.
+.. gaesynkit quickstart guide.
+
+Quickstart
+==========
+
 
 Installation
 ------------

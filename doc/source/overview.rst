@@ -1,8 +1,8 @@
 .. gaesynkit documentation.
 
-=============
-Documentation
-=============
+========
+Overview
+========
 
 The gaesynkit library provides an API to create entities and synchronize data
 between a web client and the `server-side` Datastore.
