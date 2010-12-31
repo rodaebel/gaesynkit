@@ -72,9 +72,9 @@ setup(
     description=("Google App Engine Datastore/Local Storage Synchronization "
                  "Framework"),
     long_description=(
-        read('README.rst')
+        read('README.txt')
         + '\n\n' +
-        read('CHANGES.rst')
+        read('CHANGES.txt')
         ),
     license="Apache License 2.0",
     keywords="google app engine gae javascript datastore",

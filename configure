@@ -96,6 +96,14 @@ PYTHON_VERSION=`${PYTHON} -c "import sys; print ('%s.%s.%s'%sys.version_info[:3]
 log "${PYTHON_VERSION}\n"
 
 #
+# Create zc.buildout configuration
+#
+log "creating: buildout.cfg\n";
+cat buildout.cfg.in | sed \
+   -e "s,@GAE_SDK@,${GAE_SDK}," \
+   > buildout.cfg
+
+#
 # Create Makefile
 #
 log "creating: Makefile\n";

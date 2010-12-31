@@ -1,6 +1,5 @@
 syntax: glob
 
-Makefile
 config.log
 *.egg-info
 *.pyc
@@ -10,6 +9,7 @@ config.log
 
 syntax: regexp
 
+^Makefile
 ^bin/
 ^develop-eggs/
 ^eggs/
