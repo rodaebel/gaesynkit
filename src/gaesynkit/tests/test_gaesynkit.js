@@ -1,7 +1,7 @@
 /*
  * test_gaesynkit.js - Unit tests for the gaesynkit Javascript library.
  *
- * Copyright 2010 Tobias Rodaebel
+ * Copyright 2011 Tobias Rodaebel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

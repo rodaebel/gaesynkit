@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2010 Florian Glanzner (fgl), Tobias Rodäbel
+# Copyright 2010, 2011 Florian Glanzner (fgl), Tobias Rodäbel
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2010 Tobias Rodäbel
+# Copyright 2011 Tobias Rodäbel
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Python implementation for the server-side gaesynkit library part."""
+"""Python implementation of the gaesynkit handlers JSON-RPC endpoint."""
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
@@ -28,8 +28,7 @@ import time
 class JsonRpcHandler(RPC.JsonRpcHandler):
     """Handles JSON Remote Procedure Calls.
 
-    No need to define the post(self) method. Variable arguments *args and **kw
-    are not allowed for service methods.
+    This request handler is the main JSON-RPC endpoint.
     """
 
     @RPC.ServiceMethod

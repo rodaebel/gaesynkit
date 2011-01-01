@@ -17,7 +17,7 @@ Tobias Rodäbel <tobias dot rodaebel at googlemail dot com>
 Copyright and License
 ---------------------
 
-Copyright 2010 Tobias Rodaebel
+Copyright 2011 Tobias Rodaebel
 
 This software is released under the Apache License, Version 2.0. You may obtain
 a copy of the License at
