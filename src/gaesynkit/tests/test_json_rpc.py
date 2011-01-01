@@ -113,7 +113,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         self.assertEqual(loads(r_resp), loads(resp))
 
     def test_invalid_request(self):
-        """Test rpc call with invalid Request object."""
+        """Test JSON-RPC with invalid request."""
         req = '{"jsonrpc": "2.0", "method": 1, "params": "bar"}'
         resp = '{"jsonrpc": "2.0", "error": {"code": -32600, "message": "InvalidRequestError: Method must be a string"}, "id": null}'
         status = 400
@@ -121,8 +121,35 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         self.assertEqual(r_status, status)
         self.assertEqual(loads(r_resp), loads(resp))
 
+    def test_invalid_params(self):
+        """Test JSON-RPC with invalid params."""
+        req = '{"jsonrpc": "2.0", "method": "subtract", "params": 1}'
+        resp = '{"jsonrpc": "2.0", "error": {"code": -32600, "message": "InvalidRequestError: \'params\' must be an array or object"}, "id": null}'
+        status = 400
+        r_status, r_resp = self.exec_handler(req)
+        self.assertEqual(r_status, status)
+        self.assertEqual(loads(r_resp), loads(resp))
+
+    def test_wrong_json_rpc(self):
+        """Test JSON-RPC with wrong version."""
+        req = '{"jsonrpc": "1.0", "method": 1, "params": "bar"}'
+        resp = '{"jsonrpc": "2.0", "error": {"code": -32600, "message": "InvalidRequestError: Server supports JSON-RPC 2.0 only"}, "id": null}'
+        status = 400
+        r_status, r_resp = self.exec_handler(req)
+        self.assertEqual(r_status, status)
+        self.assertEqual(loads(r_resp), loads(resp))
+
+    def test_missing_method(self):
+        """Test JSON-RPC without a method."""
+        req = '{"jsonrpc": "2.0", "params": "bar"}'
+        resp = '{"jsonrpc": "2.0", "error": {"code": -32600, "message": "InvalidRequestError: No method specified"}, "id": null}'
+        status = 400
+        r_status, r_resp = self.exec_handler(req)
+        self.assertEqual(r_status, status)
+        self.assertEqual(loads(r_resp), loads(resp))
+
     def test_invalid_json_batch(self):
-        """Test rpc call Batch, invalid JSON."""
+        """Test JSON-RPC batch with invalid JSON."""
         req = '[{"jsonrpc": "2.0", "method": "sum", "params": [1,2,4], "id": "1"},{"jsonrpc": "2.0", "method"]'
         resp = '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "ParseError: Parse error"}, "id": null}'
         status = 500
@@ -257,6 +284,15 @@ class JsonRpcHandlerTestCase(unittest.TestCase):
         """Service method definitions must not have variable parameters."""
         h = self.getHandler()
         rq  = '''{"jsonrpc":"2.0", "method":"variableParamsMethod", "params":["A","B"], "id":"1"}'''
+        messages, dummy = h.parse_body(rq)
+        msg = messages[0]
+        h.handle_message(msg)
+        self.assertTrue(isinstance(msg.error, InvalidParamsError))
+
+    def testInvalidParams(self):
+        """Service methods expect the complete set of parameters."""
+        h = self.getHandler()
+        rq  = '''{"jsonrpc":"2.0", "method":"myMethod", "params":{"foo": 1}, "id":"1"}'''
         messages, dummy = h.parse_body(rq)
         msg = messages[0]
         h.handle_message(msg)

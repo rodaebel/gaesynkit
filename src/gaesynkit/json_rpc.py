@@ -317,7 +317,7 @@ class JsonRpcHandler(webapp.RequestHandler):
                     self._build_error(msg.error, msg.message_id))
         elif msg.result:
             return (200, self._build_result(msg))
-        else:
+        else:   # pragma: no cover
             # Should never be reached
             logging.warn('Message neither contains an error nor a result')
 
@@ -341,21 +341,21 @@ class JsonRpcHandler(webapp.RequestHandler):
             if not len(args_set) == 0:
                 raise InvalidParamsError(
                     "Wrong number of parameters; "
-                    "Expected %i but 'params' was omitted "
+                    "expected %i but 'params' was omitted "
                     "from JSON-RPC message" % (len(args_set)))
             return method()
         elif isinstance(params, (list, tuple)):
             if not len(args_set) == len(params):
                 raise InvalidParamsError(
                     "Wrong number of parameters; "
-                    "Expected %i got %i" % (len(args_set),len(params)))
+                    "expected %i got %i" % (len(args_set),len(params)))
             return method(*params)
         elif isinstance(params, dict):
             paramset = set(params)
             if not args_set == paramset:
                 raise InvalidParamsError(
                     "Named parameters do not "
-                    "match method; Expected %s" % (str(args_set)))
+                    "match method; expected %s" % (str(args_set)))
             params = self.decode_dict_keys(params)
             return method(**params)
 
