@@ -74,7 +74,7 @@ $(document).ready(function(){
 
   test("db.ValueType", function()
   {
-    expect(9);
+    expect(10);
 
     // Test the basic property value type object
     ok(data = new gaesynkit.db.ValueType("foo"),
@@ -95,6 +95,9 @@ $(document).ready(function(){
     // Check if the given type is inherited from base type
     ok((date instanceof gaesynkit.db.ValueType),
        "checking if datetime is inherited from our base type");
+
+    // Get denormalized date value
+    equals(date.value().getFullYear(), 2010, "getting denormalized value");
 
     // Check JSON output
     equals(JSON.stringify(date.toJSON()),
@@ -203,15 +206,13 @@ $(document).ready(function(){
     // Retrieve a property value
     equals(entity.name, "John Dowe", "getting property value");
 
-    equals(entity["birthdate"], "1982-10-04 00:00:00",
-           "getting another value");
+    equals(entity["birthdate"].getFullYear(), 1982, "getting another value");
 
     // Update a single property
     ok(entity.birthdate = new gaesynkit.db.Datetime("1982-10-04 13:00:00"),
        "updating a single property");
 
-    equals(entity["birthdate"], "1982-10-04 13:00:00",
-           "getting updated value");
+    equals(entity["birthdate"].getHours(), 13, "getting updated value");
 
     // Try to update properties with an invalid data type
     raises(function() {entity.update("foobar");},
@@ -248,7 +249,9 @@ $(document).ready(function(){
        "update properties");
 
     // Add another property
-    ok(entity.update({"date": new gaesynkit.db.Datetime("1876-06-01 00:00:00")}),
+    var date = new Date("1876/06/01 00:00:00");
+
+    ok(entity.update({"date": new gaesynkit.db.Datetime(date)}),
        "adding another property");
 
     // Instantiate storage
@@ -275,8 +278,7 @@ $(document).ready(function(){
            "getting property value");
 
     // Get another property value
-    equals(entity.date, "1876-06-01 00:00:00",
-           "getting another property value");
+    equals(entity.date.getFullYear(), 1876, "getting another property value");
 
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},

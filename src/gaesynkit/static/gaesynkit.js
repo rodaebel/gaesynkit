@@ -305,10 +305,31 @@
     
     // http://code.google.com/apis/gdata/docs/1.0/elements.html#gdWhen
     this._type = "gd:when";
-    this._value = value;
+    this._value = this._encode(value);
   }
 
   gaesynkit.db.Datetime.prototype = new gaesynkit.db.ValueType;
+
+  // Encode date value
+  gaesynkit.db.Datetime.prototype._encode = function(val) {
+
+    if (val instanceof Date) {
+      return (val.getFullYear()+"-"+(val.getMonth()+1)+"-"+val.getDate()+" "+
+              val.getHours()+":"+val.getMinutes()+":"+val.getSeconds());
+    }
+
+    return val;
+  };
+
+  // Decode encoded date value
+  gaesynkit.db.Datetime.prototype._decode = function(encoded) {
+    return new Date(encoded.replace(/-/g, "/"));
+  };
+
+  // Return the decoded value
+  gaesynkit.db.Datetime.prototype.value = function() {
+    return this._decode(this._value);
+  };
 
   // Keys represent unique keys for datastore entities.
   //
