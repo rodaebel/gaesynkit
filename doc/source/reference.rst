@@ -45,6 +45,13 @@ Handlers
    :members:
 
 
+Synchronization
+---------------
+
+.. automodule:: gaesynkit.syncable
+   :members:
+
+
 JSON-RPC
 --------
 
