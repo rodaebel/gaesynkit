@@ -187,6 +187,14 @@ shows a simplified version of how we do it::
   json_entity = simplejson.dumps(entity, cls=JSONEncoder)
 
 
+Client-Server Communication
+---------------------------
+
+The gaesynkit framework uses `JSON-RPC 2.0
+<http://groups.google.com/group/json-rpc/web/json-rpc-1-2-proposal>`_ for
+client-server communication.
+
+
 Synchronization
 ---------------
 

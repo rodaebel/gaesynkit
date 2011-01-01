@@ -240,7 +240,7 @@
   // The gaesynkit.db namespace
   gaesynkit.db = {};
 
-  // Google App Engine Datastore types. See "Supported Data Types" in the
+  // Google App Engine Datastore types. See "Supported Value Types" in the
   // API documentation.
   //
   // Most of these types are based on XML elements from Atom and GData
@@ -255,23 +255,23 @@
   //   http://schemas.google.com/g/2005
 
   // Base type
-  gaesynkit.db.Type = function(value) {
+  gaesynkit.db.ValueType = function(value) {
     this._type = undefined;
     this._value = value;
   }
 
   // Generate JSON output
-  gaesynkit.db.Type.prototype.toJSON = function() {
+  gaesynkit.db.ValueType.prototype.toJSON = function() {
     return {"type": this.type(), "value": this._value};
   }
 
   // Return the type string
-  gaesynkit.db.Type.prototype.type = function() {
+  gaesynkit.db.ValueType.prototype.type = function() {
     return (this._type) ? this._type : typeof(this._value);;
   }
 
   // Return the value
-  gaesynkit.db.Type.prototype.value = function() {
+  gaesynkit.db.ValueType.prototype.value = function() {
     return this._value;
   }
 
@@ -283,16 +283,19 @@
     this._value = this._encode(value);
   }
 
-  gaesynkit.db.ByteString.prototype = new gaesynkit.db.Type;
+  gaesynkit.db.ByteString.prototype = new gaesynkit.db.ValueType;
 
+  // Encode value
   gaesynkit.db.ByteString.prototype._encode = function(value) {
     return gaesynkit.util.base64.encode(value);
   };
 
+  // Decode encoded value
   gaesynkit.db.ByteString.prototype._decode = function(encoded) {
     return gaesynkit.util.base64.decode(encoded);
   };
 
+  // Return the decoded value
   gaesynkit.db.ByteString.prototype.value = function() {
     return this._decode(this._value);
   };
@@ -305,7 +308,7 @@
     this._value = value;
   }
 
-  gaesynkit.db.Datetime.prototype = new gaesynkit.db.Type;
+  gaesynkit.db.Datetime.prototype = new gaesynkit.db.ValueType;
 
   // Keys represent unique keys for datastore entities.
   //
@@ -336,7 +339,7 @@
     this._value = encoded;
   }
 
-  gaesynkit.db.Key.prototype = new gaesynkit.db.Type;
+  gaesynkit.db.Key.prototype = new gaesynkit.db.ValueType;
 
   // Classmethod to create key from path
   gaesynkit.db.Key.from_path = function(kind, id_or_name, parent_, namespace) {
@@ -564,8 +567,8 @@
     function makeSetter(key) {
       return function(val) {
         var new_val;
-        if (!(val instanceof gaesynkit.db.Type)) {
-          new_val = new gaesynkit.db.Type(val);
+        if (!(val instanceof gaesynkit.db.ValueType)) {
+          new_val = new gaesynkit.db.ValueType(val);
         }
         else {
           new_val = val;

@@ -72,12 +72,13 @@ $(document).ready(function(){
 
   });
 
-  test("db.Type", function()
+  test("db.ValueType", function()
   {
     expect(9);
 
-    // Test the basic property data type object
-    ok(data = new gaesynkit.db.Type("foo"), "creating a data type instance");
+    // Test the basic property value type object
+    ok(data = new gaesynkit.db.ValueType("foo"),
+       "creating a value type instance");
 
     // Check the value
     equals(data.value(), "foo", "checking the value");
@@ -92,7 +93,7 @@ $(document).ready(function(){
        "creating a datetime object")
 
     // Check if the given type is inherited from base type
-    ok((date instanceof gaesynkit.db.Type),
+    ok((date instanceof gaesynkit.db.ValueType),
        "checking if datetime is inherited from our base type");
 
     // Check JSON output
