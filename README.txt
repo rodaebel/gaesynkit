@@ -8,12 +8,6 @@ the server-side Datastore at a later point of time. So, offline editing becomes
 easier and more secure through a high level API.
 
 
-Author
-------
-
-Tobias Rodäbel <tobias dot rodaebel at googlemail dot com>
-
-
 Copyright and License
 ---------------------
 
