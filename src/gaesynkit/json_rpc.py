@@ -47,6 +47,9 @@ def ServiceMethod(fn):
 
     This exposes methods to the RPC interface.
 
+    :param function fn: A function.
+    :returns: A function.
+
     TODO:
         - Warn when applied to underscore methods
     """
@@ -139,7 +142,10 @@ class ServerError(JsonRpcError):
 
 
 class JsonRpcMessage(object):
-    """A single JSON-RPC message."""
+    """A single JSON-RPC message.
+
+    :param dict json: The JSON-RPC message Python representation.
+    """
 
     def __init__(self, json=None):
         super(JsonRpcMessage, self).__init__()
@@ -151,8 +157,10 @@ class JsonRpcMessage(object):
             self.from_json(json)
 
     def from_json(self, json):
-        """Parses a single JSON-RPC message."""
+        """Parses a single JSON-RPC message.
 
+        :param dict json: The JSON-RPC message Python representation.
+        """
         try:
             if not isinstance(json, dict):
                 raise InvalidRequestError(
@@ -240,9 +248,12 @@ class JsonRpcHandler(webapp.RequestHandler):
     def get_responses(self, messages):
         """Gets a list of responses from all 'messages'.
 
-        Responses are a tuple of http-status and body.
-        A Response may be None if the message was a notification.
-        None Responses are excluded from the returned list.
+        Responses are a tuple of HTTP-status and body.
+        A response may be None if the message was a notification and will be
+        excluded from the returned list.
+
+        :param list messages: JSON messages.
+        :returns: List of responses.
         """
 
         responses = []
@@ -256,7 +267,9 @@ class JsonRpcHandler(webapp.RequestHandler):
         """Executes a message.
 
         The method of the message is executed.
-        Errors and/or result are written back to the message.
+        Errors and/or results are written back to the message.
+
+        :param dict msg: A JSON-RPC message.
         """
 
         if msg.error != None:
@@ -281,6 +294,8 @@ class JsonRpcHandler(webapp.RequestHandler):
         Validates for correct JSON and returns a tuple with a list of JSON-RPC
         messages and wether the request was a batch-request.
         Raises ParseError and InvalidRequestError.
+
+        :param string body: The HTTP body.
         """
 
         try:
@@ -306,9 +321,12 @@ class JsonRpcHandler(webapp.RequestHandler):
     def get_response(self, msg):
         """Gets the response object for a message.
 
-        Returns a tuple of a http-status and a json object or None.
-        The JSON object maybe a JSON-RPC error object, a result object
+        Returns a tuple of a HTTP-status and a json object or None.
+        The JSON object may be a JSON-RPC error object or a result object.
         None is returned if the message was a notification.
+
+        :param dict msg: A JSON-RPC message.
+        :returns: Tuple with status and result.
         """
         if msg.notification:
             return None
@@ -332,6 +350,11 @@ class JsonRpcHandler(webapp.RequestHandler):
                 'id':msg.message_id}
 
     def execute_method(self, method, params):
+        """Executes the RPC method.
+
+        :param function method: A method object.
+        :param params: List, tuple or dictionary with JSON-RPC parameters.
+        """
         args, varargs, varkw, defaults = getargspec(method)
         if varargs or varkw:
             raise InvalidParamsError(
@@ -368,9 +391,11 @@ class JsonRpcHandler(webapp.RequestHandler):
         return f
 
     def decode_dict_keys(self, d):
-        """Convert all keys i dict d to str.
+        """Convert all keys in dict d to str.
 
-        Maybe unicode in JSON but no Unicode as keys in python allowed.
+        Python does not allow unicode keys in dictionaries.
+
+        :param dict d: A JSON-RPC message.
         """
         try:
             r = {}

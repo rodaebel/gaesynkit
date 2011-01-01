@@ -35,8 +35,7 @@ class JsonRpcHandler(RPC.JsonRpcHandler):
     def test(self, param):
         """For testing only.
 
-        Args:
-            param: Arbitrary parameter.
+        :param object param: Arbitrary parameter.
         """
         return param
 
