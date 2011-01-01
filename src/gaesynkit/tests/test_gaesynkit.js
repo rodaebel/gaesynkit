@@ -109,7 +109,7 @@ $(document).ready(function(){
 
     // Check JSON output
     equals(JSON.stringify(bytestring.toJSON()),
-           "{\"type\":\"byte_string\",\"value\":\"Très bien\"}",
+           "{\"type\":\"byte_string\",\"value\":\"VHLDqHMgYmllbg==\"}",
            "checking JSON output for byte string");
 
   });

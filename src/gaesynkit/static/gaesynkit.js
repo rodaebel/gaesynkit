@@ -262,7 +262,7 @@
 
   // Generate JSON output
   gaesynkit.db.Type.prototype.toJSON = function() {
-    return {"type": this.type(), "value": this.value()};
+    return {"type": this.type(), "value": this._value};
   }
 
   // Return the type string
