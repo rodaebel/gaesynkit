@@ -260,32 +260,42 @@
     this._value = value;
   }
 
-  // Private method to guess the value type
-  var _guessType = function(value) {
-    // TODO Guess more complex types
-    return typeof(value);
-  }
-
   // Generate JSON output
   gaesynkit.db.Type.prototype.toJSON = function() {
-
-    var type = (this._type) ? this._type : _guessType(this._value);
-
-    return {"type": type, "value": this._value};
+    return {"type": this.type(), "value": this.value()};
   }
 
   // Return the type string
   gaesynkit.db.Type.prototype.type = function() {
-
-    var type = (this._type) ? this._type : _guessType(this._value);
-
-    return type;
+    return (this._type) ? this._type : typeof(this._value);;
   }
 
   // Return the value
   gaesynkit.db.Type.prototype.value = function() {
     return this._value;
   }
+
+  // Byte string
+  gaesynkit.db.ByteString = function(value) {
+    
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#ByteString
+    this._type = "byte_string";
+    this._value = this._encode(value);
+  }
+
+  gaesynkit.db.ByteString.prototype = new gaesynkit.db.Type;
+
+  gaesynkit.db.ByteString.prototype._encode = function(value) {
+    return gaesynkit.util.base64.encode(value);
+  };
+
+  gaesynkit.db.ByteString.prototype._decode = function(encoded) {
+    return gaesynkit.util.base64.decode(encoded);
+  };
+
+  gaesynkit.db.ByteString.prototype.value = function() {
+    return this._decode(this._value);
+  };
 
   // Date
   gaesynkit.db.Datetime = function(value) {
@@ -444,6 +454,7 @@
   // Value types map
   var _PROPERTY_VALUE_TYPES = {
     "string": "string",
+    "byte_string": gaesynkit.db.ByteString,
     "gd:when": gaesynkit.db.Datetime,
     "key": gaesynkit.db.Key
   };

@@ -74,7 +74,7 @@ $(document).ready(function(){
 
   test("db.Type", function()
   {
-    expect(6);
+    expect(9);
 
     // Test the basic property data type object
     ok(data = new gaesynkit.db.Type("foo"), "creating a data type instance");
@@ -99,6 +99,18 @@ $(document).ready(function(){
     equals(JSON.stringify(date.toJSON()),
            "{\"type\":\"gd:when\",\"value\":\"2010-12-30T15:38:00\"}",
            "checking JSON output for datetime");
+
+    // Create byte string
+    ok(bytestring = new gaesynkit.db.ByteString("Très bien"),
+       "creating byte string")
+
+    // Get byte string value
+    equals(bytestring.value(), "Très bien", "getting byte string value");
+
+    // Check JSON output
+    equals(JSON.stringify(bytestring.toJSON()),
+           "{\"type\":\"byte_string\",\"value\":\"Très bien\"}",
+           "checking JSON output for byte string");
 
   });
 
