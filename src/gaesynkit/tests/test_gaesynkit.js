@@ -205,7 +205,7 @@ $(document).ready(function(){
            "trying to update with invalid properties");
 
     // Delete a property
-    ok(entity.deleteProperty("birthdate"), "deleting a property");
+    ok(entity.deleteProperty("tags"), "deleting a property");
 
     raises(function() {entity.deleteProperty("foobar");},
            "trying to delete unknown property");
@@ -218,21 +218,25 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"tags\":{\"type\":\"object\",\"value\":[\"nice\",\"educated\"]}}}",
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982-10-04 13:00:00\"}}}",
            "getting properties as JSON");
 
   });
 
   test("db.Storage", function()
   {
-    expect(19);
+    expect(21);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
 
-    // Create properties
+    // Update properties
     ok(entity.update({"title":"The Adventures Of Tom Sawyer"}),
        "update properties");
+
+    // Add another property
+    ok(entity.update({"date": new gaesynkit.db.Datetime("1876-06-01 00:00:00")}),
+       "adding another property");
 
     // Instantiate storage
     ok(storage = new gaesynkit.db.Storage, "instantiating storage");
@@ -256,6 +260,10 @@ $(document).ready(function(){
     // Get property value
     equals(entity.title, "The Adventures Of Tom Sawyer",
            "getting property value");
+
+    // Get another property value
+    equals(entity.date, "1876-06-01 00:00:00",
+           "getting another property value");
 
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},

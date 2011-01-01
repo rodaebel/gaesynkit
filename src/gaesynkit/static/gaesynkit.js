@@ -441,6 +441,13 @@
 
   // TODO More types
 
+  // Value types map
+  var _PROPERTY_VALUE_TYPES = {
+    "string": "string",
+    "gd:when": gaesynkit.db.Datetime,
+    "key": gaesynkit.db.Key
+  };
+
   // An Entity holds the client-side representation of a GAE Datastore
   // entity. It can be dumped as a JSON string.
 
@@ -597,7 +604,7 @@
   // Constructs a new Entity from JSON and returns it.
   gaesynkit.db.Storage.prototype.get = function(k) {
 
-    var key, json, entity, prop, json_prop;
+    var key, json, entity, prop, type, value;
 
     key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
     try {
@@ -613,8 +620,20 @@
     for (var key in json.properties) {
 
       prop = new Object;
+      type = _PROPERTY_VALUE_TYPES[json.properties[key].type];
 
-      prop[key] = json.properties[key].value;
+      if (type == "string") {
+        value = json.properties[key].value;
+      }
+      else if (!type) {
+        throw Error("Unknown property value type");
+      }
+      else {
+        value = new type(json.properties[key].value);
+      }
+
+      prop[key] = value;
+
       entity.update(prop);
     }
 
