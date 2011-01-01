@@ -137,15 +137,14 @@ We choose JSON as format for representing the above entity::
   {
     "kind": "Person",
     "key": "ag5nYWVzeW5raXR0ZXN0c3IMCxIGUGVyc29uGAQM",
-    "properties": [
-      {"name": "birthday", "type": "gd:when", "value": "1982-10-04 00:00:00"},
-      {"name": "description", "type": "text", "value": "Some description."},
-      {"name": "email", "type": "gd:email", "value": "john@example.com"},
-      {"name": "height", "type": "float", "value": "1.82"},
-      {"name": "name", "type": "string", "value": "John Dowe"},
-      {"name": "tags", "type": "string", "value": "nice"},
-      {"name": "tags", "type": "string", "value": "educated"}
-    ]
+    "properties": {
+      "birthday": {"type": "gd:when", "value": "1982-10-04 00:00:00"},
+      "description": {"type": "text", "value": "Some description."},
+      "email": {"type": "gd:email", "value": "john@example.com"},
+      "height": {"type": "float", "value": "1.82"},
+      "name": {"type": "string", "value": "John Dowe"},
+      "tags": {"type": "string", "value": ["nice", "educated"]}
+    }
   }
 
 Property values are normalized. Most of the types are based on XML elements

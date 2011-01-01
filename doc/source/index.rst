@@ -11,7 +11,7 @@ easier and more secure through a high level API.
 
 **Copyright and License:**
 
-Copyright © 2010 Tobias Rodäbel
+Copyright © 2011 Tobias Rodäbel
 
 This software is released under the Apache License, Version 2.0. You may
 obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
