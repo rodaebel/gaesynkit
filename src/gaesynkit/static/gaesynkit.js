@@ -267,7 +267,7 @@
 
   // Return the type string
   gaesynkit.db.ValueType.prototype.type = function() {
-    return (this._type) ? this._type : typeof(this._value);;
+    return (this._type) ? this._type : typeof(this._value);
   }
 
   // Return the value
@@ -299,6 +299,16 @@
   gaesynkit.db.ByteString.prototype.value = function() {
     return this._decode(this._value);
   };
+
+  // Bool
+  gaesynkit.db.Bool = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#bool
+    this._type = "bool"
+    this._value = value;
+  }
+
+  gaesynkit.db.Bool.prototype = new gaesynkit.db.ValueType;
 
   // Date
   gaesynkit.db.Datetime = function(value) {
@@ -475,12 +485,18 @@
 
   // TODO More types
 
-  // Value types map
+  // Property value types
   var _PROPERTY_VALUE_TYPES = {
     "string": "string",
     "byte_string": gaesynkit.db.ByteString,
+    "bool": gaesynkit.db.Bool,
     "gd:when": gaesynkit.db.Datetime,
     "key": gaesynkit.db.Key
+  };
+
+  // Value types map
+  var _VALUE_TYPES_MAP = {
+    "boolean": "bool"
   };
 
   // An Entity holds the client-side representation of a GAE Datastore
@@ -587,9 +603,15 @@
     // Using closures as setter and getter factories
     function makeSetter(key) {
       return function(val) {
-        var new_val;
+        var type, new_val;
         if (!(val instanceof gaesynkit.db.ValueType)) {
-          new_val = new gaesynkit.db.ValueType(val);
+          type = _PROPERTY_VALUE_TYPES[_VALUE_TYPES_MAP[typeof(val)]];
+          if (type) {
+            new_val = new type(val);
+          }
+          else {
+            new_val = new gaesynkit.db.ValueType(val);
+          }
         }
         else {
           new_val = val;

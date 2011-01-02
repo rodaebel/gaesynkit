@@ -90,6 +90,40 @@ $(document).ready(function(){
 
   });
 
+  test("db.ByteString", function()
+  {
+    expect(3);
+
+    // Create byte string
+    ok(bytestring = new gaesynkit.db.ByteString("Très bien"),
+       "creating byte string")
+
+    // Get byte string value
+    equals(bytestring.value(), "Très bien", "getting byte string value");
+
+    // Check JSON output
+    equals(JSON.stringify(bytestring.toJSON()),
+           "{\"type\":\"byte_string\",\"value\":\"VHLDqHMgYmllbg==\"}",
+           "checking JSON output for byte string");
+
+  });
+
+  test("db.Bool", function()
+  {
+    expect(3);
+
+    // Create boolean
+    ok(bool = new gaesynkit.db.Bool(true), "creating boolean")
+
+    // Get boolean value
+    equals(bool.value(), true, "getting boolean value");
+
+    // Check JSON output
+    equals(JSON.stringify(bool.toJSON()), "{\"type\":\"bool\",\"value\":true}",
+           "checking JSON output for boolean");
+
+  });
+
   test("db.Datetime", function()
   {
     expect(4);
@@ -109,24 +143,6 @@ $(document).ready(function(){
     equals(JSON.stringify(date.toJSON()),
            "{\"type\":\"gd:when\",\"value\":\"2010/12/30 15:38:00\"}",
            "checking JSON output for datetime");
-
-  });
-
-  test("db.ByteString", function()
-  {
-    expect(3);
-
-    // Create byte string
-    ok(bytestring = new gaesynkit.db.ByteString("Très bien"),
-       "creating byte string")
-
-    // Get byte string value
-    equals(bytestring.value(), "Très bien", "getting byte string value");
-
-    // Check JSON output
-    equals(JSON.stringify(bytestring.toJSON()),
-           "{\"type\":\"byte_string\",\"value\":\"VHLDqHMgYmllbg==\"}",
-           "checking JSON output for byte string");
 
   });
 
@@ -251,7 +267,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(21);
+    expect(23);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -260,11 +276,15 @@ $(document).ready(function(){
     ok(entity.update({"title":"The Adventures Of Tom Sawyer"}),
        "update properties");
 
-    // Add another property
+    // Add datetime property value
     var date = new Date("1876/06/01 00:00:00");
 
     ok(entity.update({"date": new gaesynkit.db.Datetime(date)}),
-       "adding another property");
+       "adding datetime property");
+
+    // Add boolean property value
+    ok(entity.update({"classic": new gaesynkit.db.Bool(true)}),
+       "adding boolean property");
 
     // Instantiate storage
     ok(storage = new gaesynkit.db.Storage, "instantiating storage");
@@ -289,8 +309,11 @@ $(document).ready(function(){
     equals(entity.title, "The Adventures Of Tom Sawyer",
            "getting property value");
 
-    // Get another property value
-    equals(entity.date.getFullYear(), 1876, "getting another property value");
+    // Get datetime property value
+    equals(entity.date.getFullYear(), 1876, "getting datetime property value");
+
+    // Get boolean property value
+    equals(entity.classic, true, "getting boolean property value");
 
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},
