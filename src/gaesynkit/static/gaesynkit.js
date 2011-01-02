@@ -310,6 +310,16 @@
 
   gaesynkit.db.Bool.prototype = new gaesynkit.db.ValueType;
 
+  // Integer
+  gaesynkit.db.Integer = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#int
+    this._type = "int"
+    this._value = value;
+  }
+
+  gaesynkit.db.Integer.prototype = new gaesynkit.db.ValueType;
+
   // Date
   gaesynkit.db.Datetime = function(value) {
     
@@ -490,13 +500,15 @@
     "string": "string",
     "byte_string": gaesynkit.db.ByteString,
     "bool": gaesynkit.db.Bool,
+    "int": gaesynkit.db.Integer,
     "gd:when": gaesynkit.db.Datetime,
     "key": gaesynkit.db.Key
   };
 
   // Value types map
   var _VALUE_TYPES_MAP = {
-    "boolean": "bool"
+    "boolean": "bool",
+    "int": "int"
   };
 
   // An Entity holds the client-side representation of a GAE Datastore

@@ -124,6 +124,22 @@ $(document).ready(function(){
 
   });
 
+  test("db.Integer", function()
+  {
+    expect(3);
+
+    // Create integer
+    ok(integer = new gaesynkit.db.Integer(42), "creating integer")
+
+    // Get integer value
+    equals(integer.value(), 42, "getting integer value");
+
+    // Check JSON output
+    equals(JSON.stringify(integer.toJSON()), "{\"type\":\"int\",\"value\":42}",
+           "checking JSON output for integer");
+
+  });
+
   test("db.Datetime", function()
   {
     expect(4);
@@ -279,7 +295,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(25);
+    expect(27);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -297,6 +313,10 @@ $(document).ready(function(){
     // Add boolean property value
     ok(entity.update({"classic": new gaesynkit.db.Bool(true)}),
        "adding boolean property");
+
+    // Add integer property value
+    ok(entity.update({"pages": new gaesynkit.db.Integer(275)}),
+       "adding integer property");
 
     // Instantiate storage
     ok(storage = new gaesynkit.db.Storage, "instantiating storage");
@@ -332,6 +352,9 @@ $(document).ready(function(){
 
     // Get boolean property value
     equals(entity.classic, true, "getting boolean property value");
+
+    // Get integer property value
+    equals(entity.pages, 275, "getting integer property value");
 
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},
