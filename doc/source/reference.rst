@@ -74,6 +74,9 @@ The namespace schemas are:
 * http://www.w3.org/2005/Atom
 * http://schemas.google.com/g/2005
 
+Base Value Type
++++++++++++++++
+
 .. js:class:: gaesynkit.db.ValueType(value)
 
    Constuctor for the value type base class. All other value types are
@@ -83,11 +86,14 @@ The namespace schemas are:
 
 .. js:function:: gaesynkit.db.ValueType.type()
 
-   :returns: The value type name.
+   :returns: The value type as string.
 
 .. js:function:: gaesynkit.db.ValueType.value()
 
    :returns: Denormalized value.
+
+ByteString
+++++++++++
 
 .. js:class:: gaesynkit.db.ByteString(value)
 
@@ -97,9 +103,15 @@ The namespace schemas are:
 
    :returns: The decoded value.
 
+Datetime
+++++++++
+
 .. js:class:: gaesynkit.db.Datetime(value)
 
    Date and time object.
+
+Key
++++
 
 .. js:class:: gaesynkit.db.Key(encoded)
 
@@ -119,6 +131,36 @@ The namespace schemas are:
    :param string|Key parent: The parent key.
    :param string namespace: The namespace identifier.
    :returns: A Key object.
+
+.. js:function:: gaesynkit.db.Key.has_id_or_name()
+
+   :returns: Boolean which indicates whether the entity has either a name or
+             a numeric id.
+
+.. js:function:: gaesynkit.db.Key.id()
+
+   :returns: The numeric id, as an integer, or undefined if the entity does
+             not have a numeric id.
+
+.. js:function:: gaesynkit.db.Key.id_or_name()
+
+   :returns: The name or numeric id, whichever it has, or undefined.
+
+.. js:function:: gaesynkit.db.Key.kind()
+
+   :returns: The kind as a string.
+
+.. js:function:: gaesynkit.db.Key.name()
+
+   :returns: The name or undefined.
+
+.. js:function:: gaesynkit.db.Key.namespace()
+
+   :returns: The namespace or undefined.
+
+.. js:function:: gaesynkit.db.Key.parent()
+
+   :returns: Key of the parent entity.
 
 
 Python Server
