@@ -74,7 +74,7 @@ $(document).ready(function(){
 
   test("db.ValueType", function()
   {
-    expect(10);
+    expect(3);
 
     // Test the basic property value type object
     ok(data = new gaesynkit.db.ValueType("foo"),
@@ -88,8 +88,14 @@ $(document).ready(function(){
            "{\"type\":\"string\",\"value\":\"foo\"}",
            "checking JSON output");
 
+  });
+
+  test("db.Datetime", function()
+  {
+    expect(4);
+
     // Create a datetime object
-    ok(date = new gaesynkit.db.Datetime("2010-12-30T15:38:00"),
+    ok(date = new gaesynkit.db.Datetime("2010/12/30 15:38:00"),
        "creating a datetime object")
 
     // Check if the given type is inherited from base type
@@ -101,8 +107,14 @@ $(document).ready(function(){
 
     // Check JSON output
     equals(JSON.stringify(date.toJSON()),
-           "{\"type\":\"gd:when\",\"value\":\"2010-12-30T15:38:00\"}",
+           "{\"type\":\"gd:when\",\"value\":\"2010/12/30 15:38:00\"}",
            "checking JSON output for datetime");
+
+  });
+
+  test("db.ByteString", function()
+  {
+    expect(3);
 
     // Create byte string
     ok(bytestring = new gaesynkit.db.ByteString("Très bien"),
@@ -193,7 +205,7 @@ $(document).ready(function(){
     // Update entity properties
     ok(entity.update({
         "name": "John Dowe",
-        "birthdate": new gaesynkit.db.Datetime("1982-10-04 00:00:00")}
+        "birthdate": new gaesynkit.db.Datetime("1982/10/04 00:00:00")}
       ), "updating entitiy properties");
 
     // Get property names
@@ -209,7 +221,7 @@ $(document).ready(function(){
     equals(entity["birthdate"].getFullYear(), 1982, "getting another value");
 
     // Update a single property
-    ok(entity.birthdate = new gaesynkit.db.Datetime("1982-10-04 13:00:00"),
+    ok(entity.birthdate = new gaesynkit.db.Datetime("1982/10/04 13:00:00"),
        "updating a single property");
 
     equals(entity["birthdate"].getHours(), 13, "getting updated value");
@@ -232,7 +244,7 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982-10-04 13:00:00\"}}}",
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
            "getting properties as JSON");
 
   });

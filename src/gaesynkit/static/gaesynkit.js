@@ -314,7 +314,7 @@
   gaesynkit.db.Datetime.prototype._encode = function(val) {
 
     if (val instanceof Date) {
-      return (val.getFullYear()+"-"+(val.getMonth()+1)+"-"+val.getDate()+" "+
+      return (val.getFullYear()+"/"+(val.getMonth()+1)+"/"+val.getDate()+" "+
               val.getHours()+":"+val.getMinutes()+":"+val.getSeconds());
     }
 
@@ -323,7 +323,7 @@
 
   // Decode encoded date value
   gaesynkit.db.Datetime.prototype._decode = function(encoded) {
-    return new Date(encoded.replace(/-/g, "/"));
+    return new Date(encoded);
   };
 
   // Return the decoded value
