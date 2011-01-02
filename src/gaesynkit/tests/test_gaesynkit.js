@@ -194,7 +194,7 @@ $(document).ready(function(){
 
   test("db.Entity", function()
   {
-    expect(20);
+    expect(23);
 
     // Create a Person entity
     ok(entity = new gaesynkit.db.Entity("Person", name="john"),
@@ -220,9 +220,9 @@ $(document).ready(function(){
 
     // Update entity properties
     ok(entity.update({
-        "name": "John Dowe",
-        "birthdate": new gaesynkit.db.Datetime("1982/10/04 00:00:00")}
-      ), "updating entitiy properties");
+         "name": "John Dowe",
+         "birthdate": new gaesynkit.db.Datetime("1982/10/04 00:00:00")}),
+       "updating entitiy properties");
 
     // Get property names
     equals(entity.keys().join(','), "name,birthdate", "getting property names");
@@ -261,13 +261,25 @@ $(document).ready(function(){
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
            "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
-           "getting properties as JSON");
+           "encoding entity to JSON");
+
+    // Create a new Person entity
+    ok(entity = new gaesynkit.db.Entity("Person"),
+       "creating new entity");
+
+    // Add property
+    ok(entity.update({"name": "John Appleseed"}), "adding property");
+
+    // Dump JSON
+    equals(JSON.stringify(entity.toJSON()),
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCjA=\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Appleseed\"}}}",
+           "encoding entity to JSON");
 
   });
 
   test("db.Storage", function()
   {
-    expect(23);
+    expect(25);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -297,6 +309,12 @@ $(document).ready(function(){
 
     // Get entity
     ok(entity = storage.get(key), "getting entity");
+
+    // Get entity's key
+    ok(key = entity.key(), "getting entity's key");
+
+    // Get the id
+    equals(key.id(), 2, "getting the id");
 
     // Get the entity's kind
     equals(entity.kind(), "Book", "getting the entity's kind");
