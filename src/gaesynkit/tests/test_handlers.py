@@ -65,22 +65,28 @@ class test_handlers(unittest.TestCase):
 
         path = os.path.join(os.environ.get('TMPDIR', ''), 'test_datastore.db')
 
-        try:
-            datastore = datastore_file_stub.DatastoreFileStub('test', path)
-            apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)
+        # Initialize Datastore
+        datastore = datastore_file_stub.DatastoreFileStub('test', path)
+        apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)
 
-            app = TestApp(handlers.app)
+        # Initialize app
+        app = TestApp(handlers.app)
 
-            res = app.post(
-                '/gaesynkit/rpc/',
-                '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book","key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":288}}},"fd0789e93416d930255d0f76f0a75e59"],"id":3}')
+        # Make a request
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
+            '"key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type'
+            '":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:'
+            'when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value'
+            '":true},"pages":{"type":"int","value":288}}},'
+            '"fd0789e93416d930255d0f76f0a75e59"],"id":3}')
  
-            self.assertEqual("200 OK", res.status)
-            self.assertEqual(
-                '{"jsonrpc": "2.0", "result": 1, "id": 3}',
-                res.body)
-        finally:
-            try:
-              os.unlink(path)
-            except OSError:
-              pass
+        self.assertEqual("200 OK", res.status)
+        self.assertEqual('{"jsonrpc": "2.0", "result": 1, "id": 3}', res.body)
+
+        # Cleaning up
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
