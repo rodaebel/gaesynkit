@@ -72,6 +72,16 @@ $(document).ready(function(){
 
   });
 
+  test("util.md5", function()
+  {
+    expect(1);
+
+    // Generate md5 checksum
+    equals(gaesynkit.util.md5("foobar"), "3858f62230ac3c915f300c664312c63f",
+           "generating md5 checksum");
+
+  });
+
   test("db.ValueType", function()
   {
     expect(3);
