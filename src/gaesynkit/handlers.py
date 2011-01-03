@@ -34,10 +34,11 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
     """
 
     @rpc.ServiceMethod
-    def syncEntity(self, json_entity):
+    def syncEntity(self, entity_dict, content_hash):
         """Synchronize entity.
 
-        :param string json_entity: JSON encoded entity.
+        :param string entity_dict: Dictionary from decoded JSON entity.
+        :param string content_hash: MD5 checksum of the entity.
         """
         return ENTITY_NOT_CHANGED
 

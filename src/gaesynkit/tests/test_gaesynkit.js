@@ -31,7 +31,9 @@ $(document).ready(function(){
 
   test("rpc", function()
   {
-    expect(4);
+    expect(5);
+
+    ok(id = gaesynkit.rpc.getNextRpcId(), "getting next JSON-RPC id");
 
     // Get the JSON-RPC endpoint
     equals(gaesynkit.rpc.ENDPOINT, "/gaesynkit/rpc/",
@@ -407,7 +409,8 @@ $(document).ready(function(){
     ok(storage.deleteEntityWithKey(key_b), "deleting child entity");
 
     // Clean up local storage
-    delete localStorage["_NextId"];
+    delete window.localStorage["_NextId"];
+    delete window.localStorage["_NextRpcId"];
     
   });
 

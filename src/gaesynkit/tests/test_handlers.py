@@ -62,9 +62,9 @@ class test_handlers(unittest.TestCase):
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc": "2.0", "method": "syncEntity", "params": [{"kind":"Book","key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type":"string","value":"The Adventures Of Tom Sawyer"},"date":{"type":"gd:when","value":"1876/6/1 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":275}}}], "id": 1}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book","key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type":"string","value":"The Adventures Of Tom Sawyer"},"date":{"type":"gd:when","value":"1876/6/1 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":275}}},"64b21971454e17acaad9cc72b143763e"],"id":3}')
  
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
-            '{"jsonrpc": "2.0", "result": 1, "id": 1}',
+            '{"jsonrpc": "2.0", "result": 1, "id": 3}',
             res.body)

@@ -39,8 +39,11 @@
   // String to separate path elements
   var _PATH_SEP = "\t";
 
-  // Row id to store the next numerical id
+  // Local Storage key to store the next numerical id
   var _NEXT_ID = "_NextId";
+
+  // Local Storage key to store the next JSON-RPC id
+  var _NEXT_RPC_ID = "_NextRpcId";
 
   // Entity has not changed
   var _ENTITY_NOT_CHANGED = 1;
@@ -103,6 +106,19 @@
 
     return true;
   };
+
+  // Obtain the next RPC-JSON id
+  gaesynkit.rpc.getNextRpcId = function() {
+
+    var id = 1;
+    var next_id = window.localStorage[_NEXT_RPC_ID];
+
+    if (next_id) id = parseInt(next_id);
+
+    window.localStorage[_NEXT_RPC_ID] = id + 1;
+    
+    return id;
+  }
 
   // The gaesynkit.util namespace
   gaesynkit.util = {};
@@ -991,16 +1007,42 @@
   // Synchronize entity
   gaesynkit.db.Storage.prototype.sync = function(key_or_entity) {
 
-    var entity = ((key_or_entity instanceof gaesynkit.db.Key) ? this.get(key)
-                                                              : key_or_entity);
+    var entity, content_hash, id, request;
+
+    // Retrieve entity from local storage
+    entity = ((key_or_entity instanceof gaesynkit.db.Key) ? this.get(key)
+                                                          : key_or_entity);
+
+    // Calculate content hash
+    function getContentHash(entity) {
+
+      var s, keys;
+
+      s = entity.key().value();
+      keys = entity.keys();
+      keys.sort();
+
+      for (var i in keys) {
+        s += entity.getProperty(keys[i]).value;
+      }
+
+      return gaesynkit.util.md5(s);
+    }
+
+    content_hash = getContentHash(entity);
 
     function callback(response) {
       if (response.result == _ENTITY_NOT_CHANGED) return;
     }
 
-    gaesynkit.rpc.makeAsyncCall(
-      {"jsonrpc": "2.0", "method": "syncEntity", "params": [entity], "id": 1},
-      callback);
+    id = gaesynkit.rpc.getNextRpcId();
+
+    request = {"jsonrpc": "2.0",
+               "method": "syncEntity",
+               "params": [entity, content_hash],
+               "id": id};
+
+    gaesynkit.rpc.makeAsyncCall(request, callback);
 
     return true;
   };
