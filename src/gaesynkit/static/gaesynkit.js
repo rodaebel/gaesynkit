@@ -264,6 +264,9 @@
     this._value = value;
   }
 
+  // Declare constructor
+  gaesynkit.db.ValueType.prototype.constructor = gaesynkit.db.ValueType;
+
   // Generate JSON output
   gaesynkit.db.ValueType.prototype.toJSON = function() {
     return {"type": this.type(), "value": this._value};
@@ -288,6 +291,9 @@
   }
 
   gaesynkit.db.ByteString.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.ByteString.prototype.constructor = gaesynkit.db.ByteString;
 
   // Encode value
   gaesynkit.db.ByteString.prototype._encode = function(value) {
@@ -314,6 +320,9 @@
 
   gaesynkit.db.Bool.prototype = new gaesynkit.db.ValueType;
 
+  // Declare constructor
+  gaesynkit.db.Bool.prototype.constructor = gaesynkit.db.Bool;
+
   // Integer
   gaesynkit.db.Integer = function(value) {
 
@@ -324,6 +333,9 @@
 
   gaesynkit.db.Integer.prototype = new gaesynkit.db.ValueType;
 
+  // Declare constructor
+  gaesynkit.db.Integer.prototype.constructor = gaesynkit.db.Integer;
+
   // Date
   gaesynkit.db.Datetime = function(value) {
     
@@ -333,6 +345,9 @@
   }
 
   gaesynkit.db.Datetime.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Datetime.prototype.constructor = gaesynkit.db.Datetime;
 
   // Encode date value
   gaesynkit.db.Datetime.prototype._encode = function(val) {
@@ -385,6 +400,9 @@
   }
 
   gaesynkit.db.Key.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Key.prototype.constructor = gaesynkit.db.Key;
 
   // Classmethod to create key from path
   gaesynkit.db.Key.from_path = function(kind, id_or_name, parent_, namespace) {
@@ -535,6 +553,9 @@
     this._properties = new Object;
   };
 
+  // Declare constructor
+  gaesynkit.db.Entity.prototype.constructor = gaesynkit.db.Entity;
+
   // Delete property
   gaesynkit.db.Entity.prototype.deleteProperty = function(name) {
 
@@ -658,6 +679,9 @@
   gaesynkit.db.Storage = function() {
     this._storage = window.localStorage;
   };
+
+  // Declare constructor
+  gaesynkit.db.Storage.prototype.constructor = Storage;
 
   // Delete entity by a given key
   gaesynkit.db.Storage.prototype.deleteEntityWithKey = function(k) {
