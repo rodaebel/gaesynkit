@@ -44,10 +44,27 @@ class test_handlers(unittest.TestCase):
         app = TestApp(handlers.app)
 
         res = app.post(
-            '/gaesynkit/rpc/test',
+            '/gaesynkit/rpc/',
             '{"jsonrpc": "2.0", "method": "test", "params": [true], "id": 1}')
  
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
             '{"jsonrpc": "2.0", "result": true, "id": 1}',
+            res.body)
+
+    def test_SyncEntity(self):
+        """Synchronizing an entity."""
+
+        from gaesynkit import handlers
+        from webtest import AppError, TestApp
+
+        app = TestApp(handlers.app)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc": "2.0", "method": "syncEntity", "params": [{"kind":"Book","key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type":"string","value":"The Adventures Of Tom Sawyer"},"date":{"type":"gd:when","value":"1876/6/1 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":275}}}], "id": 1}')
+ 
+        self.assertEqual("200 OK", res.status)
+        self.assertEqual(
+            '{"jsonrpc": "2.0", "result": 1, "id": 1}',
             res.body)

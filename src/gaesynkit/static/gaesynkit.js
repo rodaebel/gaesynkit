@@ -42,6 +42,9 @@
   // Row id to store the next numerical id
   var _NEXT_ID = "_NextId";
 
+  // Entity has not changed
+  var _ENTITY_NOT_CHANGED = 1;
+
 
   /* Internal API */
   gaesynkit.exportSymbol = function(name, opt_object, opt_objectToExportTo) {
@@ -62,6 +65,7 @@
   gaesynkit.isDef = function(val) {
     return val !== undefined;
   };
+
 
   /* External API */
 
@@ -655,6 +659,16 @@
     this._storage = window.localStorage;
   };
 
+  // Delete entity by a given key
+  gaesynkit.db.Storage.prototype.deleteEntityWithKey = function(k) {
+
+    var key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
+
+    delete this._storage[key.value()];
+
+    return true;
+  };
+
   // Obtain the next numerical id
   gaesynkit.db.Storage.prototype.getNextId = function() {
 
@@ -726,12 +740,19 @@
     return new_key;
   };
 
-  // Delete entity by a given key
-  gaesynkit.db.Storage.prototype.deleteEntityWithKey = function(k) {
+  // Synchronize entity
+  gaesynkit.db.Storage.prototype.sync = function(key_or_entity) {
 
-    var key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
+    var entity = ((key_or_entity instanceof gaesynkit.db.Key) ? this.get(key)
+                                                              : key_or_entity);
 
-    delete this._storage[key.value()];
+    function callback(response) {
+      if (response.result == _ENTITY_NOT_CHANGED) return;
+    }
+
+    gaesynkit.rpc.makeAsyncCall(
+      {"jsonrpc": "2.0", "method": "syncEntity", "params": [entity], "id": 1},
+      callback);
 
     return true;
   };

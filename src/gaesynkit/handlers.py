@@ -18,20 +18,30 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 import email
-import json_rpc as RPC
+import json_rpc as rpc
 import logging
 import mimetypes
 import os
 import time
 
+ENTITY_NOT_CHANGED = 1
 
-class JsonRpcHandler(RPC.JsonRpcHandler):
+
+class JsonRpcHandler(rpc.JsonRpcHandler):
     """Handles JSON Remote Procedure Calls.
 
     This request handler is the main JSON-RPC endpoint.
     """
 
-    @RPC.ServiceMethod
+    @rpc.ServiceMethod
+    def syncEntity(self, json_entity):
+        """Synchronize entity.
+
+        :param string json_entity: JSON encoded entity.
+        """
+        return ENTITY_NOT_CHANGED
+
+    @rpc.ServiceMethod
     def test(self, param):
         """For testing only.
 

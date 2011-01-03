@@ -295,7 +295,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(27);
+    expect(29);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -359,6 +359,12 @@ $(document).ready(function(){
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},
            "trying to get non-existent property");
+
+    // Synchronize entity
+    ok(storage.sync(entity), "synchronizing entity");
+
+    // Synchronize entity by key
+    ok(storage.sync(entity.key()), "synchronizing entity by key");
 
     // Delete entity
     ok(storage.deleteEntityWithKey(key), "deleting entity");
