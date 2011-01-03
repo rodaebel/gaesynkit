@@ -103,6 +103,20 @@ ByteString
 
    :returns: The decoded value.
 
+Bool
+++++
+
+.. js:class:: gaesynkit.db.Bool(value)
+
+   A boolean value, ``true`` or ``false``.
+
+Integer
++++++++
+
+.. js:class:: gaesynkit.db.Bool(value)
+
+   An integer value.
+
 Datetime
 ++++++++
 
