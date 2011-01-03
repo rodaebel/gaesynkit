@@ -313,11 +313,10 @@ $(document).ready(function(){
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
 
     // Update properties
-    ok(entity.update({"title":"The Adventures Of Tom Sawyer"}),
-       "update properties");
+    ok(entity.update({"title": "The Catcher in the Rye"}), "update properties");
 
     // Add datetime property value
-    var date = new Date("1876/06/01 00:00:00");
+    var date = new Date("1951/07/16 00:00:00");
 
     ok(entity.update({"date": new gaesynkit.db.Datetime(date)}),
        "adding datetime property");
@@ -327,7 +326,7 @@ $(document).ready(function(){
        "adding boolean property");
 
     // Add integer property value
-    ok(entity.update({"pages": new gaesynkit.db.Integer(275)}),
+    ok(entity.update({"pages": new gaesynkit.db.Integer(288)}),
        "adding integer property");
 
     // Instantiate storage
@@ -356,17 +355,17 @@ $(document).ready(function(){
            "getting property type");
 
     // Get property value
-    equals(entity.title, "The Adventures Of Tom Sawyer",
+    equals(entity.title, "The Catcher in the Rye",
            "getting property value");
 
     // Get datetime property value
-    equals(entity.date.getFullYear(), 1876, "getting datetime property value");
+    equals(entity.date.getFullYear(), 1951, "getting datetime property value");
 
     // Get boolean property value
     equals(entity.classic, true, "getting boolean property value");
 
     // Get integer property value
-    equals(entity.pages, 275, "getting integer property value");
+    equals(entity.pages, 288, "getting integer property value");
 
     // Get original property with invalid property name
     raises(function() {entity.getProperty("foo")},

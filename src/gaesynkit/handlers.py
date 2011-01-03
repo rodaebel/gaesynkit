@@ -15,6 +15,9 @@
 # limitations under the License.
 """Python implementation of the gaesynkit handlers JSON-RPC endpoint."""
 
+from datetime import datetime
+from google.appengine.api import datastore
+from google.appengine.api import datastore_types
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 import email
@@ -25,6 +28,15 @@ import os
 import time
 
 ENTITY_NOT_CHANGED = 1
+
+_PROPERTY_TYPES_MAP = {
+  "byte_string": datastore_types.ByteString,
+  "bool": bool,
+  "gd:when": lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
+  "int": int,
+  "key": datastore_types.Key,
+  "string": unicode,
+}
 
 
 class JsonRpcHandler(rpc.JsonRpcHandler):
@@ -40,6 +52,21 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
         :param string entity_dict: Dictionary from decoded JSON entity.
         :param string content_hash: MD5 checksum of the entity.
         """
+        entity = datastore.Entity(
+            entity_dict["kind"],
+            name=entity_dict.get("name"),
+            namespace=entity_dict.get("namespace")
+        )
+
+        properties = entity_dict["properties"]
+
+        for prop in properties:
+            value = properties[prop]
+            entity.update(
+                {prop: _PROPERTY_TYPES_MAP[value["type"]](value["value"])})
+
+        #key = datastore.Put(entity)
+
         return ENTITY_NOT_CHANGED
 
     @rpc.ServiceMethod

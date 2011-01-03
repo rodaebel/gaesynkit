@@ -770,7 +770,7 @@
   // Value types map
   var _VALUE_TYPES_MAP = {
     "boolean": "bool",
-    "int": "int"
+    "number": "int"
   };
 
   // An Entity holds the client-side representation of a GAE Datastore
@@ -1023,7 +1023,7 @@
       keys.sort();
 
       for (var i in keys) {
-        s += entity.getProperty(keys[i]).value;
+        s += JSON.stringify(entity.getProperty(keys[i]).toJSON());
       }
 
       return gaesynkit.util.md5(s);
