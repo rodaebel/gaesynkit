@@ -610,6 +610,19 @@
     return this._decode(this._value);
   };
 
+  // List (Array)
+  gaesynkit.db.List = function(value) {
+    
+    this._type = typeof(value[0]);
+    this._value = value;
+  }
+
+  gaesynkit.db.List.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.List.prototype.constructor = gaesynkit.db.Datetime;
+
+
   // Keys represent unique keys for datastore entities.
   //
   // Every entity that has been put in the storage has a unique key that
@@ -759,7 +772,7 @@
 
   // Property value types
   var _PROPERTY_VALUE_TYPES = {
-    "string": "string",
+    "string": gaesynkit.db.ValueType,
     "byte_string": gaesynkit.db.ByteString,
     "bool": gaesynkit.db.Bool,
     "int": gaesynkit.db.Integer,
@@ -770,7 +783,8 @@
   // Value types map
   var _VALUE_TYPES_MAP = {
     "boolean": "bool",
-    "number": "int"
+    "number": "int",
+    "string": "string"
   };
 
   // An Entity holds the client-side representation of a GAE Datastore
@@ -879,29 +893,36 @@
 
     // Using closures as setter and getter factories
     function makeSetter(key) {
-      return function(val) {
-        var type, new_val;
-        if (!(val instanceof gaesynkit.db.ValueType)) {
-          type = _PROPERTY_VALUE_TYPES[_VALUE_TYPES_MAP[typeof(val)]];
-          if (type) {
-            new_val = new type(val);
-          }
-          else {
-            new_val = new gaesynkit.db.ValueType(val);
-          }
+
+      var func = function(val) {
+
+        if (val instanceof gaesynkit.db.ValueType) {
+          this._properties[key] = val;
+        }
+        else if (val instanceof Array) {
+          this._properties[key] = new gaesynkit.db.List(val);
         }
         else {
-          new_val = val;
+          var type = _PROPERTY_VALUE_TYPES[_VALUE_TYPES_MAP[typeof(val)]];
+
+          if (!type)
+            throw Error("Unknown value type");
+
+          this._properties[key] = new type(val);
         }
-        this._properties[key] = new_val;
       };
+
+      return func;
     }
 
     function makeGetter(key) {
-      func = function() {
+
+      var func = function() {
+
         var prop = this._properties[key];
         return prop.value();
       };
+
       return func;
     }
 

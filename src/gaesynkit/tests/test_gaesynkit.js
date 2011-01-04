@@ -156,21 +156,41 @@ $(document).ready(function(){
   {
     expect(4);
 
-    // Create a datetime object
+    // Create a datetime value
     ok(date = new gaesynkit.db.Datetime("2010/12/30 15:38:00"),
-       "creating a datetime object")
+       "creating a datetime value")
 
-    // Check if the given type is inherited from base type
-    ok((date instanceof gaesynkit.db.ValueType),
-       "checking if datetime is inherited from our base type");
+    // Check if the newly created value inherits from our base value type
+    ok((date instanceof gaesynkit.db.ValueType), "checking class hierarchy");
 
-    // Get denormalized date value
+    // Get denormalized datetime value
     equals(date.value().getFullYear(), 2010, "getting denormalized value");
 
     // Check JSON output
     equals(JSON.stringify(date.toJSON()),
            "{\"type\":\"gd:when\",\"value\":\"2010/12/30 15:38:00\"}",
            "checking JSON output for datetime");
+
+  });
+
+  test("db.List", function()
+  {
+    expect(4);
+
+    // Create a list value
+    ok(list = new gaesynkit.db.List(["foo", "bar"]), "creating a list value")
+
+    // Check if the newly created value is inherited from our base value type
+    ok((list instanceof gaesynkit.db.ValueType),
+       "checking if the newly created value inherits from our base value type");
+
+    // Get list value
+    equals(list.value().join(','), "foo,bar", "getting list value");
+
+    // Check JSON output
+    equals(JSON.stringify(list.toJSON()),
+           "{\"type\":\"string\",\"value\":[\"foo\",\"bar\"]}",
+           "checking JSON output for our list");
 
   });
 
