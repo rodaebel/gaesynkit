@@ -131,6 +131,13 @@ Datetime
 
    Date and time object.
 
+List
+++++
+
+.. js:class:: gaesynkit.db.List(value)
+
+   A list of values, each of which is of one of the supported data types.
+
 Key
 +++
 

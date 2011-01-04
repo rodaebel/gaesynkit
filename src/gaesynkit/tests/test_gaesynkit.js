@@ -175,22 +175,46 @@ $(document).ready(function(){
 
   test("db.List", function()
   {
-    expect(4);
+    expect(10);
 
-    // Create a list value
-    ok(list = new gaesynkit.db.List(["foo", "bar"]), "creating a list value")
+    // Create a string list value
+    ok(list = new gaesynkit.db.List(["foo", "bar"]),
+       "creating a string list value")
 
     // Check if the newly created value is inherited from our base value type
     ok((list instanceof gaesynkit.db.ValueType),
        "checking if the newly created value inherits from our base value type");
 
-    // Get list value
+    // Get string list value
     equals(list.value().join(','), "foo,bar", "getting list value");
 
     // Check JSON output
     equals(JSON.stringify(list.toJSON()),
            "{\"type\":\"string\",\"value\":[\"foo\",\"bar\"]}",
            "checking JSON output for our list");
+
+    // Create an integer list value
+    ok(list = new gaesynkit.db.List([42, 7]), "creating an integer list value")
+
+    // Get integer list value
+    equals(list.value().join(','), "42,7", "getting integer list value");
+
+    // Check JSON output
+    equals(JSON.stringify(list.toJSON()),
+           "{\"type\":\"int\",\"value\":[42,7]}",
+           "checking JSON output for our integer list value");
+
+    // Create a list of booleans value
+    var values = [new gaesynkit.db.Bool(true), new gaesynkit.db.Bool(false)];
+    ok(bools = new gaesynkit.db.List(values), "creating a bool list value")
+
+    // Get bool list value
+    equals(bools.value().join(','), "true,false", "getting bool list value");
+
+    // Check JSON output
+    equals(JSON.stringify(bools.toJSON()),
+           "{\"type\":\"bool\",\"value\":[true,false]}",
+           "checking JSON output for our integer list value");
 
   });
 

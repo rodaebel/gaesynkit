@@ -612,15 +612,47 @@
 
   // List (Array)
   gaesynkit.db.List = function(value) {
-    
-    this._type = typeof(value[0]);
-    this._value = value;
-  }
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#list
+    this._type = this._getType(value);
+    this._value = this._encode(value);
+  };
 
   gaesynkit.db.List.prototype = new gaesynkit.db.ValueType;
 
   // Declare constructor
   gaesynkit.db.List.prototype.constructor = gaesynkit.db.Datetime;
+
+  // Get type of list values
+  gaesynkit.db.List.prototype._getType = function(value) {
+
+    if (value[0] instanceof gaesynkit.db.ValueType) {
+      return value[0].type();
+    }
+    else {
+      return _VALUE_TYPES_MAP[typeof(value[0])];
+    }
+  };
+
+  // Encode list values
+  gaesynkit.db.List.prototype._encode = function(value) {
+
+    var values = new Array;
+
+    for (var i in value) {
+
+      var v = value[i];
+
+      if (v instanceof gaesynkit.db.ValueType) {
+        values.push(v.value());
+      }
+      else {
+        values.push(v);
+      }
+    }
+
+    return values;
+  };
 
 
   // Keys represent unique keys for datastore entities.
