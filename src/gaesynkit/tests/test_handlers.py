@@ -76,11 +76,12 @@ class test_handlers(unittest.TestCase):
         res = app.post(
             '/gaesynkit/rpc/',
             '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawoy","id":2,"properties":{"title":{"type'
-            '":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:'
-            'when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value'
-            '":true},"pages":{"type":"int","value":288}}},'
-            '"fd0789e93416d930255d0f76f0a75e59"],"id":3}')
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","name":"catcher","propertie'
+            's":{"title":{"type":"string","value":"The Catcher in the Rye"},"'
+            'date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"t'
+            'ype":"bool","value":true},"pages":{"type":"int","value":288},"ta'
+            'gs":{"type":"string","value":["novel","identity"]}}},'
+            '"47eebabbdb1e1852d419618cea5dfca3"],"id":3}')
  
         self.assertEqual("200 OK", res.status)
         self.assertEqual('{"jsonrpc": "2.0", "result": 1, "id": 3}', res.body)

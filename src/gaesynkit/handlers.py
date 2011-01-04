@@ -66,7 +66,10 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
 
             for prop in properties:
                 value = properties[prop]
-                type_ = _PROPERTY_TYPES_MAP[value["type"]]
+                if isinstance(value["value"], list):
+                    type_ = list
+                else:
+                    type_ = _PROPERTY_TYPES_MAP[value["type"]]
 
                 yield (prop, type_(value["value"]))
 

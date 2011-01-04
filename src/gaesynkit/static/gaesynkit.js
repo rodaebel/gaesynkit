@@ -809,6 +809,7 @@
     "bool": gaesynkit.db.Bool,
     "int": gaesynkit.db.Integer,
     "gd:when": gaesynkit.db.Datetime,
+    "list": gaesynkit.db.List,
     "key": gaesynkit.db.Key
   };
 
@@ -1020,7 +1021,12 @@
     for (var key in json.properties) {
 
       prop = new Object;
-      type = _PROPERTY_VALUE_TYPES[json.properties[key].type];
+      if (json.properties[key].value instanceof Array) {
+        type = gaesynkit.db.List;
+      }
+      else {
+        type = _PROPERTY_VALUE_TYPES[json.properties[key].type];
+      }
 
       if (type == "string") {
         value = json.properties[key].value;

@@ -357,7 +357,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(29);
+    expect(30);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book", "catcher"), "creating entity");
@@ -378,6 +378,10 @@ $(document).ready(function(){
     // Add integer property value
     ok(entity.update({"pages": new gaesynkit.db.Integer(288)}),
        "adding integer property");
+
+    // Add list property values
+    ok(entity.update({"tags": new gaesynkit.db.List(["novel", "identity"])}),
+       "adding list property values");
 
     // Instantiate storage
     ok(storage = new gaesynkit.db.Storage, "instantiating storage");
