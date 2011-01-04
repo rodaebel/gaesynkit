@@ -786,7 +786,7 @@
       throw new Error("An Entity can have either a name or an id; not both");
 
     // Create entity key
-    var name = name || 0;
+    var name = (name || id) ? name || id : 0;
     this._key = gaesynkit.db.Key.from_path(kind, name, parent_, namespace);
 
     // Private attribute to store properties
@@ -962,7 +962,7 @@
     }
 
     entity = new gaesynkit.db.Entity(
-            key.kind(), key.id(), key.name(), key.parent(), key.namespace());
+            key.kind(), key.name(), key.id(), key.parent(), key.namespace());
 
     for (var key in json.properties) {
 
@@ -1031,16 +1031,16 @@
 
     content_hash = getContentHash(entity);
 
-    function callback(response) {
-      if (response.result == _ENTITY_NOT_CHANGED) return;
-    }
-
     id = gaesynkit.rpc.getNextRpcId();
 
     request = {"jsonrpc": "2.0",
                "method": "syncEntity",
                "params": [entity, content_hash],
                "id": id};
+
+    function callback(response) {
+      if (response.result == _ENTITY_NOT_CHANGED) return;
+    }
 
     gaesynkit.rpc.makeAsyncCall(request, callback);
 

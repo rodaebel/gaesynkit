@@ -176,7 +176,13 @@ $(document).ready(function(){
 
   test("db.Key", function()
   {
-    expect(12);
+    expect(14);
+
+    // Create key
+    ok(paul = gaesynkit.db.Key.from_path("Person", "paul"), "creating key");
+
+    // Get the key name
+    equals(paul.name(), "paul", "getting the key name");
 
     // Create root key
     ok(john = gaesynkit.db.Key.from_path("Person", 42), "creating root key");
@@ -310,7 +316,7 @@ $(document).ready(function(){
     expect(29);
 
     // Create an entity
-    ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
+    ok(entity = new gaesynkit.db.Entity("Book", "catcher"), "creating entity");
 
     // Update properties
     ok(entity.update({"title": "The Catcher in the Rye"}), "update properties");
@@ -344,8 +350,8 @@ $(document).ready(function(){
     // Get entity's key
     ok(key = entity.key(), "getting entity's key");
 
-    // Get the id
-    equals(key.id(), 2, "getting the id");
+    // Get the name
+    equals(key.name(), "catcher", "getting the key name");
 
     // Get the entity's kind
     equals(entity.kind(), "Book", "getting the entity's kind");
