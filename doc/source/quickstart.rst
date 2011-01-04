@@ -9,6 +9,14 @@ Google App Engine application developers to create entities in the local
 storage of a web client and synchronize them with the server-side Datastore at
 a later point of time.
 
+It mainly consists of these components:
+
+* Javascript Client Storage API library
+* Python Request Handler module for providing the JSON-RPC endpoint
+
+The Client Storage API utilizes the HTML5 Local Storage for persisting JSON
+encoded entities *client-side*.
+
 
 Installation
 ============
@@ -18,6 +26,8 @@ installed) to use::
 
   $ easy_install gaesynkit
 
+You can now make a symbolik link to it in the root directory of your Google App
+Engine Python application.
 
 Usage
 =====
