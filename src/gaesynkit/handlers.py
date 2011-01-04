@@ -49,7 +49,7 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
     def syncEntity(self, entity_dict, content_hash):
         """Synchronize entity.
 
-        :param string entity_dict: Dictionary from decoded JSON entity.
+        :param dictionary entity_dict: Dictionary from decoded JSON entity.
         :param string content_hash: MD5 checksum of the entity.
         """
 
@@ -74,7 +74,7 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
         entity.update(dict(convertProps()))
 
         # Store entity
-        #key = datastore.Put(entity)
+        key = datastore.Put(entity)
 
         return ENTITY_NOT_CHANGED
 
