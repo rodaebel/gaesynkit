@@ -28,11 +28,3 @@ Google App Engine is a trademark of Google Inc.
    quickstart
    overview
    reference
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
-

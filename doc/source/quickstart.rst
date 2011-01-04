@@ -4,6 +4,11 @@
 Quickstart
 ==========
 
+The gaesynkit framework aims at providing a Client Storage API which enables
+Google App Engine application developers to create entities in the local
+storage of a web client and synchronize them with the server-side Datastore at
+a later point of time.
+
 
 Installation
 ============
@@ -23,6 +28,21 @@ URL handler definition to the app.yaml file::
 
   - url: /gaesynkit/.*
     script: gaesynkit/handlers.py
+
+This URL handler provides the static Javascript library and handles JSON-RPC
+requests. Add this line to the `head` of the application's HTML to include the
+geasynkit Javascript library::
+
+  <script type="text/javascript" src="gaesynkit/gaesynkit.js"></script>
+
+The following example shows how to initialize, store and synchronize an entity
+in the client's Javascrtipt code::
+
+  var entity = new gaesynkit.db.Entity("Person");
+  entity.update({"name": "Arthur Dent", "planet": "Earth"});
+  var storage = new gaesynkit.db.Storage;
+  var key = storage.put(entity);
+  storage.sync(key);
 
 
 Developing

@@ -56,6 +56,13 @@ Utilities
    :param string string: Encoded string.
    :returns: Decoded string.
 
+.. js:function:: gaesynkit.util.md5(string)
+
+   Calculate MD5 hexdigest for the given string.
+
+   :param string string: An input string.
+   :returns: Hexadecimal MD5 digest.
+
 
 Value Types
 -----------

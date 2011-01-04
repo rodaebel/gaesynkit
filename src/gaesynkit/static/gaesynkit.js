@@ -774,7 +774,7 @@
   };
 
   // An Entity holds the client-side representation of a GAE Datastore
-  // entity. It can be dumped as a JSON string.
+  // entity and can be dumped as a JSON.
 
   // Entity constructor
   gaesynkit.db.Entity = function(kind, name, id, parent_, namespace) {
@@ -834,7 +834,7 @@
   };
 
   // Return an array of property names
-  // We're aware of the fact that 'keys' might be confusing, but we need to be
+  // We're aware of the fact that 'keys' might be confusing, but we try to be
   // consistent with the google.appengine.api.datastore.Entity API.
   gaesynkit.db.Entity.prototype.keys = function() {
 

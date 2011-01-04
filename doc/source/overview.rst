@@ -12,7 +12,7 @@ Storing Entities
 ----------------
 
 The gaesynkit Client Storage API is mostly designed after the low-level GAE
-Datastore API. The follwing sample shows how to create, put and get an entity
+Datastore API. The following sample shows how to create, put and get an entity
 with Javascript::
 
   var entity, db, key
