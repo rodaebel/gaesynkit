@@ -52,19 +52,28 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
         :param string entity_dict: Dictionary from decoded JSON entity.
         :param string content_hash: MD5 checksum of the entity.
         """
+
+        # Create new entity
         entity = datastore.Entity(
             entity_dict["kind"],
             name=entity_dict.get("name"),
             namespace=entity_dict.get("namespace")
         )
 
-        properties = entity_dict["properties"]
+        # Generator for converting properties
+        def convertProps():
+            properties = entity_dict["properties"]
 
-        for prop in properties:
-            value = properties[prop]
-            entity.update(
-                {prop: _PROPERTY_TYPES_MAP[value["type"]](value["value"])})
+            for prop in properties:
+                value = properties[prop]
+                type_ = _PROPERTY_TYPES_MAP[value["type"]]
 
+                yield (prop, type_(value["value"]))
+
+        # Populate entity
+        entity.update(dict(convertProps()))
+
+        # Store entity
         #key = datastore.Put(entity)
 
         return ENTITY_NOT_CHANGED
@@ -72,6 +81,8 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
     @rpc.ServiceMethod
     def test(self, param):
         """For testing only.
+
+        This method basically *echoes* the given parameter.
 
         :param object param: Arbitrary parameter.
         """
