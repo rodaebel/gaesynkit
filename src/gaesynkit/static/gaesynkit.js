@@ -118,7 +118,7 @@
     window.localStorage[_NEXT_RPC_ID] = id + 1;
     
     return id;
-  }
+  };
 
   // The gaesynkit.util namespace
   gaesynkit.util = {};
@@ -502,7 +502,7 @@
   gaesynkit.db.ValueType = function(value) {
     this._type = undefined;
     this._value = value;
-  }
+  };
 
   // Declare constructor
   gaesynkit.db.ValueType.prototype.constructor = gaesynkit.db.ValueType;
@@ -510,17 +510,17 @@
   // Generate JSON output
   gaesynkit.db.ValueType.prototype.toJSON = function() {
     return {"type": this.type(), "value": this._value};
-  }
+  };
 
   // Return the type string
   gaesynkit.db.ValueType.prototype.type = function() {
     return (this._type) ? this._type : typeof(this._value);
-  }
+  };
 
   // Return the value
   gaesynkit.db.ValueType.prototype.value = function() {
     return this._value;
-  }
+  };
 
   // Byte string
   gaesynkit.db.ByteString = function(value) {
@@ -528,7 +528,7 @@
     // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#ByteString
     this._type = "byte_string";
     this._value = this._encode(value);
-  }
+  };
 
   gaesynkit.db.ByteString.prototype = new gaesynkit.db.ValueType;
 
@@ -556,7 +556,7 @@
     // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#bool
     this._type = "bool"
     this._value = value;
-  }
+  };
 
   gaesynkit.db.Bool.prototype = new gaesynkit.db.ValueType;
 
@@ -569,7 +569,7 @@
     // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#int
     this._type = "int"
     this._value = value;
-  }
+  };
 
   gaesynkit.db.Integer.prototype = new gaesynkit.db.ValueType;
 
@@ -582,7 +582,7 @@
     // http://code.google.com/apis/gdata/docs/1.0/elements.html#gdWhen
     this._type = "gd:when";
     this._value = this._encode(value);
-  }
+  };
 
   gaesynkit.db.Datetime.prototype = new gaesynkit.db.ValueType;
 
@@ -682,7 +682,7 @@
   gaesynkit.db.Key = function(encoded) {
     this._type = "key";
     this._value = encoded;
-  }
+  };
 
   gaesynkit.db.Key.prototype = new gaesynkit.db.ValueType;
 
@@ -722,12 +722,12 @@
       throw new Error("Parent uses different namespace");
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
-  }
+  };
 
   // Return true if the key has either a name or a numeric ID
   gaesynkit.db.Key.prototype.has_id_or_name = function() {
     return ((this.id() || this.name()) != undefined) ? true : false;
-  }
+  };
 
   // Return the id
   gaesynkit.db.Key.prototype.toJSON = function() {
@@ -764,27 +764,27 @@
     for (var i in path_elems) pushPathElem(key.elements, path_elems[i]);
 
     return key;
-  }
+  };
 
   // Return the id
   gaesynkit.db.Key.prototype.id = function() {
     return this.toJSON().elements.pop().id;
-  }
+  };
 
   // Return the kind
   gaesynkit.db.Key.prototype.kind = function() {
     return this.toJSON().elements.pop().kind;
-  }
+  };
 
   // Return the key name
   gaesynkit.db.Key.prototype.name = function() {
     return this.toJSON().elements.pop().name;
-  }
+  };
 
   // Return the namespace
   gaesynkit.db.Key.prototype.namespace = function() {
     return this.toJSON().namespace;
-  }
+  };
 
   // Return the parent
   gaesynkit.db.Key.prototype.parent = function() {
@@ -798,7 +798,7 @@
     var parent_str = parts.slice(0, parts.length-1).join(_PATH_SEP);
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(parent_str));
-  }
+  };
 
   // TODO More types
 
@@ -856,7 +856,7 @@
     delete this[name];
 
     return true;
-  }
+  };
 
   // Get original property
   gaesynkit.db.Entity.prototype.getProperty = function(name) {
@@ -868,12 +868,12 @@
       throw new Error("Unknown property");
 
     return this._properties[name];
-  }
+  };
 
   // Return this entity's primary key, a Key instance
   gaesynkit.db.Entity.prototype.key = function() {
     return this._key;
-  }
+  };
 
   // Return the entity kind
   gaesynkit.db.Entity.prototype.kind = function() {
@@ -998,7 +998,7 @@
     this._storage[_NEXT_ID] = id + 1;
     
     return id;
-  }
+  };
 
   // Get entity by a given key or encoded key string
   //
@@ -1044,7 +1044,7 @@
     }
 
     return entity;
-  }
+  };
 
   // Put a given entity
   gaesynkit.db.Storage.prototype.put = function(entity) {
