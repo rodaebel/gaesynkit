@@ -48,57 +48,27 @@ Nearly identical, isn't it. In order to understand how we store entities, let's 
 Unlike a relational database, Google App Engine implements a `schemaless`
 Datastore that stores and performs queries over data objects, known as
 entities, which have one or more properties. The following example shows the
-XML representation of such an entity::
-
-  <entity kind="Person" key="ag5nYWVzeW5raXR0ZXN0c3IMCxIGUGVyc29uGAQM">
-    <key>tag:gaesynkittests.gmail.com,2010-12-26:Person[ag5nYWVzeW5raXR0ZXN0c3IMCxIGUGVyc29uGAQM]</key>
-    <property name="birthday" type="gd:when">1982-10-04 00:00:00</property>
-    <property name="description" type="text">This is a description.</property>
-    <property name="email" type="gd:email"><gd:email address="john@example.com" /></property>
-    <property name="height" type="float">1.82</property>
-    <property name="name" type="string">John Dowe</property>
-    <property name="tags" type="string">nice</property>
-    <property name="tags" type="string">educated</property>
-  </entity>
-
-For the curious, this is the string output of the `Protocol Buffers` encoded
-version of the same entity::
+dumped output of the `Protocol Buffers` encoded entity::
 
   key <
-    app: "gaesynkittests"
+    app: "test"
     path <
       Element {
         type: "Person"
-        id: 4
+        id: 3
       }
     >
   >
   entity_group <
     Element {
       type: "Person"
-      id: 4
+      id: 3
     }
   >
   property <
-    meaning: 7
-    name: "birthday"
+    name: "age"
     value <
-      int64Value: 0x16e1b16a82000
-    >
-    multiple: false
-  >
-  property <
-    meaning: 8
-    name: "email"
-    value <
-      stringValue: "john@example.com"
-    >
-    multiple: false
-  >
-  property <
-    name: "height"
-    value <
-      doubleValue: 1.82
+      int64Value: 42
     >
     multiple: false
   >
@@ -109,55 +79,18 @@ version of the same entity::
     >
     multiple: false
   >
-  property <
-    name: "tags"
-    value <
-      stringValue: "nice"
-    >
-    multiple: true
-  >
-  property <
-    name: "tags"
-    value <
-      stringValue: "educated"
-    >
-    multiple: true
-  >
-  raw_property <
-    meaning: 15
-    name: "description"
-    value <
-      stringValue: "This is a description."
-    >
-    multiple: false
-  >
 
 We choose JSON as format for representing the above entity::
 
   {
     "kind": "Person",
-    "key": "ag5nYWVzeW5raXR0ZXN0c3IMCxIGUGVyc29uGAQM",
+    "key": "ZGVmYXVsdCEhUGVyc29uCjE=",
+    "id": 3,
     "properties": {
-      "birthday": {"type": "gd:when", "value": "1982-10-04 00:00:00"},
-      "description": {"type": "text", "value": "Some description."},
-      "email": {"type": "gd:email", "value": "john@example.com"},
-      "height": {"type": "float", "value": "1.82"},
-      "name": {"type": "string", "value": "John Dowe"},
-      "tags": {"type": "string", "value": ["nice", "educated"]}
+      "name": {"type":"string","value":"John Dowe"},
+      "age": {"type":"int","value":42}
     }
   }
-
-Property values are normalized. Most of the types are based on XML elements
-from Atom and GData elements from the atom and gd namespaces. For more
-information, see:
-
- * http://www.atomenabled.org/developers/syndication/
- * http://code.google.com/apis/gdata/common-elements.html
-
-The namespace schemas are:
-
- * http://www.w3.org/2005/Atom
- * http://schemas.google.com/g/2005
 
 Serializing an entity to JSON is fairly easy. The following Python program
 shows a simplified version of how we do it::
@@ -185,6 +118,58 @@ shows a simplified version of how we do it::
       super(JSONEncoder, self).default(obj)
 
   json_entity = simplejson.dumps(entity, cls=JSONEncoder)
+
+
+Property Value Types
+--------------------
+
+Property values are normalized. Most of the types are based on XML elements
+from Atom and GData elements from the atom and gd namespaces. For more
+information, see:
+
+ * http://www.atomenabled.org/developers/syndication/
+ * http://code.google.com/apis/gdata/common-elements.html
+
+The namespace schemas are:
+
+ * http://www.w3.org/2005/Atom
+ * http://schemas.google.com/g/2005
+
+The following example instantiates a
+:class:`google.appengine.api.datastore.Entity` which stores one of each
+available property values::
+
+  from datetime import datetime
+  from google.appengine.api import blobstore
+  from google.appengine.api import datastore
+  from google.appengine.api import datastore_types
+  from google.appengine.api import users
+  from google.appengine.ext import db
+
+  entity = datastore.Entity("Test")
+
+  entity.update({
+    "tring": "A string.",
+    "byte_string": datastore_types.ByteString("Byte String"),
+    "boolean": True,
+    "int": 42,
+    "float": 1.82,
+    "date": datetime.datetime.now(),
+    "list": [1,2,3,4],
+    "key": db.Key.from_path("Kind", "name"),
+    "blob_key": blobstore.BlobKey("foobar"),
+    "user": users.User("test@example.com"),
+    "blob": db.Blob("foobar"),
+    "text": db.Text("foobar"),
+    "category": db.Category("category"),
+    "link": db.Link("http://www.apple.com"),
+    "email": db.Email("test@example.com"),
+    "geopt": db.GeoPt("52.518,13.408"),
+    "im": db.IM("http://example.com/", "Larry97"),
+    "phone": db.PhoneNumber("1 (206) 555-1212"),
+    "address": db.PostalAddress("1 Infinite Loop, Cupertino, CA"),
+    "rating": db.Rating(97)
+  })
 
 
 Client-Server Communication

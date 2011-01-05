@@ -20,6 +20,7 @@ from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
+from sync import SyncInfo
 import email
 import json_rpc as rpc
 import logging
@@ -28,6 +29,8 @@ import os
 import time
 
 ENTITY_NOT_CHANGED = 1
+ENTITY_UPDATED = 2
+ENTITY_STORED = 3
 
 _PROPERTY_TYPES_MAP = {
   "byte_string": datastore_types.ByteString,
@@ -39,8 +42,41 @@ _PROPERTY_TYPES_MAP = {
 }
 
 
-class JsonRpcHandler(rpc.JsonRpcHandler):
-    """Handles JSON Remote Procedure Calls.
+def entity_from_json_data(entity_dict):
+    """Creates a new entity.
+
+    :param dictionary entity_dict: JSON data.
+    :returns: A `datastore.Entity` instance.
+    """
+
+    # Create new entity
+    entity = datastore.Entity(
+        entity_dict["kind"],
+        name=entity_dict.get("name"),
+        namespace=entity_dict.get("namespace")
+    )
+
+    # Generator for converting properties
+    def convertProps():
+        properties = entity_dict["properties"]
+
+        for prop in properties:
+            value = properties[prop]
+            if isinstance(value["value"], list):
+                type_ = list
+            else:
+                type_ = _PROPERTY_TYPES_MAP[value["type"]]
+
+            yield (prop, type_(value["value"]))
+
+    # Populate entity
+    entity.update(dict(convertProps()))
+
+    return entity
+
+
+class SyncHandler(rpc.JsonRpcHandler):
+    """Handles JSON-RPC sync requests.
 
     This request handler is the main JSON-RPC endpoint.
     """
@@ -53,33 +89,31 @@ class JsonRpcHandler(rpc.JsonRpcHandler):
         :param string content_hash: MD5 checksum of the entity.
         """
 
-        # Create new entity
-        entity = datastore.Entity(
-            entity_dict["kind"],
-            name=entity_dict.get("name"),
-            namespace=entity_dict.get("namespace")
-        )
+        assert "key" in entity_dict, "Remote entity key missing"
 
-        # Generator for converting properties
-        def convertProps():
-            properties = entity_dict["properties"]
+        remote_key = entity_dict["key"]
 
-            for prop in properties:
-                value = properties[prop]
-                if isinstance(value["value"], list):
-                    type_ = list
-                else:
-                    type_ = _PROPERTY_TYPES_MAP[value["type"]]
+        sync_info = SyncInfo.get_by_key_name(remote_key)
 
-                yield (prop, type_(value["value"]))
+        entity_needs_update = False
 
-        # Populate entity
-        entity.update(dict(convertProps()))
+        if sync_info:
+            if sync_info.content_hash() == content_hash:
+                return {"status": ENTITY_NOT_CHANGED}
+            else:
+                # TODO Implement compare-merge-sync
 
-        # Store entity
+                return {"status": ENTITY_UPDATED, "entity": {}}
+
+        # Create and put new entity
+        entity = entity_from_json_data(entity_dict)
         key = datastore.Put(entity)
 
-        return ENTITY_NOT_CHANGED
+        # Create and put synchronization info
+        sync_info = SyncInfo.from_params(remote_key, content_hash, key)
+        sync_info.put()
+
+        return {"status": ENTITY_STORED}
 
     @rpc.ServiceMethod
     def test(self, param):
@@ -117,7 +151,7 @@ class StaticHandler(webapp.RequestHandler):
 
 
 app = webapp.WSGIApplication([
-    ('.*/gaesynkit/rpc/.*', JsonRpcHandler),
+    ('.*/gaesynkit/rpc/.*', SyncHandler),
     ('.*/gaesynkit/.*', StaticHandler),
 ], debug=True)
 

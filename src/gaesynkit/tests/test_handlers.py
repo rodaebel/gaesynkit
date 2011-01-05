@@ -22,6 +22,31 @@ import unittest
 class test_handlers(unittest.TestCase):
     """Testing gaesynkit webapp handlers."""
 
+    def setUp(self):
+        """Set up test environment."""
+
+        from google.appengine.api import apiproxy_stub_map
+        from google.appengine.api import datastore_file_stub
+
+        os.environ['APPLICATION_ID'] = 'test'
+        os.environ['AUTH_DOMAIN'] = "example.com"
+
+        self.path = os.path.join(
+            os.environ.get('TMPDIR', ''), 'test_datastore.db')
+
+        if not apiproxy_stub_map.apiproxy.GetStub('datastore_v3'):
+            # Initialize Datastore
+            datastore = datastore_file_stub.DatastoreFileStub('test', self.path)
+            apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)
+
+    def tearDown(self):
+        """Clean up."""
+
+        try:
+            os.unlink(self.path)
+        except OSError:
+            pass
+
     def test_main(self):
         """Testing the main application."""
 
@@ -57,17 +82,7 @@ class test_handlers(unittest.TestCase):
         """Synchronizing an entity."""
 
         from gaesynkit import handlers
-        from google.appengine.api import apiproxy_stub_map
-        from google.appengine.api import datastore_file_stub
         from webtest import AppError, TestApp
-
-        os.environ['APPLICATION_ID'] = 'test'
-
-        path = os.path.join(os.environ.get('TMPDIR', ''), 'test_datastore.db')
-
-        # Initialize Datastore
-        datastore = datastore_file_stub.DatastoreFileStub('test', path)
-        apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)
 
         # Initialize app
         app = TestApp(handlers.app)
@@ -84,10 +99,5 @@ class test_handlers(unittest.TestCase):
             '"47eebabbdb1e1852d419618cea5dfca3"],"id":3}')
  
         self.assertEqual("200 OK", res.status)
-        self.assertEqual('{"jsonrpc": "2.0", "result": 1, "id": 3}', res.body)
-
-        # Cleaning up
-        try:
-            os.unlink(path)
-        except OSError:
-            pass
+        self.assertEqual(
+            '{"jsonrpc": "2.0", "result": {"status": 3}, "id": 3}', res.body)

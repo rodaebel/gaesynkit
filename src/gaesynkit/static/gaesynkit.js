@@ -48,6 +48,12 @@
   // Entity has not changed
   var _ENTITY_NOT_CHANGED = 1;
 
+  // Entity has been updated
+  var _ENTITY_UPDATED = 2;
+
+  // Entity has been stored
+  var _ENTITY_STORED = 3
+
 
   /* Internal API */
   gaesynkit.exportSymbol = function(name, opt_object, opt_objectToExportTo) {

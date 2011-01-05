@@ -205,7 +205,7 @@ Handlers
 Synchronization
 ---------------
 
-.. automodule:: gaesynkit.syncable
+.. automodule:: gaesynkit.sync
    :members:
 
 
