@@ -830,7 +830,7 @@
   // entity and can be dumped as a JSON.
 
   // Entity constructor
-  gaesynkit.db.Entity = function(kind, name, id, parent_, namespace) {
+  gaesynkit.db.Entity = function(kind, name, id, parent_, namespace, version) {
 
     if (!kind || typeof(kind) != "string")
       throw new Error("Entity kind missing or not a string");
@@ -841,6 +841,9 @@
     // Create entity key
     var name = (name || id) ? name || id : 0;
     this._key = gaesynkit.db.Key.from_path(kind, name, parent_, namespace);
+
+    // Entity version
+    this._version = version || 0;
 
     // Private attribute to store properties
     this._properties = new Object;
@@ -909,6 +912,8 @@
 
     entity["key"] = this._key.value();
 
+    entity["version"] = this._version;
+
     if (this._key.name()) {
       entity["name"] = this._key.name();
     }
@@ -975,6 +980,11 @@
     return this;
   };
 
+  // Get the entity version
+  gaesynkit.db.Entity.prototype.version = function() {
+    return this._version;
+  };
+
   // Storage constructor
   gaesynkit.db.Storage = function() {
     this._storage = window.localStorage;
@@ -1022,7 +1032,12 @@
     }
 
     entity = new gaesynkit.db.Entity(
-            key.kind(), key.name(), key.id(), key.parent(), key.namespace());
+        key.kind(),
+        key.name(),
+        key.id(),
+        key.parent(),
+        key.namespace(),
+        json["version"]);
 
     for (var key in json.properties) {
 
@@ -1104,7 +1119,23 @@
                "id": id};
 
     function callback(response) {
-      if (response.result == _ENTITY_NOT_CHANGED) return;
+
+      switch (response.result["status"]) {
+
+        case _ENTITY_NOT_CHANGED: {
+          break;
+        };
+
+        case _ENTITY_UPDATED: {
+          break;
+        };
+
+        case _ENTITY_STORED: {
+          break;
+        };
+
+        default: throw Error("Unknown synchronization status");
+      }
     }
 
     gaesynkit.rpc.makeAsyncCall(request, callback);

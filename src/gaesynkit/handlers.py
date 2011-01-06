@@ -16,6 +16,7 @@
 """Python implementation of the gaesynkit handlers JSON-RPC endpoint."""
 
 from datetime import datetime
+from django.utils import simplejson
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.ext import webapp
@@ -75,6 +76,58 @@ def entity_from_json_data(entity_dict):
     return entity
 
 
+def compare_merge_sync(entity_dict, sync_info):
+    """Make a compare-merge-sync between the given entities.
+
+    :param dictionary entity_dict: The remote entity dictionary.
+    :param sync.SyncInfo sync_info: A synchronization info instance.
+    :returns: A new `datastore.Entity` instance.
+    """
+
+    remote_version = entity_dict["version"]
+    remote_entity = entity_from_json_data(entity_dict)
+    stored_version = sync_info.version()
+    stored_entity = sync_info.target()
+
+    assert remote_entity.key() == stored_entity.key(), "Key must not differ"
+
+    assert remote_version <= stored_version, "Version conflict"
+    if remote_version < stored_version:
+        return stored_entity
+    if remote_version == stored_version:
+        return remote_entity
+
+
+class JSONEncoder(simplejson.JSONEncoder):
+    """Provides a JSON encoder."""
+
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat().replace('T', ' ').replace('-', '/')
+        super(JSONEncoder, self).default(obj)
+
+
+def entity_to_dict(entity):
+    """Get the JSON encodable entity dictionary.
+
+    :param datastore.Entity entity: The entity.
+    :returns: JSON encodable dictionary.
+    """
+
+    result_dict = dict(
+        properties=simplejson.loads(simplejson.dumps(entity, cls=JSONEncoder)))
+
+    result_dict["kind"] = entity.kind()
+
+    id_or_name = entity.key().id_or_name()
+    if isinstance(id_or_name, basestring):
+        result_dict["name"] = id_or_name
+    else:
+        restul_dict["id"] = id_or_name
+
+    return result_dict
+
+
 class SyncHandler(rpc.JsonRpcHandler):
     """Handles JSON-RPC sync requests.
 
@@ -92,6 +145,7 @@ class SyncHandler(rpc.JsonRpcHandler):
         assert "key" in entity_dict, "Remote entity key missing"
 
         remote_key = entity_dict["key"]
+        version = entity_dict["version"]
 
         sync_info = SyncInfo.get_by_key_name(remote_key)
 
@@ -101,19 +155,28 @@ class SyncHandler(rpc.JsonRpcHandler):
             if sync_info.content_hash() == content_hash:
                 return {"status": ENTITY_NOT_CHANGED}
             else:
-                # TODO Implement compare-merge-sync
+                new_entity = compare_merge_sync(entity_dict, sync_info)
 
-                return {"status": ENTITY_UPDATED, "entity": {}}
+                new_entity_dict = entity_to_dict(new_entity)
+                new_entity_dict["key"] = remote_key
+                new_entity_dict["version"] = sync_info.incr_version()
+
+                datastore.Put(new_entity)
+                sync_info.put()
+
+                return {"status": ENTITY_UPDATED, "entity": new_entity_dict}
 
         # Create and put new entity
         entity = entity_from_json_data(entity_dict)
         key = datastore.Put(entity)
 
         # Create and put synchronization info
-        sync_info = SyncInfo.from_params(remote_key, content_hash, key)
+        entity_dict["version"] += 1
+        version = entity_dict["version"]
+        sync_info = SyncInfo.from_params(remote_key, version, content_hash, key)
         sync_info.put()
 
-        return {"status": ENTITY_STORED}
+        return {"status": ENTITY_STORED, "version": version}
 
     @rpc.ServiceMethod
     def test(self, param):

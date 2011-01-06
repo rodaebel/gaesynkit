@@ -272,7 +272,7 @@ $(document).ready(function(){
 
   test("db.Entity", function()
   {
-    expect(23);
+    expect(24);
 
     // Create a Person entity
     ok(entity = new gaesynkit.db.Entity("Person", name="john"),
@@ -295,6 +295,9 @@ $(document).ready(function(){
 
     // Retrieve the kind
     equals(entity.kind(), "Person", "getting entity kind");
+
+    // Get the entity version
+    equals(entity.version(), 0, "getting the current entity version");
 
     // Update entity properties
     ok(entity.update({
@@ -338,7 +341,7 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"version\":0,\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
            "encoding entity to JSON");
 
     // Create a new Person entity
@@ -350,14 +353,14 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCjA=\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Appleseed\"}}}",
+           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCjA=\",\"version\":0,\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Appleseed\"}}}",
            "encoding entity to JSON");
 
   });
 
   test("db.Storage", function()
   {
-    expect(30);
+    expect(37);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book", "catcher"), "creating entity");
@@ -388,6 +391,9 @@ $(document).ready(function(){
 
     // Get next numerical id
     equals(storage.getNextId(), 1, "getting next numerical id");
+
+    // Get the entity version
+    equals(entity.version(), 0, "getting the current entity version");
 
     // Put entity
     ok(key = storage.put(entity), "putting entity");
@@ -430,6 +436,24 @@ $(document).ready(function(){
 
     // Synchronize entity by key
     ok(storage.sync(entity.key()), "synchronizing entity by key");
+
+    // Get the new entity version
+    equals(entity.version(), 1, "getting the modified entity version");
+
+    // Modify entity
+    ok(entity.update({"pages": 287}), "modifying entity properties");
+
+    // Put modified entity
+    ok(key = storage.put(entity), "putting modified entity");
+
+    // Get modified entity
+    ok(entity = storage.get(key), "getting modified entity");
+
+    // Synchronize modified entity by key
+    ok(storage.sync(key), "synchronizing modified entity by key");
+
+    // Get the modified entity version
+    equals(entity.version(), 2, "getting the modified entity version");
 
     // Delete entity
     ok(storage.deleteEntityWithKey(key), "deleting entity");

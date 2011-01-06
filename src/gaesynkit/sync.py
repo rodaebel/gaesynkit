@@ -44,26 +44,44 @@ class SyncInfo(object):
             TypeError('Must provide Entity or Key')
 
     @classmethod
-    def from_params(cls, remote_key, content_hash, target_key=None):
+    def from_params(cls, remote_key, version, content_hash, target_key=None):
         """Retrieve or create a SyncInfo entity from the given parameters.
 
         :param string remote_key: Remote entity key.
+        :param int version: Remote entity version.
         :param string content_hash: MD5 hex digest.
         :param datastore_types.Key target_key: Key of the sync target entity.
         """
 
         entity = datastore.Entity(SYNC_INFO_KIND, name=remote_key)
-        entity.update({"content_hash": content_hash})
+        entity.update({"version": version, "content_hash": content_hash})
 
         if target_key:
             entity.update({"target_key": target_key})
 
         return cls(entity)
 
+    def version(self):
+        """Get the entity version."""
+
+        return self.__entity["version"]
+
+    def incr_version(self):
+        """Increment the entity version."""
+
+        self.__entity["version"] += 1
+        return self.__entity["version"]
+
     def content_hash(self):
         """Get the content hash as MD5 hex digest."""
 
         return self.__entity["content_hash"]
+
+    def target(self):
+        """Get the sync target entity."""
+
+        key = self.__entity.get("target_key")
+        return datastore.Get(key)
 
     @classmethod
     def get(cls, keys):

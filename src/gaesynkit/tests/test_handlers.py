@@ -15,6 +15,7 @@
 # limitations under the License.
 """Unit tests for the gaesynkit handlers and JSON-RPC endpoint."""
 
+from django.utils import simplejson
 import os
 import unittest
 
@@ -91,13 +92,30 @@ class test_handlers(unittest.TestCase):
         res = app.post(
             '/gaesynkit/rpc/',
             '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","name":"catcher","propertie'
-            's":{"title":{"type":"string","value":"The Catcher in the Rye"},"'
-            'date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"t'
-            'ype":"bool","value":true},"pages":{"type":"int","value":288},"ta'
-            'gs":{"type":"string","value":["novel","identity"]}}},'
-            '"47eebabbdb1e1852d419618cea5dfca3"],"id":3}')
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
+            '","properties":{"title":{"type":"string","value":"The Catcher in'
+            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
+            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
+            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
+            ',"47eebabbdb1e1852d419618cea5dfca3"],"id":3}')
  
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
-            '{"jsonrpc": "2.0", "result": {"status": 3}, "id": 3}', res.body)
+            simplejson.loads(res.body),
+            {u'jsonrpc': u'2.0', u'result': {u'status': 3, u'version': 1},
+             u'id': 3})
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":1,"name":"catcher'
+            '","properties":{"title":{"type":"string","value":"The Catcher in'
+            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
+            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
+            'ue":287},"tags":{"type":"string","value":["novel","identity"]}}}'
+            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
+
+        self.assertEqual("200 OK", res.status)
+        self.assertEqual(
+            simplejson.loads(res.body),
+            {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': u'1951/07/16 00:00:00', u'classic': True, u'pages': 287, u'tags': [u'novel', u'identity'], u'title': u'The Catcher in the Rye'}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})

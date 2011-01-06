@@ -53,10 +53,10 @@ class test_synchronization(unittest.TestCase):
         from gaesynkit import sync
 
         remote_key = "ZGVmYXVsdCEhQm9vawhjYXRjaGVy"
-
+        version = 1
         content_hash = "47eebabbdb1e1852d419618cea5dfca3"
 
-        info = sync.SyncInfo.from_params(remote_key, content_hash)
+        info = sync.SyncInfo.from_params(remote_key, version, content_hash)
 
         info_key = info.put()
 
