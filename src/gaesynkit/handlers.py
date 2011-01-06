@@ -92,6 +92,7 @@ def compare_merge_sync(entity_dict, sync_info):
     assert remote_entity.key() == stored_entity.key(), "Key must not differ"
 
     assert remote_version <= stored_version, "Version conflict"
+
     if remote_version < stored_version:
         return stored_entity
     if remote_version == stored_version:
@@ -148,8 +149,6 @@ class SyncHandler(rpc.JsonRpcHandler):
         version = entity_dict["version"]
 
         sync_info = SyncInfo.get_by_key_name(remote_key)
-
-        entity_needs_update = False
 
         if sync_info:
             if sync_info.content_hash() == content_hash:
