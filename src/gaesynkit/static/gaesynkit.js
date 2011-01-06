@@ -92,14 +92,16 @@
   // JSON-RPC service endpoint
   gaesynkit.rpc.ENDPOINT = "/gaesynkit/rpc/";
 
-  // Low-level method to make an asynchronous JSON-RPC
-  gaesynkit.rpc.makeAsyncCall = function(request, callback) {
+  // Low-level method to make a JSON-RPC
+  gaesynkit.rpc.makeRpc = function(request, callback, async) {
+
+    var async = async || false;
 
     if (request.jsonrpc != "2.0") throw new Error("Invalid JSON-RPC");
 
     var http = new XMLHttpRequest();
 
-    http.open("POST", gaesynkit.rpc.ENDPOINT, true);
+    http.open("POST", gaesynkit.rpc.ENDPOINT, async);
     http.setRequestHeader("Content-Type", "application/json-rpc");
 
     http.onreadystatechange = function() {
@@ -980,6 +982,11 @@
     return this;
   };
 
+  // Set the entity version
+  gaesynkit.db.Entity.prototype.set_version = function(version) {
+    this._version = version;
+  };
+
   // Get the entity version
   gaesynkit.db.Entity.prototype.version = function() {
     return this._version;
@@ -1016,28 +1023,13 @@
     return id;
   };
 
-  // Get entity by a given key or encoded key string
-  //
-  // Constructs a new Entity from JSON and returns it.
-  gaesynkit.db.Storage.prototype.get = function(k) {
+  // Get a new Entity from a given key and JSON data
+  var _getEntityFromKeyAndJSON = function(k, json) {
 
-    var key, json, entity, prop, type, value;
+    var entity = new gaesynkit.db.Entity(
+      k.kind(), k.name(), k.id(), k.parent(), k.namespace(), json["version"]);
 
-    key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
-    try {
-      json = JSON.parse(this._storage[key.value()]);
-    }
-    catch (e) {
-      throw Error("Entity not found");
-    }
-
-    entity = new gaesynkit.db.Entity(
-        key.kind(),
-        key.name(),
-        key.id(),
-        key.parent(),
-        key.namespace(),
-        json["version"]);
+    var prop, type, value;
 
     for (var key in json.properties) {
 
@@ -1064,7 +1056,25 @@
       entity.update(prop);
     }
 
-    return entity;
+  return entity;
+  };
+
+
+  // Get entity by a given key or encoded key string
+  gaesynkit.db.Storage.prototype.get = function(k) {
+
+    var key, json;
+
+    key = (k instanceof gaesynkit.db.Key) ? k : new gaesynkit.db.Key(k);
+
+    try {
+      json = JSON.parse(this._storage[key.value()]);
+    }
+    catch (e) {
+      throw Error("Entity not found");
+    }
+
+    return _getEntityFromKeyAndJSON(key, json);
   };
 
   // Put a given entity
@@ -1085,8 +1095,9 @@
   };
 
   // Synchronize entity
-  gaesynkit.db.Storage.prototype.sync = function(key_or_entity) {
+  gaesynkit.db.Storage.prototype.sync = function(key_or_entity, async) {
 
+    var async = async || false;
     var entity, content_hash, id, request;
 
     // Retrieve entity from local storage
@@ -1120,17 +1131,30 @@
 
     function callback(response) {
 
+      var entity;
+      var storage = new gaesynkit.db.Storage;
+
       switch (response.result["status"]) {
 
-        case _ENTITY_NOT_CHANGED: {
-          break;
-        };
+        case _ENTITY_NOT_CHANGED: break;
 
         case _ENTITY_UPDATED: {
+
+          var json = response.result["entity"];
+          var key = new gaesynkit.db.Key(json["key"]);
+
+          entity = _getEntityFromKeyAndJSON(key, json);
+          storage.put(entity);
+
           break;
         };
 
         case _ENTITY_STORED: {
+
+          entity = storage.get(response.result["key"]);
+          entity.set_version(response.result["version"]);
+          storage.put(entity);
+
           break;
         };
 
@@ -1138,7 +1162,7 @@
       }
     }
 
-    gaesynkit.rpc.makeAsyncCall(request, callback);
+    gaesynkit.rpc.makeRpc(request, callback, async);
 
     return true;
   };

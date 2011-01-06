@@ -31,12 +31,13 @@ JSON-RPC
 
    JSON-RPC service endpoint.
 
-.. js:function:: gaesynkit.rpc.makeAsyncCall(request, callback)
+.. js:function:: gaesynkit.rpc.makeRpc(request, callback, async)
 
-   Makes an asynchronous JSON Remote Procedure Call.
+   Makes an (a)synchronous JSON Remote Procedure Call.
 
    :param object request: The JSON-RPC request object.
-   :param callback: Callback function to handle the JSON-RPC response.
+   :param function callback: Callback function to handle the JSON-RPC response.
+   :param boolean async: Flag for asynchronous JSON-RPC.
 
 
 Utilities

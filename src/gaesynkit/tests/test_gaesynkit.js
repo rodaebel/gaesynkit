@@ -31,7 +31,7 @@ $(document).ready(function(){
 
   test("rpc", function()
   {
-    expect(5);
+    expect(7);
 
     ok(id = gaesynkit.rpc.getNextRpcId(), "getting next JSON-RPC id");
 
@@ -48,14 +48,26 @@ $(document).ready(function(){
     }
 
     // Make asynchronous JSON-RPC
-    ok(gaesynkit.rpc.makeAsyncCall(
+    ok(gaesynkit.rpc.makeRpc(
          {"jsonrpc": "2.0", "method": "test", "params": [42], "id": 1},
-         callback),
+         callback, true),
        "making asynchronous JSON-RPC"
     )
 
+    // The callback function for our asynchronous JSON-RPC
+    function callback2(response) {
+      equals(response.result, "foo", "getting JSON-RPC result");
+    }
+
+    // Make synchronous JSON-RPC
+    ok(gaesynkit.rpc.makeRpc(
+         {"jsonrpc": "2.0", "method": "test", "params": ["foo"], "id": 2},
+         callback2),
+       "making synchronous JSON-RPC"
+    )
+
     // Try to make a JSON-RPC with invalid data
-    raises(function() {gaesynkit.rpc.makeAsyncCall(["foobar", 7], callback)},
+    raises(function() {gaesynkit.rpc.makeRpc(["foobar", 7], callback)},
            "invalid JSON-RPC request throws an error")
 
   });
@@ -360,7 +372,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(37);
+    expect(38);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book", "catcher"), "creating entity");
@@ -434,8 +446,8 @@ $(document).ready(function(){
     // Synchronize entity
     ok(storage.sync(entity), "synchronizing entity");
 
-    // Synchronize entity by key
-    ok(storage.sync(entity.key()), "synchronizing entity by key");
+    // Get entity
+    ok(entity = storage.get(key), "getting synchronized entity");
 
     // Get the new entity version
     equals(entity.version(), 1, "getting the modified entity version");
@@ -451,6 +463,9 @@ $(document).ready(function(){
 
     // Synchronize modified entity by key
     ok(storage.sync(key), "synchronizing modified entity by key");
+
+    // Get entity
+    ok(entity = storage.get(key), "getting modified entity after sync");
 
     // Get the modified entity version
     equals(entity.version(), 2, "getting the modified entity version");

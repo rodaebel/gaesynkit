@@ -154,7 +154,7 @@ available property values::
     "boolean": True,
     "int": 42,
     "float": 1.82,
-    "date": datetime.datetime.now(),
+    "date": datetime.now(),
     "list": [1,2,3,4],
     "key": db.Key.from_path("Kind", "name"),
     "blob_key": blobstore.BlobKey("foobar"),

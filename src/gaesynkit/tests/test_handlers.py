@@ -48,6 +48,32 @@ class test_handlers(unittest.TestCase):
         except OSError:
             pass
 
+    def test_entity_to_dict(self):
+        """Converts a datastore.Entity instance to a JSON encodable dict."""
+
+        from datetime import datetime
+        from gaesynkit import handlers
+        from google.appengine.api import datastore
+        from google.appengine.api import datastore_types
+        from google.appengine.ext import db
+
+        entity = datastore.Entity("Test")
+        entity.update({
+            "string": "A string.",
+            "byte_string": datastore_types.ByteString("Byte String"),
+            "boolean": True,
+            "int": 42,
+            "float": 1.82,
+            "date": datetime(2011, 01, 06),
+            "list": [1,2,3,4],
+            "key": db.Key.from_path("Kind", "name")
+        })
+        datastore.Put(entity)
+        self.assertEqual(
+            handlers.json_data_from_entity(entity),
+            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 1}
+        )
+
     def test_main(self):
         """Testing the main application."""
 
@@ -62,8 +88,8 @@ class test_handlers(unittest.TestCase):
 
         self.assertRaises(AppError, app.get, '/gaesynkit/unknown')
 
-    def test_JsonRpcHandler(self):
-        """Testing the JSON-RPC handler."""
+    def test_SyncHandler(self):
+        """Testing the synchronization JSON-RPC handler."""
 
         from gaesynkit import handlers
         from webtest import AppError, TestApp
@@ -102,8 +128,7 @@ class test_handlers(unittest.TestCase):
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
             simplejson.loads(res.body),
-            {u'jsonrpc': u'2.0', u'result': {u'status': 3, u'version': 1},
-             u'id': 3})
+            {u'jsonrpc': u'2.0', u'result': {u'status': 3, u'version': 1, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy'}, u'id': 3})
 
         res = app.post(
             '/gaesynkit/rpc/',
@@ -118,4 +143,4 @@ class test_handlers(unittest.TestCase):
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
             simplejson.loads(res.body),
-            {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': u'1951/07/16 00:00:00', u'classic': True, u'pages': 287, u'tags': [u'novel', u'identity'], u'title': u'The Catcher in the Rye'}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})
+            {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': {u'type': u'gd:when', u'value': u'1951/07/16 00:00:00'}, u'classic': {u'type': u'bool', u'value': True}, u'pages': {u'type': u'int', u'value': 287}, u'tags': {u'type': u'string', u'value': [u'novel', u'identity']}, u'title': {u'type': u'string', u'value': u'The Catcher in the Rye'}}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})

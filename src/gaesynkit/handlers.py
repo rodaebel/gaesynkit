@@ -19,6 +19,7 @@ from datetime import datetime
 from django.utils import simplejson
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
+from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from sync import SyncInfo
@@ -34,12 +35,38 @@ ENTITY_UPDATED = 2
 ENTITY_STORED = 3
 
 _PROPERTY_TYPES_MAP = {
-  "byte_string": datastore_types.ByteString,
-  "bool": bool,
-  "gd:when": lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
-  "int": int,
-  "key": datastore_types.Key,
-  "string": unicode,
+    "string":       unicode,
+    "bool":         bool,
+    "int":          int,
+    "float":        float,
+    "key":          datastore_types.Key,
+    "byte_string":  datastore_types.ByteString,
+    "gd:when":      lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
+}
+
+_PROPERTY_TYPES_STRINGS = {
+    unicode:                        'string',
+    str:                            'string',
+    bool:                           'bool',
+    int:                            'int',
+    long:                           'int',
+    type(None):                     'null',
+    float:                          'float',
+    datastore_types.Key:            'key',
+    datastore_types.Blob:           'blob',
+    datastore_types.ByteString:     'byte_string',
+    datastore_types.Text:           'text',
+    users.User:                     'user',
+    datastore_types.Category:       'atom:category',
+    datastore_types.Link:           'atom:link',
+    datastore_types.Email:          'gd:email',
+    datetime:                       'gd:when',
+    datastore_types.GeoPt:          'georss:point',
+    datastore_types.IM:             'gd:im',
+    datastore_types.PhoneNumber:    'gd:phonenumber',
+    datastore_types.PostalAddress:  'gd:psotaladdress',
+    datastore_types.Rating:         'gd:rating',
+    datastore_types.BlobKey:        'blobkey',
 }
 
 
@@ -64,16 +91,66 @@ def entity_from_json_data(entity_dict):
         for prop in properties:
             value = properties[prop]
             if isinstance(value["value"], list):
-                type_ = list
+                prop_t = list
             else:
-                type_ = _PROPERTY_TYPES_MAP[value["type"]]
+                prop_t = _PROPERTY_TYPES_MAP[value["type"]]
 
-            yield (prop, type_(value["value"]))
+            yield (prop, prop_t(value["value"]))
 
     # Populate entity
     entity.update(dict(convertProps()))
 
     return entity
+
+
+def encode_properties(entity):
+    """Encode entity properties to JSON serializable dictionary.
+
+    :param datastore.Entity entity: An entity.
+    :returns: Dictionary.
+    """
+
+    def encode(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat().replace('T', ' ').replace('-', '/')
+        elif isinstance(obj, datastore_types.Key):
+            return str(obj)
+
+        return obj
+
+    def encode_props():
+        for key in entity.keys():
+            prop = entity[key]
+
+            prop_t = type(prop)
+            if prop_t == list:
+                prop_t = type(prop[0])
+
+            type_str = _PROPERTY_TYPES_STRINGS[prop_t]
+
+            yield (key, {"type": type_str, "value": encode(prop)})
+
+    return dict(encode_props())
+
+
+def json_data_from_entity(entity):
+    """Get the JSON encodable entity dictionary.
+
+    :param datastore.Entity entity: The entity.
+    :returns: JSON encodable dictionary.
+    """
+
+    result_dict = dict(properties=encode_properties(entity))
+
+    result_dict["kind"] = entity.kind()
+
+    id_or_name = entity.key().id_or_name()
+    if isinstance(id_or_name, basestring):
+        result_dict["name"] = id_or_name
+    else:
+        result_dict["id"] = id_or_name
+
+    return result_dict
 
 
 def compare_merge_sync(entity_dict, sync_info):
@@ -99,36 +176,6 @@ def compare_merge_sync(entity_dict, sync_info):
         return remote_entity
 
 
-class JSONEncoder(simplejson.JSONEncoder):
-    """Provides a JSON encoder."""
-
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat().replace('T', ' ').replace('-', '/')
-        super(JSONEncoder, self).default(obj)
-
-
-def entity_to_dict(entity):
-    """Get the JSON encodable entity dictionary.
-
-    :param datastore.Entity entity: The entity.
-    :returns: JSON encodable dictionary.
-    """
-
-    result_dict = dict(
-        properties=simplejson.loads(simplejson.dumps(entity, cls=JSONEncoder)))
-
-    result_dict["kind"] = entity.kind()
-
-    id_or_name = entity.key().id_or_name()
-    if isinstance(id_or_name, basestring):
-        result_dict["name"] = id_or_name
-    else:
-        restul_dict["id"] = id_or_name
-
-    return result_dict
-
-
 class SyncHandler(rpc.JsonRpcHandler):
     """Handles JSON-RPC sync requests.
 
@@ -151,19 +198,23 @@ class SyncHandler(rpc.JsonRpcHandler):
         sync_info = SyncInfo.get_by_key_name(remote_key)
 
         if sync_info:
+            # The entity has been synced before; check whether its contents
+            # have been changed
+
             if sync_info.content_hash() == content_hash:
+                # The entity contents haven't change
                 return {"status": ENTITY_NOT_CHANGED}
-            else:
-                new_entity = compare_merge_sync(entity_dict, sync_info)
 
-                new_entity_dict = entity_to_dict(new_entity)
-                new_entity_dict["key"] = remote_key
-                new_entity_dict["version"] = sync_info.incr_version()
+            new_entity = compare_merge_sync(entity_dict, sync_info)
 
-                datastore.Put(new_entity)
-                sync_info.put()
+            json_data = json_data_from_entity(new_entity)
+            json_data["key"] = remote_key
+            json_data["version"] = sync_info.incr_version()
 
-                return {"status": ENTITY_UPDATED, "entity": new_entity_dict}
+            datastore.Put(new_entity)
+            sync_info.put()
+
+            return {"status": ENTITY_UPDATED, "entity": json_data}
 
         # Create and put new entity
         entity = entity_from_json_data(entity_dict)
@@ -175,7 +226,7 @@ class SyncHandler(rpc.JsonRpcHandler):
         sync_info = SyncInfo.from_params(remote_key, version, content_hash, key)
         sync_info.put()
 
-        return {"status": ENTITY_STORED, "version": version}
+        return {"status": ENTITY_STORED, "key":remote_key, "version": version}
 
     @rpc.ServiceMethod
     def test(self, param):
@@ -196,16 +247,19 @@ class StaticHandler(webapp.RequestHandler):
         filename = path[path.rfind('gaesynkit/')+10:]
         filename = os.path.join(os.path.dirname(__file__), 'static', filename)
         content_type, encoding = mimetypes.guess_type(filename)
+
         try:
             assert content_type and '/' in content_type, repr(content_type)
             fp = open(filename, 'rb')
         except (IOError, AssertionError):
             self.response.set_status(404)
             return
+
         expiration = email.Utils.formatdate(time.time()+3600, usegmt=True)
         self.response.headers['Content-type'] = content_type
         self.response.headers['Cache-Control'] = 'public, max-age=expiry'
         self.response.headers['Expires'] = expiration
+
         try:
             self.response.out.write(fp.read())
         finally:
