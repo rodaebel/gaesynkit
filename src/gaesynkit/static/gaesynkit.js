@@ -52,7 +52,13 @@
   var _ENTITY_UPDATED = 2;
 
   // Entity has been stored
-  var _ENTITY_STORED = 3
+  var _ENTITY_STORED = 3;
+
+  // Entity not found on server
+  var _ENTITY_NOT_FOUND = 4;
+
+  // Entity has been deleted
+  var _ENTITY_DELETED = 5;
 
 
   /* Internal API */
@@ -1080,8 +1086,14 @@
   // Put a given entity
   gaesynkit.db.Storage.prototype.put = function(entity) {
 
-    var key = entity.key();
-    var id_or_name = (!key.name()) ? this.getNextId() : key.name();
+    var key, id_or_name;
+
+    key = entity.key();
+    id_or_name = key.id();
+
+    if (!id_or_name) {
+      id_or_name = (key.name()) ? key.name() : this.getNextId();
+    }
 
     var new_key = gaesynkit.db.Key.from_path(
                         key.kind(), id_or_name, key.parent(), key.namespace());
@@ -1158,6 +1170,31 @@
           break;
         };
 
+        default: throw Error("Unknown synchronization status");
+      }
+    }
+
+    gaesynkit.rpc.makeRpc(request, callback, async);
+
+    return true;
+  };
+
+  // Synchronize deleted entity
+  gaesynkit.db.Storage.prototype.syncDeleted = function(key, async) {
+
+    var async = async || false;
+
+    var id = gaesynkit.rpc.getNextRpcId();
+
+    request = {"jsonrpc": "2.0",
+               "method": "syncDeletedEntity",
+               "params": [key.value()],
+               "id": id};
+
+    function callback(response) {
+      switch (response.result["status"]) {
+        case _ENTITY_NOT_FOUND: break;
+        case _ENTITY_DELETED: break;
         default: throw Error("Unknown synchronization status");
       }
     }

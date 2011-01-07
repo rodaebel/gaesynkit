@@ -21,7 +21,7 @@ from google.appengine.api import datastore_errors
 
 __all__ = ['SYNC_INFO_KIND', 'SyncInfo']
 
-SYNC_INFO_KIND = "__SyncInfo__"
+SYNC_INFO_KIND = "SyncInfo"
 
 
 class SyncInfo(object):
@@ -76,6 +76,11 @@ class SyncInfo(object):
         """Get the content hash as MD5 hex digest."""
 
         return self.__entity["content_hash"]
+
+    def target_key(self):
+        """Get the sync target key."""
+
+        return self.__entity.get("target_key")
 
     def target(self):
         """Get the sync target entity."""

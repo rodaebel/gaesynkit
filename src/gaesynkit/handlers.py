@@ -33,6 +33,8 @@ import time
 ENTITY_NOT_CHANGED = 1
 ENTITY_UPDATED = 2
 ENTITY_STORED = 3
+ENTITY_NOT_FOUND = 4
+ENTITY_DELETED = 5
 
 _PROPERTY_TYPES_MAP = {
     "string":       unicode,
@@ -154,26 +156,32 @@ def json_data_from_entity(entity):
 
 
 def compare_merge_sync(entity_dict, sync_info):
-    """Make a compare-merge-sync between the given entities.
+    """Make a compare-merge-sync between the stored and the remote entity.
 
     :param dictionary entity_dict: The remote entity dictionary.
     :param sync.SyncInfo sync_info: A synchronization info instance.
     :returns: A new `datastore.Entity` instance.
     """
 
+    # The remote entity
     remote_version = entity_dict["version"]
     remote_entity = entity_from_json_data(entity_dict)
-    stored_version = sync_info.version()
-    stored_entity = sync_info.target()
 
-    assert remote_entity.key() == stored_entity.key(), "Key must not differ"
+    # The stored entity
+    version = sync_info.version()
+    entity = sync_info.target()
 
-    assert remote_version <= stored_version, "Version conflict"
+    assert remote_version <= version, "Version conflict"
 
-    if remote_version < stored_version:
-        return stored_entity
-    if remote_version == stored_version:
-        return remote_entity
+    if remote_version < version:
+        # If the remote version is older, just return the stored entity
+        return entity
+
+    # Merge entities
+    for prop in remote_entity.keys():
+        entity[prop] = remote_entity[prop]
+
+    return entity
 
 
 class SyncHandler(rpc.JsonRpcHandler):
@@ -227,6 +235,19 @@ class SyncHandler(rpc.JsonRpcHandler):
         sync_info.put()
 
         return {"status": ENTITY_STORED, "key":remote_key, "version": version}
+
+    @rpc.ServiceMethod
+    def syncDeletedEntity(self, key):
+        """Delete entity.
+
+        :param string key: The remote key.
+        """
+
+        sync_info = SyncInfo.get_by_key_name(key)
+        datastore.Delete(sync_info.target_key())
+        datastore.Delete(sync_info.key())
+
+        return {"status": ENTITY_DELETED}
 
     @rpc.ServiceMethod
     def test(self, param):

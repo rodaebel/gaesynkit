@@ -372,10 +372,10 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(38);
+    expect(39);
 
     // Create an entity
-    ok(entity = new gaesynkit.db.Entity("Book", "catcher"), "creating entity");
+    ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
 
     // Update properties
     ok(entity.update({"title": "The Catcher in the Rye"}), "update properties");
@@ -416,8 +416,8 @@ $(document).ready(function(){
     // Get entity's key
     ok(key = entity.key(), "getting entity's key");
 
-    // Get the name
-    equals(key.name(), "catcher", "getting the key name");
+    // Get the entity id
+    equals(key.id(), 2, "getting the entity id");
 
     // Get the entity's kind
     equals(entity.kind(), "Book", "getting the entity's kind");
@@ -472,6 +472,9 @@ $(document).ready(function(){
 
     // Delete entity
     ok(storage.deleteEntityWithKey(key), "deleting entity");
+
+    // Synchronize deleted entity
+    ok(storage.syncDeleted(key), "synchronizing deleted entity");
 
     // Try to retrieve an entity by an invalid key
     raises(function() {
