@@ -9,7 +9,8 @@ Javascript Client
 =================
 
 The gaesynkit.js file contains the complete client-side implementation. It has
-no dependencies to any other Javascript library and defines its own namesapce.
+no dependencies to any other Javascript library and defines its own Javascript
+namesapce.
 
 Add the following resource tag to the head section of your HTML file::
 
@@ -190,6 +191,87 @@ Key
 .. js:function:: gaesynkit.db.Key.parent()
 
    :returns: Key of the parent entity.
+
+
+Entities
+--------
+
+.. js:class:: gaesynkit.db.Entity(kind, name, id, parent, namespace, version)
+
+   :param string kind: The entity kind.
+   :param string name: If provided, this entity's name.
+   :param number id: If provided, this entity's numerical id.
+   :param Entity|Key parent: If provided, this entity's parent.
+   :param string namespace: Overrides the default namespace.
+   :param number version: This entity's version, default is 0.
+
+.. js:function:: gaesynkit.db.Entity.key()
+
+   :returns: This entity's key.
+
+.. js:function:: gaesynkit.db.Entity.kind()
+
+   :returns: The entity kind.
+
+.. js:function:: gaesynkit.db.Entity.keys()
+
+   :returns: Array of the entity's property names.
+
+.. js:function:: gaesynkit.db.Entity.update(properties)
+
+   :param object properies: Key-value pairs of properties where the key is
+                            the property name and the value type may be one of
+                            value types listed above.
+   :returns: Array of the entity's property names.
+
+.. js:function:: gaesynkit.db.Entity.toJSON()
+
+   :returns: A JSON object of this entity.
+
+.. js:function:: gaesynkit.db.Entity.vesion()
+
+   :returns: This entity's version.
+
+.. js:function:: gaesynkit.db.Entity.set_version(version)
+
+   :param number version: Use this as new version number.
+
+
+Storage
+-------
+
+.. js:class:: gaesynkit.db.Storage
+
+   Wraps the HTML5 Local Storage.
+
+.. js:function:: gaesynkit.db.Storage.put(entity)
+
+   Put an entity into the storage.
+
+   :param Entity entity: An entity object.
+
+.. js:function:: gaesynkit.db.Storage.get(key)
+
+   Retrieve entity from the storage.
+
+   :param Key|string key: A key object or encoded key string.
+   :returns: An entity object.
+   :raises: An "Entity not found" error.
+
+.. js:function:: gaesynkit.db.Storage.deleteEntityWithKey(key)
+
+   Delete an entity from the storage.
+
+   :param Key|string key: A key object or encoded key string.
+
+.. js:function:: gaesynkit.db.Storage.sync(key_or_entity, async)
+
+   Synchronize entity between client-side storage and the Google App Engine
+   Datastore.
+
+   :param Key|Entity key_or_entity: A key object or an entity object.
+   :param boolean async: Flag to specify if the synchronization is done
+                         asynchronously or not.
 
 
 Python Server
