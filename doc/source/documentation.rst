@@ -1,11 +1,15 @@
 .. gaesynkit documentation.
 
-========
+=============
+Documentation
+=============
+
 Overview
-========
+--------
 
 The gaesynkit library provides an API to create entities and synchronize data
-between a web client and the `server-side` Datastore.
+between the HTML5 Local Storage of a web client and the Google App Engine
+Datastore.
 
 
 Storing Entities
@@ -43,7 +47,8 @@ The equivalent GAE Python API looks like this::
 
   entity["name"] # -> "John Dowe"
 
-Nearly identical, isn't it. In order to understand how we store entities, let's now take a look at some lower level details of the GAE Datastore.
+Nearly identical, isn't it. In order to understand how we store entities, let's
+now take a quick look at some lower level details of the GAE Datastore.
 
 Unlike a relational database, Google App Engine implements a `schemaless`
 Datastore that stores and performs queries over data objects, known as
@@ -80,7 +85,7 @@ dumped output of the `Protocol Buffers` encoded entity::
     multiple: false
   >
 
-We choose JSON as format for representing the above entity::
+We use JSON to represent and store the above entity in our web client::
 
   {
     "kind": "Person",
@@ -91,33 +96,6 @@ We choose JSON as format for representing the above entity::
       "age": {"type":"int","value":42}
     }
   }
-
-Serializing an entity to JSON is fairly easy. The following Python program
-shows a simplified version of how we do it::
-
-  from datetime import datetime
-  from google.appengine.api import datastore
-  from google.appengine.api import datastore_types
-  from django.utils import simplejson
-  import re
-
-  entity = datastore.Entity("Person")
-
-  splitdate = lambda s: map(int, re.split('[^\d]', s)[:-1])
-
-  entity.update({
-    "name": "John",
-    "email": datastore_types.Email("john@example.com"),
-    "birthday": datetime(*splitdate("1978-04-01 00:00:00"))
-  })
-
-  class JSONEncoder(simplejson.JSONEncoder):
-    def default(self, obj):
-      if isinstance(obj, datetime):
-        return obj.isoformat().replace('T', ' ')
-      super(JSONEncoder, self).default(obj)
-
-  json_entity = simplejson.dumps(entity, cls=JSONEncoder)
 
 
 Property Value Types

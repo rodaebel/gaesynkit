@@ -11,8 +11,9 @@ a later point of time.
 
 It mainly consists of these components:
 
-* Javascript Client Storage API library
-* Python Request Handler module for providing the JSON-RPC endpoint
+* Javascript Client Storage API
+* Python Request Handler module for providing a JSON-RPC endpoint
+* Synchronization logic (Python)
 
 The Client Storage API utilizes the HTML5 Local Storage for persisting JSON
 encoded entities *client-side*.
@@ -38,20 +39,29 @@ URL handler definition to the app.yaml file::
 
   - url: /gaesynkit/.*
     script: gaesynkit/handlers.py
+    login: required
 
 This URL handler provides the static Javascript library and handles JSON-RPC
-requests. Add this line to the `head` of the application's HTML to include the
-geasynkit Javascript library::
+requests. The URL handler should have a ``login`` setting to restrict visitors
+to only those users who have signed in, or just those users who are
+administrators for the application.
+
+We make the gaesynkit Javascript library available for our web application by
+adding the following line to the `head` section of the application's HTML::
 
   <script type="text/javascript" src="gaesynkit/gaesynkit.js"></script>
 
-The following example shows how to initialize, store and synchronize an entity
-in the client's Javascrtipt code::
+Here is a brief example which shows how to initialize, store and synchronize an
+entity in the client's Javascrtipt code::
 
   var entity = new gaesynkit.db.Entity("Person");
+
   entity.update({"name": "Arthur Dent", "planet": "Earth"});
+
   var storage = new gaesynkit.db.Storage;
+
   var key = storage.put(entity);
+
   storage.sync(key);
 
 
