@@ -278,6 +278,8 @@ class SyncHandler(rpc.JsonRpcHandler):
             json_data["version"] = sync_info.incr_version()
 
             datastore.Put(new_entity)
+
+            sync_info.set_content_hash(content_hash)
             sync_info.put()
 
             return {"status": ENTITY_UPDATED, "entity": json_data}

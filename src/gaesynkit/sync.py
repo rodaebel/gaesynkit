@@ -77,6 +77,13 @@ class SyncInfo(object):
 
         return self.__entity["content_hash"]
 
+    def set_content_hash(self, content_hash):
+        """Set the content hash.
+
+        :param str content_hash: MD5 hex digest.
+        """
+        self.__entity["content_hash"] = content_hash
+
     def target_key(self):
         """Get the sync target key."""
 

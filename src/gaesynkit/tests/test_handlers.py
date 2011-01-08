@@ -145,6 +145,42 @@ class test_handlers(unittest.TestCase):
             simplejson.loads(res.body),
             {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': {u'type': u'gd:when', u'value': u'1951/07/16 00:00:00'}, u'classic': {u'type': u'bool', u'value': True}, u'pages': {u'type': u'int', u'value': 287}, u'tags': {u'type': u'string', u'value': [u'novel', u'identity']}, u'title': {u'type': u'string', u'value': u'The Catcher in the Rye'}}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})
 
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
+            '","properties":{"title":{"type":"string","value":"The Catcher in'
+            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
+            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
+            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
+            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
+
+        self.assertEqual("200 OK", res.status)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
+            '","properties":{"title":{"type":"string","value":"The Catcher in'
+            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
+            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
+            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
+            ',"568cd6b9ec85fb7ca24e3f7p98f5c456"],"id":4}')
+
+        self.assertEqual("200 OK", res.status)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
+            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":1,"name":"catcher'
+            '","properties":{"title":{"type":"string","value":"The Catcher in'
+            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
+            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
+            'ue":287},"tags":{"type":"string","value":["novel","identity"]}}}'
+            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
+
+        self.assertEqual("200 OK", res.status)
+
     def test_decode_remote_key(self):
         """Decode a remote key string."""
 
@@ -159,7 +195,15 @@ class test_handlers(unittest.TestCase):
         """Synchronizing an ancestor relationship."""
 
         from gaesynkit import handlers
+        from google.appengine.ext import db
         from webtest import AppError, TestApp
+
+        # Models for verifying out test results
+        class A(db.Model):
+            pass
+
+        class B(db.Model):
+            pass
 
         # Initialize app
         app = TestApp(handlers.app)
@@ -172,6 +216,8 @@ class test_handlers(unittest.TestCase):
 
         self.assertEqual("200 OK", res.status)
 
+        self.assertEqual(A.get_by_key_name('a').kind(), 'A')
+
         res = app.post(
             '/gaesynkit/rpc/',
             '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
@@ -179,6 +225,10 @@ class test_handlers(unittest.TestCase):
             '":{}},"fb1b335564b0155f839c16a4073eefa3"],"id":7}')
 
         self.assertEqual("200 OK", res.status)
+
+        self.assertEqual(
+            B.all().get().parent().key().name(),
+            A.get_by_key_name('a').key().name())
 
         res = app.post(
             '/gaesynkit/rpc/',
@@ -195,3 +245,12 @@ class test_handlers(unittest.TestCase):
             '},"b038fa4e11677b02f58aa83a1da103f0"],"id":9}')
 
         self.assertEqual("200 OK", res.status)
+
+        self.assertEqual(
+            set([b.parent().key().id_or_name() for b in B.all().fetch(2)]),
+            set([a.key().id_or_name() for a in A.all().fetch(2)]))
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncDeletedEntity","params":["ZGVmYXV'
+            'sdCEhQQozCUIKNA=="],"id":9}')
