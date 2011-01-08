@@ -193,3 +193,10 @@ Synchronization
 
 Multiple web clients can concurrently create, modify and delete Datastore
 entities.
+
+
+Security
+--------
+
+Since the Client Storage API provides a rich interface to modify data in the
+Datastore of an application, authentication is particularly challenging.
