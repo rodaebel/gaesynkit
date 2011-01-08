@@ -314,4 +314,7 @@ class JsonRpcHandlerTestCase(unittest.TestCase):
         messages, dummy = h.parse_body(rq)
         msg = messages[0]
         h.handle_message(msg)
+        self.assertEqual(str(msg.error), "Error executing service method")
+        self.assertEqual(
+            repr(msg.error), 'InternalError("Error executing service method")')
         self.assertTrue(isinstance(msg.error, InternalError))

@@ -66,7 +66,6 @@ class JsonRpcError(Exception):
     """
     code = 0
     message = None
-    data = None
     status = 500
 
     def __init__(self, message=None):
@@ -85,9 +84,6 @@ class JsonRpcError(Exception):
             'message' : '%s: %s' %
                 (str(self.__class__.__name__),
                 str(self.message))}
-        if self.data is not None:
-            error['data'] = self.data
-        # TODO More / less info depending on DEBUG mode
         return error
 
         
