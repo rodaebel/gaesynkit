@@ -103,15 +103,23 @@ def decode_remote_key(key_string):
     if namespace == _DEFAULT_NAMESPACE:
         namespace = None
 
-    def split(elem):
-        if _KIND_ID_SEP in elem:
-            return elem.split(_KIND_ID_SEP, 1)
-        elif _KIND_NAME_SEP in elem:
+    def split_elem(elem):
+        if _KIND_NAME_SEP in elem:
             return elem.split(_KIND_NAME_SEP, 1)
         else:
-            raise ValueError("Corrupt key")
+            raise StopIteration
  
-    path_elements = list(itertools.chain(*map(split, path.split(_PATH_SEP))))
+    try:
+        path_elements = list(
+            itertools.chain(*map(split_elem, path.split(_PATH_SEP))))
+    except StopIteration:
+        sync_info = SyncInfo.get_by_key_name(
+            base64.b64encode((namespace or _DEFAULT_NAMESPACE) +
+            _NAMESPACE_SEP+(_PATH_SEP.join(path.split(_PATH_SEP)[:-1]))))
+        if sync_info:
+            return sync_info.target_key()
+        else:
+            return None
 
     if len(path_elements) == 2:
         return None

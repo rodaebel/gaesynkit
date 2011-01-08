@@ -71,7 +71,7 @@ class test_handlers(unittest.TestCase):
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 1}
+            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 3}
         )
 
     def test_main(self):
@@ -177,5 +177,21 @@ class test_handlers(unittest.TestCase):
             '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
             'y":"ZGVmYXVsdCEhQQhhCUIIYg==","version":0,"name":"b","properties'
             '":{}},"fb1b335564b0155f839c16a4073eefa3"],"id":7}')
+
+        self.assertEqual("200 OK", res.status)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"A","ke'
+            'y":"ZGVmYXVsdCEhQQoz","version":0,"id":3,"properties":{}},"cd0f1'
+            'dd6b4ea5de20d95ffac4db8f29d"],"id":8}')
+
+        self.assertEqual("200 OK", res.status)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
+            'y":"ZGVmYXVsdCEhQQozCUIKNA==","version":0,"id":4,"properties":{}'
+            '},"b038fa4e11677b02f58aa83a1da103f0"],"id":9}')
 
         self.assertEqual("200 OK", res.status)
