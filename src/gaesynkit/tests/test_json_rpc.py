@@ -280,6 +280,15 @@ class JsonRpcHandlerTestCase(unittest.TestCase):
         h.handle_message(msg)
         self.assertEqual(msg.result, 'nice')
 
+    def testWronNumberOfParams(self):
+        """Test invalid number of params."""
+        h = self.getHandler()
+        rq  = '''{"jsonrpc":"2.0", "method":"myMethod", "id":"1"}'''
+        messages, dummy = h.parse_body(rq)
+        msg = messages[0]
+        h.handle_message(msg)
+        self.assertEqual(msg.result, None)
+
     def testVariableParams(self):
         """Service method definitions must not have variable parameters."""
         h = self.getHandler()
