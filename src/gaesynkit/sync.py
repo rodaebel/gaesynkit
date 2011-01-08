@@ -41,7 +41,7 @@ class SyncInfo(object):
             self.__entity = data
             self.__key = entity_or_key
         else:
-            TypeError('Must provide Entity or Key')
+            raise TypeError('Must provide Entity or Key')
 
     @classmethod
     def from_params(cls, remote_key, version, content_hash, target_key=None):

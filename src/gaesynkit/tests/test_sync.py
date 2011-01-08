@@ -61,6 +61,9 @@ class test_synchronization(unittest.TestCase):
         info_key = info.put()
 
         self.assertEqual(
+            sync.SyncInfo.get(info_key).kind(), sync.SYNC_INFO_KIND)
+
+        self.assertEqual(
             sync.SyncInfo.get(info_key).content_hash(), content_hash)
 
         self.assertEqual(
@@ -73,3 +76,26 @@ class test_synchronization(unittest.TestCase):
         self.assertEqual(
             sync.SyncInfo.get_by_key_name([remote_key])[0].content_hash(),
             content_hash)
+
+    def test_exceptions(self):
+        """Testing exceptions."""
+
+        from gaesynkit import sync
+        from google.appengine.api import datastore
+        from google.appengine.api import datastore_errors
+        from google.appengine.api import datastore_types
+
+        remote_key = "ZGVmYXVsdCEhQm9vawhjYXRjaGVy"
+        version = 1
+        content_hash = "47eebabbdb1e1852d419618cea5dfca3"
+
+        entity = datastore.Entity(sync.SYNC_INFO_KIND, name=remote_key)
+        entity.update({"content_hash": content_hash, "version": version})
+        info = sync.SyncInfo(entity.key())
+
+        self.assertRaises(TypeError, sync.SyncInfo, "foo")
+
+        self.assertEqual(
+            info.get(datastore_types.Key.from_path("Something", "foo")), None)
+
+        self.assertRaises(TypeError, info.get_by_key_name, 1)
