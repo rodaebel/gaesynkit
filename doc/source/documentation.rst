@@ -150,6 +150,36 @@ available property values::
   })
 
 
+Ancestor Relationship
+---------------------
+
+Each :class:`gaesynkit.db.Key` instance holds a *path*. The path is a sequence
+of kind and id/name pairs where the key of the original entity is the last path
+element. All other path elements are the ancestors where the first one is the
+root entity.
+
+The following example shows how to create a *one-to-many* relationship by
+specifying a parent key::
+
+  var author = new gaesynkit.db.Entity("Author", "dadams");
+
+  author.update({"name": "Douglas Adams"});
+
+  var db = new gaesynkit.db.Storage;
+
+  db.put(author);
+
+  var book = new gaesynkit.db.Entity("Book", null, null, author.key());
+
+  book.update({"title": "The Hitchhiker's Guide to the Galaxy"});
+
+  db.put(book);
+
+We can easily retrieve the parent key::
+
+  book.key.parent();
+
+
 Client-Server Communication
 ---------------------------
 

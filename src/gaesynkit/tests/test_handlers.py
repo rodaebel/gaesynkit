@@ -144,3 +144,38 @@ class test_handlers(unittest.TestCase):
         self.assertEqual(
             simplejson.loads(res.body),
             {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': {u'type': u'gd:when', u'value': u'1951/07/16 00:00:00'}, u'classic': {u'type': u'bool', u'value': True}, u'pages': {u'type': u'int', u'value': 287}, u'tags': {u'type': u'string', u'value': [u'novel', u'identity']}, u'title': {u'type': u'string', u'value': u'The Catcher in the Rye'}}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})
+
+    def test_decode_remote_key(self):
+        """Decode a remote key string."""
+
+        from gaesynkit import handlers
+        from google.appengine.api import datastore_types
+
+        self.assertEqual(
+            handlers.decode_remote_key("ZGVmYXVsdCEhQQhhCUIIYg=="),
+            datastore_types.Key.from_path(u'A', u'a', _app=u'test'))
+
+    def test_SyncAncestorEntity(self):
+        """Synchronizing an ancestor relationship."""
+
+        from gaesynkit import handlers
+        from webtest import AppError, TestApp
+
+        # Initialize app
+        app = TestApp(handlers.app)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"A","ke'
+            'y":"ZGVmYXVsdCEhQQhh","version":0,"name":"a","properties":{}},"b'
+            '5c6689f064b6a0683f4d5b5c1939bee"],"id":6}')
+
+        self.assertEqual("200 OK", res.status)
+
+        res = app.post(
+            '/gaesynkit/rpc/',
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
+            'y":"ZGVmYXVsdCEhQQhhCUIIYg==","version":0,"name":"b","properties'
+            '":{}},"fb1b335564b0155f839c16a4073eefa3"],"id":7}')
+
+        self.assertEqual("200 OK", res.status)

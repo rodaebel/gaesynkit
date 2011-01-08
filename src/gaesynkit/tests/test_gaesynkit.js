@@ -372,7 +372,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(39);
+    expect(43);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -498,10 +498,22 @@ $(document).ready(function(){
     equals(storage.get(key_b).key().parent().name(), "a",
            "getting ancestor");
 
+    // Synchronize root entity
+    ok(storage.sync(entity_a), "synchronizing root entity");    
+
+    // Synchronize child entity
+    ok(storage.sync(entity_b), "synchronizing child entity");    
+
     // Clean up
     ok(storage.deleteEntityWithKey(key_a), "deleting root entity");
 
     ok(storage.deleteEntityWithKey(key_b), "deleting child entity");
+
+    // Synchronize deleted child entity
+    ok(storage.syncDeleted(key_b), "synchronizing deleted child entity");
+
+    // Synchronize deleted root entity
+    ok(storage.syncDeleted(key_a), "synchronizing deleted root entity");
 
     // Clean up local storage
     delete window.localStorage["_NextId"];

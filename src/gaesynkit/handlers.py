@@ -23,18 +23,35 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from sync import SyncInfo
+import base64
 import email
+import itertools
 import json_rpc as rpc
 import logging
 import mimetypes
 import os
 import time
 
+
 ENTITY_NOT_CHANGED = 1
+
 ENTITY_UPDATED = 2
+
 ENTITY_STORED = 3
+
 ENTITY_NOT_FOUND = 4
+
 ENTITY_DELETED = 5
+
+_DEFAULT_NAMESPACE = "default"
+
+_NAMESPACE_SEP = "!!"
+
+_KIND_ID_SEP = "\n"
+
+_KIND_NAME_SEP = "\b"
+
+_PATH_SEP = "\t"
 
 _PROPERTY_TYPES_MAP = {
     "string":       unicode,
@@ -72,6 +89,38 @@ _PROPERTY_TYPES_STRINGS = {
 }
 
 
+def decode_remote_key(key_string):
+    """Decodes the remote key string.
+
+    :param str key_string: The remote key string.
+    :returns: List of remote path elements.
+    """
+
+    decoded = base64.b64decode(key_string)
+
+    namespace, path = decoded.split(_NAMESPACE_SEP, 1)
+
+    if namespace == _DEFAULT_NAMESPACE:
+        namespace = None
+
+    def split(elem):
+        if _KIND_ID_SEP in elem:
+            return elem.split(_KIND_ID_SEP, 1)
+        elif _KIND_NAME_SEP in elem:
+            return elem.split(_KIND_NAME_SEP, 1)
+        else:
+            raise ValueError("Corrupt key")
+ 
+    path_elements = list(itertools.chain(*map(split, path.split(_PATH_SEP))))
+
+    if len(path_elements) == 2:
+        return None
+
+    kw = dict(namespace=namespace)
+
+    return datastore_types.Key.from_path(*path_elements[:-2], **kw)
+
+
 def entity_from_json_data(entity_dict):
     """Creates a new entity.
 
@@ -83,6 +132,7 @@ def entity_from_json_data(entity_dict):
     entity = datastore.Entity(
         entity_dict["kind"],
         name=entity_dict.get("name"),
+        parent=decode_remote_key(entity_dict["key"]),
         namespace=entity_dict.get("namespace")
     )
 
