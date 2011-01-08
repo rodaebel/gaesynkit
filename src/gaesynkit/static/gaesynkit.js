@@ -590,6 +590,19 @@
   // Declare constructor
   gaesynkit.db.Integer.prototype.constructor = gaesynkit.db.Integer;
 
+  // Float
+  gaesynkit.db.Float = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#float
+    this._type = "float"
+    this._value = value;
+  };
+
+  gaesynkit.db.Float.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Float.prototype.constructor = gaesynkit.db.Float;
+
   // Date
   gaesynkit.db.Datetime = function(value) {
     
@@ -644,7 +657,7 @@
       return value[0].type();
     }
     else {
-      return _VALUE_TYPES_MAP[typeof(value[0])];
+      return _evalValueType(value[0]);
     }
   };
 
@@ -822,6 +835,7 @@
     "byte_string": gaesynkit.db.ByteString,
     "bool": gaesynkit.db.Bool,
     "int": gaesynkit.db.Integer,
+    "float": gaesynkit.db.Float,
     "gd:when": gaesynkit.db.Datetime,
     "list": gaesynkit.db.List,
     "key": gaesynkit.db.Key
@@ -833,6 +847,14 @@
     "number": "int",
     "string": "string"
   };
+
+  // Evaluate value type
+  function _evalValueType(val) {
+    if (typeof(val) == "number")
+      return ((val+"").search(/\./) != -1) ? "float" : "int";
+    else
+      return typeof(val);
+  }
 
   // An Entity holds the client-side representation of a GAE Datastore
   // entity and can be dumped as a JSON.
@@ -955,7 +977,8 @@
           this._properties[key] = new gaesynkit.db.List(val);
         }
         else {
-          var type = _PROPERTY_VALUE_TYPES[_VALUE_TYPES_MAP[typeof(val)]];
+
+          var type = _PROPERTY_VALUE_TYPES[_evalValueType(val)];
 
           if (!type)
             throw Error("Unknown value type");

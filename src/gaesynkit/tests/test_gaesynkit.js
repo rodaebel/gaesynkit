@@ -164,6 +164,35 @@ $(document).ready(function(){
 
   });
 
+  test("db.Float", function()
+  {
+    expect(6);
+
+    // Create float
+    ok(float_value = new gaesynkit.db.Float(0.34), "creating float")
+
+    // Get float value
+    equals(float_value.value(), 0.34, "getting float value");
+
+    // Check JSON output
+    equals(JSON.stringify(float_value.toJSON()),
+           "{\"type\":\"float\",\"value\":0.34}",
+           "checking JSON output for float");
+
+    // Create entity with float value
+    ok(entity = new gaesynkit.db.Entity("Dummy"),
+       "creating entity with float property");
+
+    // Update entity with float property
+    ok(entity.update({"float": 0.42}), "updating entity with float property");
+
+    // Get JSON output for our entity
+    equals(JSON.stringify(entity.toJSON()),
+           "{\"kind\":\"Dummy\",\"key\":\"ZGVmYXVsdCEhRHVtbXkKMA==\",\"version\":0,\"properties\":{\"float\":{\"type\":\"float\",\"value\":0.42}}}",
+           "getting JSON output for an entity with float property");
+
+  });
+
   test("db.Datetime", function()
   {
     expect(4);

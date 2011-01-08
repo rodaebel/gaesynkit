@@ -122,9 +122,16 @@ Bool
 Integer
 +++++++
 
-.. js:class:: gaesynkit.db.Bool(value)
+.. js:class:: gaesynkit.db.Integer(value)
 
    An integer value.
+
+Float
++++++
+
+.. js:class:: gaesynkit.db.Float(value)
+
+   A float value.
 
 Datetime
 ++++++++
