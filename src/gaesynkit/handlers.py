@@ -218,7 +218,7 @@ def compare_merge_sync(entity_dict, sync_info):
 
     :param dictionary entity_dict: The remote entity dictionary.
     :param sync.SyncInfo sync_info: A synchronization info instance.
-    :returns: A new `datastore.Entity` instance.
+    :returns: A `datastore.Entity` instance.
     """
 
     # The remote entity
@@ -271,13 +271,13 @@ class SyncHandler(rpc.JsonRpcHandler):
                 # The entity contents haven't change
                 return {"status": ENTITY_NOT_CHANGED}
 
-            new_entity = compare_merge_sync(entity_dict, sync_info)
+            entity = compare_merge_sync(entity_dict, sync_info)
 
-            json_data = json_data_from_entity(new_entity)
+            json_data = json_data_from_entity(entity)
             json_data["key"] = remote_key
             json_data["version"] = sync_info.incr_version()
 
-            datastore.Put(new_entity)
+            datastore.Put(entity)
 
             sync_info.set_content_hash(content_hash)
             sync_info.put()
@@ -288,9 +288,10 @@ class SyncHandler(rpc.JsonRpcHandler):
         entity = entity_from_json_data(entity_dict)
         key = datastore.Put(entity)
 
+        # Get a new version number
+        version = entity_dict["version"] + 1
+
         # Create and put synchronization info
-        entity_dict["version"] += 1
-        version = entity_dict["version"]
         sync_info = SyncInfo.from_params(remote_key, version, content_hash, key)
         sync_info.put()
 

@@ -13,7 +13,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The Google App Engine Python Synchronization API."""
+"""Module for synchronization support.
+
+A SyncInfo is a wrapper class for entities which holds the synchronization
+status of a user's entity.
+"""
 
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
@@ -136,7 +140,8 @@ class SyncInfo(object):
 
         return self.__key
 
-    def kind(self):
+    @staticmethod
+    def kind():
         """Get the entity kind for synchronization info entities."""
 
         return SYNC_INFO_KIND
