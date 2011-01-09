@@ -4,12 +4,15 @@
 Documentation
 =============
 
+This document tries to introduce the concepts behind the gaesynkit Client
+Storage API and explains common use-cases with code examples.
+
 Overview
 --------
 
 The gaesynkit library provides an API to create entities and synchronize data
-between the HTML5 Local Storage of a web client and the Google App Engine
-Datastore.
+between the HTML5 `Web Storage <http://dev.w3.org/html5/webstorage>`_ and the
+Google App Engine Datastore.
 
 
 Storing Entities

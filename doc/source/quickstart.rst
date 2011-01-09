@@ -5,9 +5,9 @@ Quickstart
 ==========
 
 The gaesynkit framework aims at providing a Client Storage API which enables
-Google App Engine application developers to create entities in the local
-storage of a web client and synchronize them with the server-side Datastore at
-a later point of time.
+Google App Engine application developers to create entities in the client's
+`Web Storage <http://dev.w3.org/html5/webstorage>`_ and synchronize them with
+the server-side Datastore at a later point of time.
 
 It mainly consists of these components:
 
