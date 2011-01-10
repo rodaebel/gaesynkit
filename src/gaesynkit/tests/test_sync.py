@@ -51,12 +51,15 @@ class test_sync(unittest.TestCase):
         """Testing synchronization info entities."""
 
         from gaesynkit import sync
+        from google.appengine.api import users
 
         remote_key = "ZGVmYXVsdCEhQm9vawhjYXRjaGVy"
         version = 1
         content_hash = "47eebabbdb1e1852d419618cea5dfca3"
+        user = users.User("jane@example.com")
 
-        info = sync.SyncInfo.from_params(remote_key, version, content_hash)
+        info = sync.SyncInfo.from_params(
+            remote_key, version, content_hash, user=user)
 
         info_key = info.put()
 

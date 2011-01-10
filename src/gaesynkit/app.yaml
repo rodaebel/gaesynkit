@@ -21,8 +21,12 @@ handlers:
   static_files: tests/\1
   upload: tests/(.*\.js)
 
+- url: /gaesynkit/gaesynkit.js
+  script: handlers.py
+
 - url: /gaesynkit/.*
   script: handlers.py
+  login: required
 
 - url: /
   script: testing.py

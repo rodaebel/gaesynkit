@@ -15,11 +15,12 @@
 # limitations under the License.
 """Application for running the Javascript Unit Tests."""
 
+from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
 
-TEST_HTML = """
+TEST_HTML = r"""
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -31,6 +32,7 @@ TEST_HTML = """
     <script type="text/javascript" src="gaesynkit/gaesynkit.js"></script>
     <script type="text/javascript" src="tests/test_gaesynkit.js"></script>
   <body>
+    <div style="text-align: right;">%s</div>
     <h1 id="qunit-header">Unit Tests</h1>  
     <h2 id="qunit-banner"></h2>  
     <div id="qunit-testrunner-toolbar"></div>
@@ -41,11 +43,27 @@ TEST_HTML = """
 """
 
 
+def get_login_or_logout(user):
+    """Returns either login or logout button."""
+
+    form = ('<form action="%(action)s" method="GET">'
+            '<input type="submit" value="%(label)s">'
+            '</form>')
+
+    if user:
+        form_vars = dict(action=users.create_logout_url('/'), label='Logout')
+    else:
+        form_vars = dict(action=users.create_login_url('/'), label='Login')
+
+    return form % form_vars
+
+
 class MainHandler(webapp.RequestHandler):
     """Request handler for running our JS unit tests."""
 
     def get(self):
-        self.response.out.write(TEST_HTML)
+        user = users.get_current_user()
+        self.response.out.write(TEST_HTML % get_login_or_logout(user))
 
 
 app = webapp.WSGIApplication([('.*', MainHandler),], debug=True)

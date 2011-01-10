@@ -89,6 +89,10 @@ _PROPERTY_TYPES_STRINGS = {
 }
 
 
+class NotAllowedError(Exception):
+    """Error to be raised when synchronization is not allowed."""
+
+
 def parent_from_remote_key(key_string):
     """Extracts parent key from remote key string.
 
@@ -260,13 +264,18 @@ class SyncHandler(rpc.JsonRpcHandler):
 
         remote_key = entity_dict["key"]
         version = entity_dict["version"]
+        user = users.get_current_user()
 
         sync_info = SyncInfo.get_by_key_name(remote_key)
 
         if sync_info:
+            # Check whether user is allowed to synchronize the requested
+            # entity
+            if user != sync_info.user():
+                raise NotAllowedError("Synchronization not allowed")
+
             # The entity has been synced before; check whether its contents
             # have been changed
-
             if sync_info.content_hash() == content_hash:
                 # The entity contents haven't change
                 return {"status": ENTITY_NOT_CHANGED}
@@ -292,7 +301,8 @@ class SyncHandler(rpc.JsonRpcHandler):
         version = entity_dict["version"] + 1
 
         # Create and put synchronization info
-        sync_info = SyncInfo.from_params(remote_key, version, content_hash, key)
+        sync_info = SyncInfo.from_params(
+            remote_key, version, content_hash, key, user=user)
         sync_info.put()
 
         return {"status": ENTITY_STORED, "key":remote_key, "version": version}

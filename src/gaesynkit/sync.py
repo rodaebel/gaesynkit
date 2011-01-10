@@ -48,13 +48,15 @@ class SyncInfo(object):
             raise TypeError('Must provide Entity or Key')
 
     @classmethod
-    def from_params(cls, remote_key, version, content_hash, target_key=None):
+    def from_params(cls, remote_key, version, content_hash, target_key=None,
+            user=None):
         """Retrieve or create a SyncInfo entity from the given parameters.
 
         :param string remote_key: Remote entity key.
         :param int version: Remote entity version.
         :param string content_hash: MD5 hex digest.
         :param datastore_types.Key target_key: Key of the sync target entity.
+        :param datastore_types.User user: A user.
         """
 
         entity = datastore.Entity(SYNC_INFO_KIND, name=remote_key)
@@ -63,7 +65,15 @@ class SyncInfo(object):
         if target_key:
             entity.update({"target_key": target_key})
 
+        if user:
+            entity.update({"user": user})
+
         return cls(entity)
+
+    def user(self):
+        """Get the user, if provided."""
+
+        return self.__entity.get("user")
 
     def version(self):
         """Get the entity version."""
