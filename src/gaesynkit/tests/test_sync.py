@@ -13,14 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for synchronization."""
+"""Unit tests for the sync module."""
 
 import os
 import unittest
 
 
-class test_synchronization(unittest.TestCase):
-    """Testing synchronization."""
+class test_sync(unittest.TestCase):
+    """Testing the synchronization info wrapper class."""
 
     def setUp(self):
         """Set up test environment."""
@@ -63,6 +63,8 @@ class test_synchronization(unittest.TestCase):
         self.assertEqual(
             sync.SyncInfo.get(info_key).kind(), sync.SYNC_INFO_KIND)
 
+        self.assertRaises(TypeError, sync.SyncInfo.get, "foo")
+
         self.assertEqual(
             sync.SyncInfo.get(info_key).content_hash(), content_hash)
 
@@ -97,5 +99,9 @@ class test_synchronization(unittest.TestCase):
 
         self.assertEqual(
             info.get(datastore_types.Key.from_path("Something", "foo")), None)
+
+        self.assertEqual(
+            info.get([datastore_types.Key.from_path("Something", "foo")]),
+            [None])
 
         self.assertRaises(TypeError, info.get_by_key_name, 1)

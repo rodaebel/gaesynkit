@@ -106,34 +106,43 @@ class SyncInfo(object):
         :param key|list keys: One or a list of `datastore_types.Key` instances.
         """
 
-        try:
-            if isinstance(keys, list):
-                return [cls(entity) for entity in datastore.Get(keys)]
-            elif isinstance(keys, datastore_types.Key):
-                return cls(datastore.Get(keys))
-        except datastore_errors.EntityNotFoundError:
-            return None
+        if isinstance(keys, datastore_types.Key):
+            keys_ = [keys]
+        elif isinstance(keys, list):
+            keys_ = keys
+        else:
+            raise TypeError("SyncInfo.get(keys) takes a key or list of keys")
+
+        results = []
+
+        for key in keys_:
+            try:
+                results.append(cls(datastore.Get(key)))
+            except datastore_errors.EntityNotFoundError:
+                results.append(None)
+
+        if isinstance(keys, datastore_types.Key):
+            return results[0]
+        elif isinstance(keys, list):
+            return results
 
     @classmethod
-    def get_by_key_name(cls, key_names):
+    def get_by_key_name(cls, key_names, parent=None):
         """Get one or more synchronization info entities.
 
         :param string|list key_names: A key name, or a list of key names.
+        :param Entity|Key parent: The parent.
         """
 
-        try:
-            if isinstance(key_names, list):
-                keys = [datastore_types.Key.from_path(SYNC_INFO_KIND, name)
-                        for name in key_names]
-                return [cls(entity) for entity in datastore.Get(keys)]
-            elif isinstance(key_names, basestring):
-                keys = datastore_types.Key.from_path(SYNC_INFO_KIND, key_names)
-                return cls(datastore.Get(keys))
-            else:
-                raise TypeError("SyncInfo.get_by_key_name(key_name) takes a "
-                                "key name or a list of key names")
-        except datastore_errors.EntityNotFoundError:
-            return None
+        if isinstance(key_names, basestring):
+            return cls.get(datastore_types.Key.from_path(
+                SYNC_INFO_KIND, key_names, parent=parent))
+        elif isinstance(key_names, list):
+            return cls.get([datastore_types.Key.from_path(
+                SYNC_INFO_KIND, name, parent=parent) for name in key_names])
+        else:
+            raise TypeError("SyncInfo.get_by_key_name(key_name, parent) takes "
+                            "a key name or a list of key names")
 
     def key(self):
         """Get the key for this synchronization info entity."""
