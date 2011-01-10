@@ -44,18 +44,16 @@ TEST_HTML = r"""
 
 
 def get_login_or_logout(user):
-    """Returns either login or logout button."""
+    """Returns either login or logout link."""
 
-    form = ('<form action="%(action)s" method="GET">'
-            '<input type="submit" value="%(label)s">'
-            '</form>')
+    link = '<a href="%(url)s">%(label)s</a>'
 
     if user:
-        form_vars = dict(action=users.create_logout_url('/'), label='Logout')
+        link_vars = dict(url=users.create_logout_url('/'), label='Logout')
     else:
-        form_vars = dict(action=users.create_login_url('/'), label='Login')
+        link_vars = dict(url=users.create_login_url('/'), label='Login')
 
-    return form % form_vars
+    return link % link_vars
 
 
 class MainHandler(webapp.RequestHandler):
