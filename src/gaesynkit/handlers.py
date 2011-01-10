@@ -89,11 +89,11 @@ _PROPERTY_TYPES_STRINGS = {
 }
 
 
-def decode_remote_key(key_string):
-    """Decodes the remote key string.
+def parent_from_remote_key(key_string):
+    """Extracts parent key from remote key string.
 
     :param str key_string: The remote key string.
-    :returns: List of remote path elements.
+    :returns: A `datastore_types.Key` instance.
     """
 
     decoded = base64.b64decode(key_string)
@@ -140,7 +140,7 @@ def entity_from_json_data(entity_dict):
     entity = datastore.Entity(
         entity_dict["kind"],
         name=entity_dict.get("name"),
-        parent=decode_remote_key(entity_dict["key"]),
+        parent=parent_from_remote_key(entity_dict["key"]),
         namespace=entity_dict.get("namespace")
     )
 

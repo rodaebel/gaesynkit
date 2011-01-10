@@ -181,14 +181,14 @@ class test_handlers(unittest.TestCase):
 
         self.assertEqual("200 OK", res.status)
 
-    def test_decode_remote_key(self):
-        """Decode a remote key string."""
+    def test_parent_from_remote_key(self):
+        """Extract parent from a remote key string."""
 
         from gaesynkit import handlers
         from google.appengine.api import datastore_types
 
         self.assertEqual(
-            handlers.decode_remote_key("ZGVmYXVsdCEhQQhhCUIIYg=="),
+            handlers.parent_from_remote_key("ZGVmYXVsdCEhQQhhCUIIYg=="),
             datastore_types.Key.from_path(u'A', u'a', _app=u'test'))
 
     def test_SyncAncestorEntity(self):
