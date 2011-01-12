@@ -246,6 +246,8 @@ def compare_merge_sync(entity_dict, sync_info):
     for prop in remote_entity.keys():
         entity[prop] = remote_entity[prop]
 
+    sync_info.incr_version()
+
     return entity
 
 
@@ -287,7 +289,7 @@ class SyncHandler(rpc.JsonRpcHandler):
 
             json_data = json_data_from_entity(entity)
             json_data["key"] = remote_key
-            json_data["version"] = sync_info.incr_version()
+            json_data["version"] = sync_info.version()
 
             datastore.Put(entity)
 
