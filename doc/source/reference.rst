@@ -199,6 +199,13 @@ Key
 
    :returns: Key of the parent entity.
 
+User
+++++
+
+.. js:class:: gaesynkit.db.User(value)
+
+   User object.
+
 
 Entities
 --------

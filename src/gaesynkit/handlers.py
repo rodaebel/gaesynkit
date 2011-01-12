@@ -61,6 +61,7 @@ _PROPERTY_TYPES_MAP = {
     "key":          datastore_types.Key,
     "byte_string":  datastore_types.ByteString,
     "gd:when":      lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
+    "user":         users.User,
 }
 
 _PROPERTY_TYPES_STRINGS = {
@@ -178,6 +179,8 @@ def encode_properties(entity):
         if isinstance(obj, datetime):
             return obj.isoformat().replace('T', ' ').replace('-', '/')
         elif isinstance(obj, datastore_types.Key):
+            return str(obj)
+        elif isinstance(obj, users.User):
             return str(obj)
 
         return obj

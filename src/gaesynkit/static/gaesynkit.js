@@ -827,6 +827,19 @@
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(parent_str));
   };
 
+  // User
+  gaesynkit.db.User = function(value) {
+
+    // http://code.google.com/appengine/docs/python/users/userclass.html
+    this._type = "user"
+    this._value = value;
+  };
+
+  gaesynkit.db.User.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.User.prototype.constructor = gaesynkit.db.User;
+
   // TODO More types
 
   // Property value types
@@ -838,7 +851,8 @@
     "float": gaesynkit.db.Float,
     "gd:when": gaesynkit.db.Datetime,
     "list": gaesynkit.db.List,
-    "key": gaesynkit.db.Key
+    "key": gaesynkit.db.Key,
+    "user": gaesynkit.db.User
   };
 
   // Value types map

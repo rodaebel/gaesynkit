@@ -311,6 +311,23 @@ $(document).ready(function(){
 
   });
 
+  test("db.User", function()
+  {
+    expect(3);
+
+    // Create user
+    ok(user = new gaesynkit.db.User("john@example.com"), "creating user")
+
+    // Get user value
+    equals(user.value(), "john@example.com", "getting user value");
+
+    // Check JSON output
+    equals(JSON.stringify(user.toJSON()),
+           "{\"type\":\"user\",\"value\":\"john@example.com\"}",
+           "checking JSON output for user");
+
+  });
+
   test("db.Entity", function()
   {
     expect(24);
