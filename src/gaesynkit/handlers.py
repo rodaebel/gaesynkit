@@ -30,6 +30,7 @@ import json_rpc as rpc
 import logging
 import mimetypes
 import os
+import re
 import time
 
 
@@ -43,9 +44,11 @@ ENTITY_NOT_FOUND = 4
 
 ENTITY_DELETED = 5
 
-_DEFAULT_NAMESPACE = "default"
+_APP_ID_SEP = "@"
 
 _NAMESPACE_SEP = "!!"
+
+_DEFAULT_NAMESPACE = "default"
 
 _KIND_ID_SEP = "\n"
 
@@ -89,6 +92,9 @@ _PROPERTY_TYPES_STRINGS = {
     datastore_types.BlobKey:        'blobkey',
 }
 
+DECODED_KEY_PATTERN = re.compile(r'([a-z\-0-9]+?)%s([a-zA-Z0-9\-\_]+?)%s(.*)' %
+                                 (_APP_ID_SEP, _NAMESPACE_SEP))
+
 
 class NotAllowedError(Exception):
     """Error to be raised when synchronization is not allowed."""
@@ -103,7 +109,16 @@ def parent_from_remote_key(key_string):
 
     decoded = base64.b64decode(key_string)
 
-    namespace, path = decoded.split(_NAMESPACE_SEP, 1)
+    m = re.match(DECODED_KEY_PATTERN, decoded)
+
+    if not m:
+        raise Exception("Corrupted key")
+
+    app_id, namespace, path = m.groups()
+
+    if app_id != os.environ['APPLICATION_ID']:
+        raise NotAllowedError(
+            "Not allowed to access data of another application")
 
     if namespace == _DEFAULT_NAMESPACE:
         namespace = None
@@ -358,7 +373,9 @@ class StaticHandler(webapp.RequestHandler):
         self.response.headers['Expires'] = expiration
 
         try:
-            self.response.out.write(fp.read())
+            data = fp.read().replace("$APPLICATION_ID",
+                                     os.environ['APPLICATION_ID'])
+            self.response.out.write(data)
         finally:
             fp.close()
 

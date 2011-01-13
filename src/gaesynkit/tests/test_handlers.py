@@ -71,7 +71,7 @@ class test_handlers(unittest.TestCase):
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 3}
+            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 2}
         )
 
     def test_main(self):
@@ -117,67 +117,25 @@ class test_handlers(unittest.TestCase):
         # Make a request
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
-            '","properties":{"title":{"type":"string","value":"The Catcher in'
-            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
-            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
-            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
-            ',"47eebabbdb1e1852d419618cea5dfca3"],"id":3}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book","key":"dGVzdEBkZWZhdWx0ISFCb29rCjI=","version":0,"id":2,"properties":{"title":{"type":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":288},"tags":{"type":"string","value":["novel","identity"]}}},"6eb9a4d405f3ee6c67e965b7693108d2"],"id":3}')
  
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
             simplejson.loads(res.body),
-            {u'jsonrpc': u'2.0', u'result': {u'status': 3, u'version': 1, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy'}, u'id': 3})
+            {u'jsonrpc': u'2.0', u'result': {u'status': 3, u'version': 1, u'key': u'dGVzdEBkZWZhdWx0ISFCb29rCjI='}, u'id': 3})
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":1,"name":"catcher'
-            '","properties":{"title":{"type":"string","value":"The Catcher in'
-            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
-            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
-            'ue":287},"tags":{"type":"string","value":["novel","identity"]}}}'
-            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book","key":"dGVzdEBkZWZhdWx0ISFCb29rCjI=","version":1,"id":2,"properties":{"title":{"type":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":287},"tags":{"type":"string","value":["novel","identity"]}}},"7ec49827a52b56fdd24b07410c9bf0d6"],"id":4}')
 
         self.assertEqual("200 OK", res.status)
         self.assertEqual(
             simplejson.loads(res.body),
-            {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': {u'type': u'gd:when', u'value': u'1951/07/16 00:00:00'}, u'classic': {u'type': u'bool', u'value': True}, u'pages': {u'type': u'int', u'value': 287}, u'tags': {u'type': u'string', u'value': [u'novel', u'identity']}, u'title': {u'type': u'string', u'value': u'The Catcher in the Rye'}}, u'key': u'ZGVmYXVsdCEhQm9vawhjYXRjaGVy', u'name': u'catcher'}}, u'id': 4})
+            {u'jsonrpc': u'2.0', u'result': {u'status': 2, u'entity': {u'kind': u'Book', u'version': 2, u'properties': {u'date': {u'type': u'gd:when', u'value': u'1951/07/16 00:00:00'}, u'classic': {u'type': u'bool', u'value': True}, u'pages': {u'type': u'int', u'value': 287}, u'tags': {u'type': u'string', u'value': [u'novel', u'identity']}, u'title': {u'type': u'string', u'value': u'The Catcher in the Rye'}}, u'key': u'dGVzdEBkZWZhdWx0ISFCb29rCjI=', u'id': 1}}, u'id': 4})
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
-            '","properties":{"title":{"type":"string","value":"The Catcher in'
-            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
-            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
-            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
-            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
-
-        self.assertEqual("200 OK", res.status)
-
-        res = app.post(
-            '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":0,"name":"catcher'
-            '","properties":{"title":{"type":"string","value":"The Catcher in'
-            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
-            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
-            'ue":288},"tags":{"type":"string","value":["novel","identity"]}}}'
-            ',"568cd6b9ec85fb7ca24e3f7p98f5c456"],"id":4}')
-
-        self.assertEqual("200 OK", res.status)
-
-        res = app.post(
-            '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book",'
-            '"key":"ZGVmYXVsdCEhQm9vawhjYXRjaGVy","version":1,"name":"catcher'
-            '","properties":{"title":{"type":"string","value":"The Catcher in'
-            ' the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"'
-            'classic":{"type":"bool","value":true},"pages":{"type":"int","val'
-            'ue":287},"tags":{"type":"string","value":["novel","identity"]}}}'
-            ',"568cd6b9ec85fb7ca24e3f7f98f5c456"],"id":4}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"Book","key":"dGVzdEBkZWZhdWx0ISFCb29rCjI=","version":0,"id":2,"properties":{"title":{"type":"string","value":"The Catcher in the Rye"},"date":{"type":"gd:when","value":"1951/7/16 0:0:0"},"classic":{"type":"bool","value":true},"pages":{"type":"int","value":287},"tags":{"type":"string","value":["novel","identity"]}}},"7ec49827a52b56fdd24b07410c9bf0d6"],"id":4}')
 
         self.assertEqual("200 OK", res.status)
 
@@ -188,7 +146,7 @@ class test_handlers(unittest.TestCase):
         from google.appengine.api import datastore_types
 
         self.assertEqual(
-            handlers.parent_from_remote_key("ZGVmYXVsdCEhQQhhCUIIYg=="),
+            handlers.parent_from_remote_key("dGVzdEBkZWZhdWx0ISFBCGEJQghi"),
             datastore_types.Key.from_path(u'A', u'a', _app=u'test'))
 
     def test_SyncAncestorEntity(self):
@@ -210,9 +168,7 @@ class test_handlers(unittest.TestCase):
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"A","ke'
-            'y":"ZGVmYXVsdCEhQQhh","version":0,"name":"a","properties":{}},"b'
-            '5c6689f064b6a0683f4d5b5c1939bee"],"id":6}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"A","key":"dGVzdEBkZWZhdWx0ISFBCGE=","version":0,"name":"a","properties":{}},"66b18b82cb6a183d4d91316027426a39"],"id":5}')
 
         self.assertEqual("200 OK", res.status)
 
@@ -220,9 +176,7 @@ class test_handlers(unittest.TestCase):
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
-            'y":"ZGVmYXVsdCEhQQhhCUIIYg==","version":0,"name":"b","properties'
-            '":{}},"fb1b335564b0155f839c16a4073eefa3"],"id":7}')
+            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","key":"dGVzdEBkZWZhdWx0ISFBCGEJQghi","version":0,"name":"b","properties":{}},"cb9594c64733d11e131643cfd8689d82"],"id":6}')
 
         self.assertEqual("200 OK", res.status)
 
@@ -232,25 +186,4 @@ class test_handlers(unittest.TestCase):
 
         res = app.post(
             '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"A","ke'
-            'y":"ZGVmYXVsdCEhQQoz","version":0,"id":3,"properties":{}},"cd0f1'
-            'dd6b4ea5de20d95ffac4db8f29d"],"id":8}')
-
-        self.assertEqual("200 OK", res.status)
-
-        res = app.post(
-            '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncEntity","params":[{"kind":"B","ke'
-            'y":"ZGVmYXVsdCEhQQozCUIKNA==","version":0,"id":4,"properties":{}'
-            '},"b038fa4e11677b02f58aa83a1da103f0"],"id":9}')
-
-        self.assertEqual("200 OK", res.status)
-
-        self.assertEqual(
-            set([b.parent().key().id_or_name() for b in B.all().fetch(2)]),
-            set([a.key().id_or_name() for a in A.all().fetch(2)]))
-
-        res = app.post(
-            '/gaesynkit/rpc/',
-            '{"jsonrpc":"2.0","method":"syncDeletedEntity","params":["ZGVmYXV'
-            'sdCEhQQozCUIKNA=="],"id":9}')
+            '{"jsonrpc":"2.0","method":"syncDeletedEntity","params":["dGVzdEBkZWZhdWx0ISFBCGEJQghi"],"id":7}')

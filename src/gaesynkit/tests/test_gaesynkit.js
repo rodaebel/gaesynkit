@@ -22,10 +22,14 @@ $(document).ready(function(){
 
   test("api", function()
   {
-    expect(1);
+    expect(2);
 
     // Check gaesynkit version
     equals(gaesynkit.api.VERSION, "1.0.0a1", "getting gaesynkit version");
+
+    //Configure application id
+    equals(gaesynkit.api.APPLICATION_ID, "gaesynkit",
+           "checking application id");
 
   });
 
@@ -188,7 +192,7 @@ $(document).ready(function(){
 
     // Get JSON output for our entity
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Dummy\",\"key\":\"ZGVmYXVsdCEhRHVtbXkKMA==\",\"version\":0,\"properties\":{\"float\":{\"type\":\"float\",\"value\":0.42}}}",
+           "{\"kind\":\"Dummy\",\"key\":\"Z2Flc3lua2l0QGRlZmF1bHQhIUR1bW15CjA=\",\"version\":0,\"properties\":{\"float\":{\"type\":\"float\",\"value\":0.42}}}",
            "getting JSON output for an entity with float property");
 
   });
@@ -277,7 +281,8 @@ $(document).ready(function(){
        "creating child key");
 
     equals(gaesynkit.util.base64.decode(song.value()),
-           "default!!Person\n42\tSong\bimagine", "checking key value");
+           "gaesynkit@default!!Person\n42\tSong\bimagine",
+           "checking key value");
 
     // Check if the key has either a numeric id or a name
     equals(john.has_id_or_name(), true,
@@ -399,7 +404,7 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCGpvaG4=\",\"version\":0,\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
+           "{\"kind\":\"Person\",\"key\":\"Z2Flc3lua2l0QGRlZmF1bHQhIVBlcnNvbghqb2hu\",\"version\":0,\"name\":\"john\",\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Dowe\"},\"birthdate\":{\"type\":\"gd:when\",\"value\":\"1982/10/04 13:00:00\"}}}",
            "encoding entity to JSON");
 
     // Create a new Person entity
@@ -411,7 +416,7 @@ $(document).ready(function(){
 
     // Dump JSON
     equals(JSON.stringify(entity.toJSON()),
-           "{\"kind\":\"Person\",\"key\":\"ZGVmYXVsdCEhUGVyc29uCjA=\",\"version\":0,\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Appleseed\"}}}",
+           "{\"kind\":\"Person\",\"key\":\"Z2Flc3lua2l0QGRlZmF1bHQhIVBlcnNvbgow\",\"version\":0,\"properties\":{\"name\":{\"type\":\"string\",\"value\":\"John Appleseed\"}}}",
            "encoding entity to JSON");
 
   });

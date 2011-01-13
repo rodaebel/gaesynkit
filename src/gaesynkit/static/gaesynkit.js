@@ -1,5 +1,5 @@
 /*
- * gaesynkit.js - Local Storage/GAE Datastore Synchronisation Javascript API
+ * gaesynkit.js - Client Storage/GAE Datastore Synchronisation Javascript API
  *
  * Copyright 2011 Tobias Rodaebel
  *
@@ -24,17 +24,20 @@
 
   // Private constants
 
-  // This is the default namespace for entities
-  var _DEFAULT_NAMESPACE = "default";
-
   // String to separate entity kind from numerical id
   var _KIND_ID_SEP = "\n";
 
   // String to separate entity kind from key name
   var _KIND_NAME_SEP = "\b";
 
+  // Application id separator
+  var _APP_ID_SEP = "@";
+
   // The namespace separator
   var _NAMESPACE_SEP = "!!";
+
+  // This is the default namespace for entities
+  var _DEFAULT_NAMESPACE = "default";
 
   // String to separate path elements
   var _PATH_SEP = "\t";
@@ -90,6 +93,9 @@
 
   // The API version string
   gaesynkit.api.VERSION = '1.0.0a1';
+
+  // The application id
+  gaesynkit.api.APPLICATION_ID = "$APPLICATION_ID";
 
   // The gaesynkit.rpc namespace defines RPC objects to communicate with
   // the backend
@@ -721,6 +727,8 @@
 
     var path, p;
 
+    var _app_id = gaesynkit.api.APPLICATION_ID;
+
     var _namespace = namespace || _DEFAULT_NAMESPACE;
 
     var _id_or_name = id_or_name || 0;
@@ -743,9 +751,9 @@
     }
 
     path = ((p) ? gaesynkit.util.base64.decode(p) + _PATH_SEP + path
-                : _namespace + _NAMESPACE_SEP + path);
+                : _app_id + _APP_ID_SEP + _namespace + _NAMESPACE_SEP + path);
 
-    if (_namespace != path.split(_NAMESPACE_SEP)[0])
+    if (_namespace != path.split(_NAMESPACE_SEP)[0].split(_APP_ID_SEP)[1])
       throw new Error("Parent uses different namespace");
 
     return new gaesynkit.db.Key(gaesynkit.util.base64.encode(path));
@@ -764,7 +772,7 @@
     var parts = decoded_key.split(_NAMESPACE_SEP);
     var path_elems = parts[1].split(_PATH_SEP);
 
-    key.namespace = parts[0];
+    key.namespace = parts[0].split(_APP_ID_SEP)[1];
     key.elements = new Array;
 
     function pushPathElem(elems, str) {
