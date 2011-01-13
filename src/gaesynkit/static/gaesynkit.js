@@ -705,9 +705,9 @@
   // the current entity itself.
   //
   // Example:
-  //   some_namespace!!RootEntityKind\n50001\tMyEntityKind\bmy_key_name
-  //         |                |          |          |           |
-  //     Namespace          Parent    Num. ID     Entity     Key name
+  //   app_id@namespace!!RootEntityKind\n50001\tMyEntityKind\bmy_key_name
+  //      |       |             |          |          |           |
+  //    AppId Namespace       Parent    Num.ID      Entity     Key name
   //
   // The first component of a key is the entity kind. The next component is a
   // numerical ID or key name. Note that entities can have a numerical ID or
