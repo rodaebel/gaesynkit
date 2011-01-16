@@ -1158,8 +1158,8 @@
     var entity, content_hash, id, request;
 
     // Retrieve entity from local storage
-    entity = ((key_or_entity instanceof gaesynkit.db.Key) ? this.get(key)
-                                                          : key_or_entity);
+    entity = ((key_or_entity instanceof gaesynkit.db.Key)
+              ? this.get(key_or_entity) : key_or_entity);
 
     // Calculate content hash
     function getContentHash(entity) {
