@@ -19,6 +19,7 @@ test: bin/python
 	bin/python setup.py test --gae-sdk=$(GAE_SDK)
 
 testjs:
+	$(shell ln -s ../../doc/build/html src/gaesynkit/docs)
 	$(shell $(PYTHON) $(GAE_SDK)/dev_appserver.py -c --debug src/gaesynkit)
 
 coverage: bin/coverage
@@ -32,10 +33,12 @@ dist: bin/python
 	bin/python setup.py sdist
 
 deploy:
+	$(shell ln -s ../../doc/build/html src/gaesynkit/docs)
 	$(PYTHON) $(GAE_SDK)/appcfg.py update src/gaesynkit
 
 distclean:
 	@(cd doc; $(MAKE) clean)
+	rm -f src/gaesynkit/docs
 	rm -rf .coverage .installed.cfg bin/ develop-eggs/ dist/ eggs/ htmlcov/ parts/
 	for f in `find . -name "*.pyc"`; do (rm -f $$f); done
 	for f in `find . -name "*.egg-info"`; do (rm -rf $$f); done

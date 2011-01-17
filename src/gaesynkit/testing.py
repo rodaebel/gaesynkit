@@ -31,8 +31,29 @@ TEST_HTML = r"""
     <script type="text/javascript" src="qunit/qunit.js"></script>
     <script type="text/javascript" src="gaesynkit/gaesynkit.js"></script>
     <script type="text/javascript" src="tests/test_gaesynkit.js"></script>
+    <style type="text/css">
+      a {
+        font-family: 'Helvetica Neue Light', Helvetica, sans-serif;
+        font-size: 0.8em;
+        border: none;
+        color: #009;
+        text-decoration: none;
+      }
+
+      a:hover {
+        border: none;
+        color: #009;
+        text-decoration: none;
+      }
+
+      a:visited {
+        border: none;
+        color: #009;
+        text-decoration: none;
+      }
+    </style>
   <body>
-    <div style="text-align: right;">%s</div>
+    <div style="text-align: right;"><a href="doc/index.html">Documentation</a> | %s</div>
     <h1 id="qunit-header">Unit Tests</h1>  
     <h2 id="qunit-banner"></h2>  
     <div id="qunit-testrunner-toolbar"></div>

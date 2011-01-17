@@ -12,6 +12,10 @@ handlers:
   static_files: qunit/favicon.ico
   upload: qunit/favicon.ico
 
+- url: /docs/(.*)
+  static_files: docs/\1
+  upload: docs/(.*)
+
 - url: /qunit/(.*\.(css|js))
   static_files: qunit/\1
   upload: qunit/(.*\.(css|js))
