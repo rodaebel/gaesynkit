@@ -552,8 +552,8 @@ $(document).ready(function(){
     // Synchronize root entity
     ok(storage.sync(entity_a), "synchronizing root entity");    
 
-    // Synchronize child entity
-    ok(storage.sync(entity_b), "synchronizing child entity");    
+    // Synchronize child entity by key
+    ok(storage.sync(key_b), "synchronizing child entity by key");    
 
     // Clean up
     ok(storage.deleteEntityWithKey(key_a), "deleting root entity");
