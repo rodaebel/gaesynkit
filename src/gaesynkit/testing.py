@@ -53,7 +53,7 @@ TEST_HTML = r"""
       }
     </style>
   <body>
-    <div style="text-align: right;"><a href="doc/index.html">Documentation</a> | %s</div>
+    <div style="text-align: right;"><a href="docs/index.html">Documentation</a> | %s</div>
     <h1 id="qunit-header">Unit Tests</h1>  
     <h2 id="qunit-banner"></h2>  
     <div id="qunit-testrunner-toolbar"></div>
