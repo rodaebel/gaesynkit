@@ -1221,6 +1221,14 @@
 
     gaesynkit.rpc.makeRpc(request, callback, async);
 
+    if (!async) {
+      // Retrieve entity from local storage again
+      entity = ((key_or_entity instanceof gaesynkit.db.Key)
+                ? this.get(key_or_entity) : key_or_entity);
+
+      return entity;
+    }
+
     return true;
   };
 

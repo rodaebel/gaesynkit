@@ -423,7 +423,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(43);
+    expect(44);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -553,7 +553,10 @@ $(document).ready(function(){
     ok(storage.sync(entity_a), "synchronizing root entity");    
 
     // Synchronize child entity by key
-    ok(storage.sync(key_b), "synchronizing child entity by key");    
+    ok(entity = storage.sync(key_b), "synchronizing child entity by key");    
+
+    // Check new version
+    equals(entity.version(), 1, "checking new version");
 
     // Clean up
     ok(storage.deleteEntityWithKey(key_a), "deleting root entity");
