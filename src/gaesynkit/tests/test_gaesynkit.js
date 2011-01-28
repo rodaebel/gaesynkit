@@ -138,7 +138,7 @@ $(document).ready(function(){
 
   test("db.Bool", function()
   {
-    expect(3);
+    expect(5);
 
     // Create boolean
     ok(bool = new gaesynkit.db.Bool(true), "creating boolean")
@@ -149,6 +149,12 @@ $(document).ready(function(){
     // Check JSON output
     equals(JSON.stringify(bool.toJSON()), "{\"type\":\"bool\",\"value\":true}",
            "checking JSON output for boolean");
+
+    // Create plain entity
+    ok(entity = new gaesynkit.db.Entity("Foo"), "creating plain entity");
+
+    // Update entity with boolean value
+    ok(entity.update({"value": true}), "updating entity with boolean value");
 
   });
 

@@ -863,19 +863,17 @@
     "user": gaesynkit.db.User
   };
 
-  // Value types map
-  var _VALUE_TYPES_MAP = {
-    "boolean": "bool",
-    "number": "int",
-    "string": "string"
-  };
-
   // Evaluate value type
   function _evalValueType(val) {
-    if (typeof(val) == "number")
+
+    var t = typeof(val);
+
+    if (t == "number")
       return ((val+"").search(/\./) != -1) ? "float" : "int";
-    else
-      return typeof(val);
+    else if (t == "boolean")
+      return "bool";
+
+    return t;
   }
 
   // An Entity holds the client-side representation of a GAE Datastore
