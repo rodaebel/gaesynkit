@@ -53,7 +53,9 @@ TEST_HTML = r"""
       }
     </style>
   <body>
-    <div style="text-align: right;"><a href="docs/index.html">Documentation</a> | %s</div>
+    <div style="text-align: right;">
+      <a href="docs/index.html">Documentation</a> | %(login_or_logout)s
+    </div>
     <h1 id="qunit-header">Unit Tests</h1>  
     <h2 id="qunit-banner"></h2>  
     <div id="qunit-testrunner-toolbar"></div>
@@ -70,11 +72,9 @@ def get_login_or_logout(user):
     link = '<a href="%(url)s">%(label)s</a>'
 
     if user:
-        link_vars = dict(url=users.create_logout_url('/'), label='Logout')
+        return link % dict(url=users.create_logout_url('/'), label='Logout')
     else:
-        link_vars = dict(url=users.create_login_url('/'), label='Login')
-
-    return link % link_vars
+        return link % dict(url=users.create_login_url('/'), label='Login')
 
 
 class MainHandler(webapp.RequestHandler):
@@ -82,7 +82,8 @@ class MainHandler(webapp.RequestHandler):
 
     def get(self):
         user = users.get_current_user()
-        self.response.out.write(TEST_HTML % get_login_or_logout(user))
+        login_or_logout = get_login_or_logout(user)
+        self.response.out.write(TEST_HTML % locals())
 
 
 app = webapp.WSGIApplication([('.*', MainHandler),], debug=True)
