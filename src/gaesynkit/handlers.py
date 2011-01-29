@@ -298,7 +298,12 @@ class SyncHandler(rpc.JsonRpcHandler):
             # have been changed
             if sync_info.content_hash() == content_hash:
                 # The entity contents haven't change
-                return {"status": ENTITY_NOT_CHANGED}
+                result = {
+                  "status": ENTITY_NOT_CHANGED,
+                  "key": remote_key,
+                  "version": sync_info.version()
+                }
+                return result
 
             entity = compare_merge_sync(entity_dict, sync_info)
 
@@ -325,7 +330,7 @@ class SyncHandler(rpc.JsonRpcHandler):
             remote_key, version, content_hash, key, user=user)
         sync_info.put()
 
-        return {"status": ENTITY_STORED, "key":remote_key, "version": version}
+        return {"status": ENTITY_STORED, "key": remote_key, "version": version}
 
     @rpc.ServiceMethod
     def syncDeletedEntity(self, key):

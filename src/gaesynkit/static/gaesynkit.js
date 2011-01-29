@@ -1191,7 +1191,14 @@
 
       switch (response.result["status"]) {
 
-        case _ENTITY_NOT_CHANGED: break;
+        case _ENTITY_NOT_CHANGED: {
+
+          entity = storage.get(response.result["key"]);
+          entity.set_version(response.result["version"]);
+          storage.put(entity);  
+
+          break;
+        };
 
         case _ENTITY_UPDATED: {
 
