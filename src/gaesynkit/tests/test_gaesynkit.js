@@ -138,7 +138,7 @@ $(document).ready(function(){
 
   test("db.Bool", function()
   {
-    expect(5);
+    expect(6);
 
     // Create boolean
     ok(bool = new gaesynkit.db.Bool(true), "creating boolean")
@@ -156,11 +156,14 @@ $(document).ready(function(){
     // Update entity with boolean value
     ok(entity.update({"value": true}), "updating entity with boolean value");
 
+    // Check boolean value
+    equals(entity.value, true, "checking boolean value");
+
   });
 
   test("db.Integer", function()
   {
-    expect(3);
+    expect(6);
 
     // Create integer
     ok(integer = new gaesynkit.db.Integer(42), "creating integer")
@@ -171,6 +174,15 @@ $(document).ready(function(){
     // Check JSON output
     equals(JSON.stringify(integer.toJSON()), "{\"type\":\"int\",\"value\":42}",
            "checking JSON output for integer");
+
+    // Create plain entity
+    ok(entity = new gaesynkit.db.Entity("Foo"), "creating plain entity");
+
+    // Update entity with integer value
+    ok(entity.update({"value": 42}), "updating entity with integer value");
+
+    // Check integer value
+    equals(entity.value, 42, "checking integer value");
 
   });
 
@@ -205,7 +217,7 @@ $(document).ready(function(){
 
   test("db.Datetime", function()
   {
-    expect(4);
+    expect(7);
 
     // Create a datetime value
     ok(date = new gaesynkit.db.Datetime("2010/12/30 15:38:00"),
@@ -222,11 +234,20 @@ $(document).ready(function(){
            "{\"type\":\"gd:when\",\"value\":\"2010/12/30 15:38:00\"}",
            "checking JSON output for datetime");
 
+    // Create plain entity
+    ok(entity = new gaesynkit.db.Entity("Foo"), "creating plain entity");
+
+    // Update entity with date value
+    ok(entity.update({"value": date}), "updating entity with date value");
+
+    // Check integer value
+    equals(entity.value.getFullYear(), 2010, "checking date value");
+
   });
 
   test("db.List", function()
   {
-    expect(10);
+    expect(13);
 
     // Create a string list value
     ok(list = new gaesynkit.db.List(["foo", "bar"]),
@@ -266,6 +287,15 @@ $(document).ready(function(){
     equals(JSON.stringify(bools.toJSON()),
            "{\"type\":\"bool\",\"value\":[true,false]}",
            "checking JSON output for our integer list value");
+
+    // Create plain entity
+    ok(entity = new gaesynkit.db.Entity("Foo"), "creating plain entity");
+
+    // Update entity with list value
+    ok(entity.update({"value": values}), "updating entity with list value");
+
+    // Check integer value
+    equals(entity.value.join(','), "true,false", "checking list value");
 
   });
 
