@@ -156,10 +156,10 @@ available property values::
 Ancestor Relationship
 ---------------------
 
-Each :class:`gaesynkit.db.Key` instance holds a *path*. The path is a sequence
-of kind and id/name pairs where the key of the original entity is the last path
-element. All other path elements are the ancestors where the first one is the
-root entity.
+Each :js:class:`gaesynkit.db.Key` instance holds a *path*. The path is a
+sequence of kind and id/name pairs where the key of the original entity is the
+last path element. All other path elements are the ancestors where the first
+one is the root entity.
 
 The following example shows how to create a *one-to-many* relationship by
 specifying a parent key::
@@ -194,8 +194,29 @@ client-server communication.
 Synchronization
 ---------------
 
-Multiple web clients can concurrently create, modify and delete Datastore
-entities.
+The Client Storage API allows for synchronizing entities between HTML5 `Web
+Storage <http://dev.w3.org/html5/webstorage>`_ and the server-side Datastore.
+Therefore, the Python API of :py:mod:`gaesynkit` provides the necessary
+facilities such as a webapp based synchronization request handler and a
+:py:class:`SyncInfo` model. The :py:class:`gaesynkit.sync.SyncInfo` is
+basically is a wrapper class for entities which holds the synchronization
+status of a user's entity. So, there is no need for changing any model of the
+user's application.
+
+These are the parts, but how does synchronization work? Before going into
+detail let me show a simple code snippet::
+
+  var db, entity, key
+
+  db = new gaesynkit.db.Storage;
+
+  entity = new gaesynkit.db.Entity("Thing", "mything");
+
+  entity.update({"description": "A really strange thing."});
+
+  key = db.put(entity);
+
+  entity = db.sync(key);
 
 
 Security
