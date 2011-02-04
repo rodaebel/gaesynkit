@@ -15,8 +15,8 @@
 # limitations under the License.
 """Unit tests for the gaesynkit handlers and JSON-RPC endpoint."""
 
-from django.utils import simplejson
 import os
+import simplejson
 import unittest
 
 

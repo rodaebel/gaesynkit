@@ -30,11 +30,11 @@ TODOs:
   - Factor out handler methods to reuse in other frameworks
 """
 
-from django.utils.simplejson import dumps, loads
 from google.appengine.ext import webapp
 from inspect import getargspec
 import cgi
 import logging
+import simplejson
 import sys
 import traceback
 
@@ -217,7 +217,7 @@ class JsonRpcHandler(webapp.RequestHandler):
             logging.error(ex)
             self.error(ex.status)
             body = self._build_error(ex)
-            self.response.out.write(dumps(body))
+            self.response.out.write(simplejson.dumps(body))
         else:
             for msg in messages:
                 self.handle_message(msg)
@@ -232,14 +232,14 @@ class JsonRpcHandler(webapp.RequestHandler):
                 #TODO Which http_status to set for batches?
                 self.error(200)
                 body = [r[1] for r in responses]
-                self.response.out.write(dumps(body))
+                self.response.out.write(simplejson.dumps(body))
             else:
                 if len(responses) != 1:
                     # This should never happen
                     raise InternalError()   # pragma: no cover
                 status, body = responses[0]
                 self.error(status)
-                self.response.out.write(dumps(body))
+                self.response.out.write(simplejson.dumps(body))
 
     def get_responses(self, messages):
         """Gets a list of responses from all 'messages'.
@@ -295,7 +295,7 @@ class JsonRpcHandler(webapp.RequestHandler):
         """
 
         try:
-            json = loads(body)
+            json = simplejson.loads(body)
         except ValueError:
             raise ParseError()
 

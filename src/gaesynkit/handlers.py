@@ -16,7 +16,6 @@
 """Python implementation of the gaesynkit handlers JSON-RPC endpoint."""
 
 from datetime import datetime
-from django.utils import simplejson
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.api import users
@@ -31,6 +30,7 @@ import logging
 import mimetypes
 import os
 import re
+import simplejson
 import time
 
 

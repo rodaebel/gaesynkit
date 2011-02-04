@@ -19,6 +19,7 @@ from gaesynkit.json_rpc import *
 from google.appengine.ext.webapp import Request, Response
 import google.appengine.ext.webapp
 import logging
+import simplejson
 import unittest
 import webob
 
@@ -101,7 +102,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 404
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_invalid_json(self):
         """Test rpc call with invalid JSON."""
@@ -110,7 +111,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 500
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_invalid_request(self):
         """Test JSON-RPC with invalid request."""
@@ -119,7 +120,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 400
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_invalid_params(self):
         """Test JSON-RPC with invalid params."""
@@ -128,7 +129,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 400
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_wrong_json_rpc(self):
         """Test JSON-RPC with wrong version."""
@@ -137,7 +138,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 400
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_missing_method(self):
         """Test JSON-RPC without a method."""
@@ -146,7 +147,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 400
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_invalid_json_batch(self):
         """Test JSON-RPC batch with invalid JSON."""
@@ -155,7 +156,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 500
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_empty_array(self):
         """Test rpc call with an empty Array."""
@@ -164,7 +165,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 400
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_invalid_batch(self):
         """Test rpc call with invalid batch."""
@@ -177,7 +178,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 200
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_batch(self):
         """Test rpc call with batch."""
@@ -195,7 +196,7 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         status = 200
         r_status, r_resp = self.exec_handler(req)
         self.assertEqual(r_status, status)
-        self.assertEqual(loads(r_resp), loads(resp))
+        self.assertEqual(simplejson.loads(r_resp), simplejson.loads(resp))
 
     def test_notification_batch(self):
         """Test rpc call Batch (all notifications)."""

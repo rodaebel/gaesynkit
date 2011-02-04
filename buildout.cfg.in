@@ -15,6 +15,8 @@ extra-paths =
     @GAE_SDK@/lib/fancy_urllib
     @GAE_SDK@/lib/webob
     @GAE_SDK@/lib/yaml/lib
+    @GAE_SDK@/lib/simplejson
+    @GAE_SDK@/lib/graphy
 interpreter = python
 
 [sphinx]
