@@ -204,9 +204,11 @@ status of a user's entity. So, there is no need for changing any model of the
 user's application.
 
 These are the parts, but how does synchronization work? Before going into
-detail let me show a simple code snippet::
+detail here is a simple code snippet.
 
-  var db, entity, key
+Create an entity::
+
+  var db, entity, key;
 
   db = new gaesynkit.db.Storage;
 
@@ -214,9 +216,24 @@ detail let me show a simple code snippet::
 
   entity.update({"description": "A really strange thing."});
 
+The :js:func:`gaesynkit.db.Storage.put` method puts the entity into the local
+storage of the web client::
+
   key = db.put(entity);
 
+And the :js:func:`gaesynkit.db.Storage.sync` method submits the entity to the
+GAE server application for synchronization::
+
   entity = db.sync(key);
+
+After synchronizing, the entity has a new version::
+
+  entity.version();
+
+Let's make sure that our entity is correctly stored to the GAE Datastore by
+accessing the admin Datastore Viewer.
+
+.. image:: _static/datastoreviewer.png
 
 
 Security

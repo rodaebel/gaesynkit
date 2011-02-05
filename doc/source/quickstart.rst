@@ -46,7 +46,7 @@ requests. The URL handler should have a ``login`` setting to restrict visitors
 to only those users who have signed in, or just those users who are
 administrators for the application.
 
-We make the gaesynkit Javascript library available for our web application by
+We make the Javascript Client Storage API available for our web application by
 adding the following line to the `head` section of the application's HTML::
 
   <script type="text/javascript" src="gaesynkit/gaesynkit.js"></script>
@@ -62,7 +62,26 @@ entity in the client's Javascrtipt code::
 
   var key = storage.put(entity);
 
-  storage.sync(key);
+  entity = storage.sync(key);
+
+The entitie's properties are accessible as follows::
+
+  entity["name"];   // -> "Arthur Dent"
+
+It's also possible to directly access properties as they were attributes::
+
+  entity.name;      // -> "Arthur Dent"
+
+And both notations can be used to assign new values::
+
+  entity.planet = "Beteigeuze 5";
+
+After assigning a new value, the entity must be stored again before
+synchronizing::
+
+  key = storage.put(entity);
+
+  entity = storage.sync(key);
 
 
 Developing
