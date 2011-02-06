@@ -1160,22 +1160,7 @@
               ? this.get(key_or_entity) : key_or_entity);
 
     // Calculate content hash
-    function getContentHash(entity) {
-
-      var s, keys;
-
-      s = entity.key().value();
-      keys = entity.keys();
-      keys.sort();
-
-      for (var i in keys) {
-        s += JSON.stringify(entity.getProperty(keys[i]).toJSON());
-      }
-
-      return gaesynkit.util.md5(s);
-    }
-
-    content_hash = getContentHash(entity);
+    content_hash = gaesynkit.util.md5(JSON.stringify(entity.toJSON()));
 
     id = gaesynkit.rpc.getNextRpcId();
 
