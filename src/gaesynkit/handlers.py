@@ -15,17 +15,25 @@
 # limitations under the License.
 """Python implementation of the gaesynkit handlers JSON-RPC endpoint."""
 
+try:
+    from gaesynkit import json_rpc as rpc
+except ImportError:
+    import json_rpc as rpc
+
+try:
+    from gaesynkit.sync import SyncInfo
+except ImportError:
+    from sync import SyncInfo
+
 from datetime import datetime
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
-from sync import SyncInfo
 import base64
 import email
 import itertools
-import json_rpc as rpc
 import logging
 import mimetypes
 import os
