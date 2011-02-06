@@ -8,7 +8,7 @@ The gaesynkit framework enables Google App Engine application developers to
 create entities in the client's `Web Storage
 <http://dev.w3.org/html5/webstorage>`_ and synchronize them with the
 server-side Datastore at a later point of time. So, mobile offline editing
-becomes easier and more secure through a high level API.
+becomes easier and more secure through a higher level API.
 
 **Copyright and License:**
 

@@ -130,7 +130,7 @@ available property values::
   entity = datastore.Entity("Test")
 
   entity.update({
-    "tring": "A string.",
+    "string": "A string.",
     "byte_string": datastore_types.ByteString("Byte String"),
     "boolean": True,
     "int": 42,
@@ -151,6 +151,54 @@ available property values::
     "address": db.PostalAddress("1 Infinite Loop, Cupertino, CA"),
     "rating": db.Rating(97)
   })
+
+The Client Storage API transparently translates properties to equivalent
+Javascript types or classes. Let's take a look at the JSON representation to
+get a feeling how property types are stored::
+
+  {
+    "kind": "Test",
+    "key": "Z2Flc3lua2l0QGRlZmF1bHQhIVRlc3QKMQ==",
+    "version": 0,
+    "id": 1,
+    "properties": {
+      "string": {"type": "string", "value": "A string."},
+      "boolean": {"type": "bool", "value": true},
+      "int": {"type": "int", "value": 42},
+      "float": {"type": "float", "value": 1.82},
+      ...
+    }
+  }
+
+Here is the :js:class:`gaesynkit.db.Entity` instance as shown by the Chrome
+Developer Tools::
+
+  gaesynkit.db.Entity
+    _key: gaesynkit.db.Key
+    _properties: Object
+      boolean: gaesynkit.db.Bool
+        _type: "bool"
+        _value: true
+        __proto__: gaesynkit.db.ValueType
+      float: gaesynkit.db.Float
+        _type: "float"
+        _value: 1.82
+        __proto__: gaesynkit.db.ValueType
+      int: gaesynkit.db.Integer
+        _type: "int"
+        _value: 42
+        __proto__: gaesynkit.db.ValueType
+      string: gaesynkit.db.ValueType
+        _type: undefined
+        _value: "A string."
+        __proto__: Object
+      __proto__: Object
+    _version: 0
+    boolean: —
+    float: —
+    int: —
+    string: —
+    __proto__: Object
 
 
 Ancestor Relationship
@@ -199,14 +247,12 @@ Storage <http://dev.w3.org/html5/webstorage>`_ and the server-side Datastore.
 Therefore, the Python API of :py:mod:`gaesynkit` provides the necessary
 facilities such as a webapp based synchronization request handler and a
 :py:class:`SyncInfo` model. The :py:class:`gaesynkit.sync.SyncInfo` is
-basically is a wrapper class for entities which holds the synchronization
-status of a user's entity. So, there is no need for changing any model of the
-user's application.
+basically a wrapper class for entities which holds the synchronization status
+of a user's entity. So, there is no need for changing any model of the user's
+application.
 
 These are the parts, but how does synchronization work? Before going into
-detail here is a simple code snippet.
-
-Create an entity::
+detail here is a simple code snippet. First, we create an entity::
 
   var db, entity, key;
 
@@ -235,9 +281,29 @@ accessing the admin Datastore Viewer.
 
 .. image:: _static/datastoreviewer.png
 
+At the same time, our entity is stored in the client's local storage as a JSON
+string::
+
+  {
+    "kind": "Thing",
+    "key": "Z2Flc3lua2l0QGRlZmF1bHQhIVRoaW5nCG15dGhpbmc=",
+    "version": 1,
+    "name": "mything",
+    "properties": {
+      "description": {"type":"string","value":"A really strange thing."}
+    }
+  }
+
+For keeping track of synchronized entities the server-side Datastore stores a
+:py:class:`gaesynkit.sync.SyncInfo` entity which points to a particular entity
+and holds information such as the current version and a md5 content hash.
+
 
 Security
 --------
 
 Since the Client Storage API provides a rich interface to modify data in the
-Datastore of an application, authentication is particularly challenging.
+Datastore of an application, authentication is particularly challenging. The
+current implementation uses a fairly straightforward approach where each
+:py:class:`gaesynkit.sync.SyncInfo` entity is owned by a distinct user. For
+now, only this user is allowd to synchronize the related entity.
