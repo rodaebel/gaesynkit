@@ -243,8 +243,8 @@ def json_data_from_entity(entity):
     return result_dict
 
 
-def compare_merge_sync(entity_dict, sync_info, content_hash):
-    """Make a compare-merge-sync between the stored and the remote entity.
+def compare_replace_sync(entity_dict, sync_info, content_hash):
+    """Make a compare-replace-sync between the stored and the remote entity.
 
     :param dictionary entity_dict: The remote entity dictionary.
     :param sync.SyncInfo sync_info: A synchronization info instance.
@@ -315,7 +315,7 @@ class SyncHandler(rpc.JsonRpcHandler):
                 }
                 return result
 
-            entity = compare_merge_sync(entity_dict, sync_info, content_hash)
+            entity = compare_replace_sync(entity_dict, sync_info, content_hash)
 
             json_data = json_data_from_entity(entity)
             json_data["key"] = remote_key
