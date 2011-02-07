@@ -298,6 +298,35 @@ For keeping track of synchronized entities the server-side Datastore stores a
 :py:class:`gaesynkit.sync.SyncInfo` entity which points to a particular entity
 and holds information such as the current version and a md5 content hash.
 
+When an entity is sent to the :py:class:`gaesynkit.handlers.SyncHandler`, it
+checks whether a :py:class:`SyncInfo` for a given remote key exists, and if
+not, creates one with the attributes mentioned above.
+
+Compare Replace Synchronization
++++++++++++++++++++++++++++++++
+
+In case the entity has been synchronized before, :py:mod:`gaesynkit` uses a
+relatively simple algorithm to synchronize data between two different versions.
+
+1. Check if the ``content hash`` has changed.
+
+  a) If not, simply respond with a ``ENTITY_NOT_CHANGED`` status and the
+     current version number.
+
+  b) Otherwise, proceed with the following steps.
+
+2. Compare the versions of both entities.
+
+  a) If the version of the server-side stored entity is higher, just return
+     the entity.
+
+  b) When the remote entity comes with a higher version number, replace all
+     properties of the stored entity with the properties of the remote entity,
+     update the related :py:class:`SyncInfo` and increment the version number.
+
+Since the synchronization algorithm heavily depends on the exact use-case, it
+is planned to implement an alternate *Compare-Merge-Algorithm*.
+
 
 Security
 --------
@@ -307,3 +336,13 @@ Datastore of an application, authentication is particularly challenging. The
 current implementation uses a fairly straightforward approach where each
 :py:class:`gaesynkit.sync.SyncInfo` entity is owned by a distinct user. For
 now, only this user is allowd to synchronize the related entity.
+
+
+Client Storage Backends
+-----------------------
+
+Currently, :js:class:`gaesynkit.db.Storage` supports only the HTML5 `Web
+Storage <http://dev.w3.org/html5/webstorage>`_ as simple key-value store. It is
+planned to implement an alternative client storage on top of the `Indexed
+Database API <http://www.w3.org/TR/IndexedDB>`_. Ideally, it should be
+completely backward compatible.
