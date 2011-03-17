@@ -32,7 +32,12 @@ coverage: bin/coverage
 dist: bin/python
 	bin/python setup.py sdist
 
-deploy:
+bin/sphinx-build: bin/python
+
+docs: bin/sphinx-build
+	@(cd doc; $(MAKE) html)
+
+deploy: docs
 	$(shell ln -s ../../doc/build/html src/gaesynkit/docs)
 	$(PYTHON) $(GAE_SDK)/appcfg.py update src/gaesynkit
 
