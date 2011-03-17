@@ -144,6 +144,7 @@
   gaesynkit.util = {};
 
   // Base64 encode/decode
+  // Reuses code from http://www.webtoolkit.info/javascript-base64.html
   // TODO This should rather belong to the internal API
   gaesynkit.util.base64 = {
 
@@ -278,6 +279,7 @@
   };
 
   // MD5 checksum
+  // Reuses code from http://www.webtoolkit.info/javascript-md5.html
   // TODO This should rather belong to the internal API
   gaesynkit.util.md5 = function (string) {
  
