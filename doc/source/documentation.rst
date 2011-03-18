@@ -325,7 +325,15 @@ relatively simple algorithm to synchronize data between two different versions.
      update the related :py:class:`SyncInfo` and increment the version number.
 
 Since the synchronization algorithm heavily depends on the exact use-case, it
-is planned to implement an alternate *Compare-Merge-Algorithm*.
+is planned to implement an API which allows a developer to easily add alternate
+sync methods. Another useful example would be a *Compare-Merge-Algorithm*.
+
+Content Hash
+++++++++++++
+
+Each locally stored entity provides a
+:js:func:`gaesynkit.db.Entity.content_hash` function. A ``content hash`` is
+calculated from the entity's key string and its property values.
 
 
 Security
