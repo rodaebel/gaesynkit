@@ -1130,7 +1130,6 @@
   return entity;
   };
 
-
   // Get entity by a given key or encoded key string
   gaesynkit.db.Storage.prototype.get = function(k) {
 
