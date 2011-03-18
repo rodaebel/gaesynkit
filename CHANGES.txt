@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+Version 1.0.0a2 (2011-??-??)
+----------------------------
+
+  - Using HTML5 Session Storage for storing RPC IDs.
+
+
 Version 1.0.0a1 (2011-02-08)
 ----------------------------
 

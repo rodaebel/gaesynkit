@@ -66,7 +66,7 @@ def read(*rnames):
 
 setup(
     name='gaesynkit',
-    version='1.0.0a1',
+    version='1.0.0a2',
     author="Tobias Rodaebel",
     author_email="tobias.rodaebel@googlemail.com",
     description=("Google App Engine Datastore/Local Storage Synchronization "
