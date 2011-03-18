@@ -45,8 +45,8 @@
   // Local Storage key to store the next numerical id
   var _NEXT_ID = "_NextId";
 
-  // Local Storage key to store the next JSON-RPC id
-  var _NEXT_RPC_ID = "_NextRpcId";
+  // Session Storage key to store the next JSON-RPC id
+  var _NEXT_RPC_ID = "gaesynkit-NextRpcId";
 
   // Entity has not changed
   var _ENTITY_NOT_CHANGED = 1;
@@ -131,11 +131,11 @@
   gaesynkit.rpc.getNextRpcId = function() {
 
     var id = 1;
-    var next_id = window.localStorage[_NEXT_RPC_ID];
+    var next_id = window.sessionStorage[_NEXT_RPC_ID];
 
     if (next_id) id = parseInt(next_id);
 
-    window.localStorage[_NEXT_RPC_ID] = id + 1;
+    window.sessionStorage[_NEXT_RPC_ID] = id + 1;
     
     return id;
   };
@@ -501,7 +501,6 @@
  
     return temp.toLowerCase();
   };
-
 
   // The gaesynkit.db namespace
   gaesynkit.db = {};
@@ -1045,7 +1044,12 @@
 
   // Storage constructor
   gaesynkit.db.Storage = function() {
+
+    if (!("localStorage" in window))
+      throw new Error("HTML5 Local Storage not supported");
+
     this._storage = window.localStorage;
+
   };
 
   // Declare constructor
