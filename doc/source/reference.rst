@@ -250,6 +250,10 @@ Entities
 
    :param number version: Use this as new version number.
 
+.. js:function:: gaesynkit.db.Entity.content_hash()
+
+   :returns: MD5 content hash.
+
 
 Storage
 -------

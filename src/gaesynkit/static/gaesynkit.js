@@ -1042,6 +1042,22 @@
     return this._version;
   };
 
+  // Calculate content hash
+  gaesynkit.db.Entity.prototype.content_hash = function() {
+
+    var s, keys;
+
+    s = this.key().value();
+    keys = this.keys();
+    keys.sort();
+
+    for (var i in keys) {
+      s += JSON.stringify(this.getProperty(keys[i]).toJSON());
+    }
+
+    return gaesynkit.util.md5(s);
+  }
+
   // Storage constructor
   gaesynkit.db.Storage = function() {
 
@@ -1159,35 +1175,17 @@
   gaesynkit.db.Storage.prototype.sync = function(key_or_entity, async) {
 
     var async = async || false;
-    var entity, content_hash, id, request;
+    var entity, id, request;
 
     // Retrieve entity from local storage
     entity = ((key_or_entity instanceof gaesynkit.db.Key)
               ? this.get(key_or_entity) : key_or_entity);
 
-    // Calculate content hash
-    function getContentHash(entity) {
-
-      var s, keys;
-
-      s = entity.key().value();
-      keys = entity.keys();
-      keys.sort();
-
-      for (var i in keys) {
-        s += JSON.stringify(entity.getProperty(keys[i]).toJSON());
-      }
-
-      return gaesynkit.util.md5(s);
-    }
-
-    content_hash = getContentHash(entity);
-
     id = gaesynkit.rpc.getNextRpcId();
 
     request = {"jsonrpc": "2.0",
                "method": "syncEntity",
-               "params": [entity, content_hash],
+               "params": [entity, entity.content_hash()],
                "id": id};
 
     function callback(response) {
