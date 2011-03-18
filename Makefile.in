@@ -18,7 +18,7 @@ bin/coverage: bin/python
 test: bin/python
 	bin/python setup.py test --gae-sdk=$(GAE_SDK)
 
-testjs:
+testjs: bin/python docs
 	$(shell ln -s ../../doc/build/html src/gaesynkit/docs)
 	$(shell $(PYTHON) $(GAE_SDK)/dev_appserver.py -c --debug src/gaesynkit)
 
