@@ -17,12 +17,12 @@
 
 try:
     from gaesynkit import json_rpc as rpc
-except ImportError:
+except ImportError:         # pragma: no cover
     import json_rpc as rpc
 
 try:
     from gaesynkit.sync import SyncInfo
-except ImportError:
+except ImportError:         # pragma: no cover
     from sync import SyncInfo
 
 from datetime import datetime

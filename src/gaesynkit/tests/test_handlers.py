@@ -55,6 +55,7 @@ class test_handlers(unittest.TestCase):
         from gaesynkit import handlers
         from google.appengine.api import datastore
         from google.appengine.api import datastore_types
+        from google.appengine.api import users
         from google.appengine.ext import db
 
         entity = datastore.Entity("Test")
@@ -66,13 +67,55 @@ class test_handlers(unittest.TestCase):
             "float": 1.82,
             "date": datetime(2011, 01, 06),
             "list": [1,2,3,4],
-            "key": db.Key.from_path("Kind", "name")
+            "key": db.Key.from_path("Kind", "name"),
+            "user": users.User("tester@example.com")
         })
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}}, 'id': 2}
+            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'user': {'type': 'user', 'value': 'tester'}}, 'id': 2}
         )
+
+        entity = datastore.Entity("A", name="a")
+        self.assertEqual(
+            handlers.json_data_from_entity(entity),
+            {'kind': u'A', 'properties': {}, 'name': u'a'})
+
+    def test_entity_from_json_data(self):
+        """Create a datastore.Entity instance from JSON data."""
+
+        from datetime import datetime
+        from gaesynkit import handlers
+        from google.appengine.api import datastore_types
+
+        data = {
+            'kind': u'A',
+            'key': u'dGVzdEBkZWZhdWx0ISFBCGE=',
+            'id': 2,
+            'properties':{
+                'string':{'type':'string','value':'A string.'},
+                'boolean':{'type':'bool','value':True},
+                'int':{'type':'int','value':42},
+                'float':{'type':'float','value':1.8200000000000001},
+                'key':{'type':'key','value':'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'},
+                'byte_string':{'type':'byte_string','value':'Byte String'}, 
+                'date':{'type':'gd:when','value':'2011/01/06 00:00:00'},
+                'list':{'type':'int','value':[1, 2, 3, 4]},
+            }
+        }
+
+        entity = handlers.entity_from_json_data(data)
+
+        self.assertEqual(entity['string'], u'A string.')
+        self.assertEqual(entity['boolean'], True)
+        self.assertEqual(entity['int'], 42)
+        self.assertEqual(entity['float'], 1.8200000000000001)
+        self.assertEqual(
+            entity['key'],
+            datastore_types.Key.from_path(u'Kind', u'name', _app=u'test'))
+        self.assertEqual(entity['byte_string'], 'Byte String')
+        self.assertEqual(entity['date'], datetime(2011, 1, 6, 0, 0))
+        self.assertEqual(entity['list'], [1, 2, 3, 4])
 
     def test_main(self):
         """Testing the main application."""
@@ -148,6 +191,18 @@ class test_handlers(unittest.TestCase):
         self.assertEqual(
             handlers.parent_from_remote_key("dGVzdEBkZWZhdWx0ISFBCGEJQghi"),
             datastore_types.Key.from_path(u'A', u'a', _app=u'test'))
+
+        self.assertEqual(
+            handlers.parent_from_remote_key("dGVzdEBkZWZhdWx0ISFBCGE="),
+            None)
+
+        self.assertRaises(
+            Exception,
+            handlers.parent_from_remote_key, "dVzdEBkZdWx0ISFBCGE=")
+
+        self.assertRaises(
+            handlers.NotAllowedError,
+            handlers.parent_from_remote_key, "Z2Flc3lua2l0QGRlZmF1bHQhIUEIYQ==")
 
     def test_SyncAncestorEntity(self):
         """Synchronizing an ancestor relationship."""
