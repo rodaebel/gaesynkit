@@ -18,3 +18,4 @@ syntax: regexp
 ^google_appengine/
 ^htmlcov/
 ^parts/
+^src/gaesynkit/docs
