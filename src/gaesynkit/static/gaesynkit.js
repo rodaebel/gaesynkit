@@ -849,6 +849,19 @@
   // Declare constructor
   gaesynkit.db.User.prototype.constructor = gaesynkit.db.User;
 
+  // Email
+  gaesynkit.db.Email = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#Email
+    this._type = "gd:email"
+    this._value = value;
+  };
+
+  gaesynkit.db.Email.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Email.prototype.constructor = gaesynkit.db.Email;
+
   // TODO More types
 
   // Property value types

@@ -71,6 +71,7 @@ _PROPERTY_TYPES_MAP = {
     "byte_string":  datastore_types.ByteString,
     "gd:when":      lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
     "user":         users.User,
+    "gd:email":     datastore_types.Email,
 }
 
 _PROPERTY_TYPES_STRINGS = {

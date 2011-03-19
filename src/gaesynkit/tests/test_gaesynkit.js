@@ -369,6 +369,23 @@ $(document).ready(function(){
 
   });
 
+  test("db.Email", function()
+  {
+    expect(3);
+
+    // Create user
+    ok(email = new gaesynkit.db.Email("john@example.com"), "creating email")
+
+    // Get email value
+    equals(email.value(), "john@example.com", "getting email value");
+
+    // Check JSON output
+    equals(JSON.stringify(email.toJSON()),
+           "{\"type\":\"gd:email\",\"value\":\"john@example.com\"}",
+           "checking JSON output for email");
+
+  });
+
   test("db.Entity", function()
   {
     expect(24);
