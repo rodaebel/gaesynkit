@@ -206,6 +206,12 @@ User
 
    User object.
 
+Email
++++++
+
+.. js:class:: gaesynkit.db.Email(email)
+
+   Email object.
 
 Entities
 --------
