@@ -34,11 +34,9 @@ from google.appengine.ext.webapp import util
 import base64
 import email
 import itertools
-import logging
 import mimetypes
 import os
 import re
-import simplejson
 import time
 
 
