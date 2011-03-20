@@ -320,9 +320,7 @@ class SyncHandler(rpc.JsonRpcHandler):
             json_data["key"] = remote_key
             json_data["version"] = sync_info.version()
 
-            datastore.Put(entity)
-
-            sync_info.put()
+            datastore.Put([entity, sync_info.entity()])
 
             return {"status": ENTITY_UPDATED, "entity": json_data}
 

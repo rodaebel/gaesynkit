@@ -31,21 +31,16 @@ SYNC_INFO_KIND = "SyncInfo"
 class SyncInfo(object):
     """Wrapper class for synchronization info entities.
 
-    :param Entity|Key entity_or_key: Datastore sync info entity or key.
-    :param dictionary value: Synchronization info data.
+    :param Entity entity: A datastore.Entity instance.
     """
 
-    def __init__(self, entity_or_key, data=None):
+    def __init__(self, entity):
         """Constructor."""
 
-        if isinstance(entity_or_key, datastore.Entity):
-            self.__entity = entity_or_key
-            self.__key = entity_or_key.key()
-        elif isinstance(entity_or_key, datastore_types.Key):
-            self.__entity = data
-            self.__key = entity_or_key
-        else:
-            raise TypeError('Must provide Entity or Key')
+        if not isinstance(entity, datastore.Entity):
+            raise TypeError("Expected datastore.Entity instance")
+
+        self.__entity = entity
 
     @classmethod
     def from_params(cls, remote_key, version, content_hash, target_key=None,
@@ -69,6 +64,13 @@ class SyncInfo(object):
             entity.update({"user": user})
 
         return cls(entity)
+
+    def entity(self):
+        """Get raw entity.
+
+        :returns: A datastore.Entity instance.
+        """
+        return self.__entity
 
     def user(self):
         """Get the user, if provided."""
@@ -157,7 +159,7 @@ class SyncInfo(object):
     def key(self):
         """Get the key for this synchronization info entity."""
 
-        return self.__key
+        return self.__entity.key()
 
     @staticmethod
     def kind():
