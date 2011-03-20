@@ -402,7 +402,7 @@ app = webapp.WSGIApplication([
 def main():                 # pragma: no cover
     """The main function."""
 
-    util.run_bare_wsgi_app(app)
+    util.run_wsgi_app(app)
 
 
 if __name__ == "__main__":  # pragma: no cover
