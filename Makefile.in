@@ -2,7 +2,7 @@ PYTHON=@PYTHON@
 GAE_SDK=@GAE_SDK@
 CWD=$(shell pwd)
 
-TESTS= $(shell find src -name [a-z]\*.py ! -name \test_*.py ! -name \testing.py)
+TESTS= $(shell find src -name [a-z]\*.py ! -name appengine_config.py ! -name \test_*.py ! -name \testing.py)
 
 
 all: bin/python
