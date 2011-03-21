@@ -346,8 +346,7 @@ class SyncHandler(rpc.JsonRpcHandler):
         """
 
         sync_info = SyncInfo.get_by_key_name(key)
-        datastore.Delete(sync_info.target_key())
-        datastore.Delete(sync_info.key())
+        datastore.Delete([sync_info.target_key(), sync_info.key()])
 
         return {"status": ENTITY_DELETED}
 
