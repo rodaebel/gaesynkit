@@ -72,6 +72,7 @@ _PROPERTY_TYPES_MAP = {
     "gd:when":      lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
     "user":         users.User,
     "gd:email":     datastore_types.Email,
+    "georss:point": datastore_types.GeoPt,
 }
 
 _PROPERTY_TYPES_STRINGS = {

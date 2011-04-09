@@ -69,12 +69,13 @@ class test_handlers(unittest.TestCase):
             "list": [1,2,3,4],
             "key": db.Key.from_path("Kind", "name"),
             "user": users.User("tester@example.com"),
-            "email": db.Email("tester@example.com")
+            "email": db.Email("tester@example.com"),
+            "location": db.GeoPt(52.500556, 13.398889),
         })
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}}, 'id': 2}
+            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}, 'location': {'type': 'georss:point', 'value': datastore_types.GeoPt(52.500556000000003, 13.398889)}}, 'id': 2}
         )
 
         entity = datastore.Entity("A", name="a")
@@ -103,6 +104,7 @@ class test_handlers(unittest.TestCase):
                 'date':{'type':'gd:when','value':'2011/01/06 00:00:00'},
                 'list':{'type':'int','value':[1, 2, 3, 4]},
                 'email':{'type':'gd:email','value':u'tester@example.com'},
+                'location':{'type':'georss:point','value':u'52.5,13.3'},
             }
         }
 
@@ -119,6 +121,9 @@ class test_handlers(unittest.TestCase):
         self.assertEqual(entity['date'], datetime(2011, 1, 6, 0, 0))
         self.assertEqual(entity['list'], [1, 2, 3, 4])
         self.assertEqual(entity['email'], u'tester@example.com')
+        self.assertEqual(
+            entity['location'],
+            datastore_types.GeoPt(52.5, 13.300000000000001))
 
     def test_main(self):
         """Testing the main application."""

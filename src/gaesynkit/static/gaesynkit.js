@@ -862,6 +862,35 @@
   // Declare constructor
   gaesynkit.db.Email.prototype.constructor = gaesynkit.db.Email;
 
+  // GeoPt
+  gaesynkit.db.GeoPt = function(latitude, longitude) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#GeoPt
+    this._type = "georss:point"
+    this._value = latitude + ',' + longitude;
+  };
+
+  gaesynkit.db.GeoPt.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.GeoPt.prototype.constructor = gaesynkit.db.GeoPt;
+
+  // Return the value
+  gaesynkit.db.GeoPt.prototype.value = function() {
+    var val = this._value.split(',');
+    return [parseFloat(val[0]), parseFloat(val[1])];
+  };
+
+  // Return the latitude
+  gaesynkit.db.GeoPt.prototype.latitude = function() {
+    return this.value()[0];
+  };
+
+  // Return the longitude
+  gaesynkit.db.GeoPt.prototype.longitude = function() {
+    return this.value()[1];
+  };
+
   // TODO More types
 
   // Property value types
@@ -874,7 +903,9 @@
     "gd:when": gaesynkit.db.Datetime,
     "list": gaesynkit.db.List,
     "key": gaesynkit.db.Key,
-    "user": gaesynkit.db.User
+    "user": gaesynkit.db.User,
+    "gd:email": gaesynkit.db.Email,
+    "georss:point": gaesynkit.db.GeoPt
   };
 
   // Evaluate value type

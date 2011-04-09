@@ -213,6 +213,13 @@ Email
 
    Email object.
 
+GeoPt
++++++
+
+.. js:class:: gaesynkit.db.GeoPt(lat, lon)
+
+   GeoPt object.
+
 Entities
 --------
 

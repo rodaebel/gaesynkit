@@ -386,6 +386,30 @@ $(document).ready(function(){
 
   });
 
+  test("db.GeoPt", function()
+  {
+    expect(5);
+
+    // Create a geographical point
+    ok(point = new gaesynkit.db.GeoPt(52.500556, 13.398889), "creating a point")
+
+    // Get GeoPt value
+    equals(point.value().join(','), "52.500556,13.398889",
+           "getting the point's value");
+
+    // Get latitude
+    equals(point.latitude(), 52.500556, "getting the latitude");
+
+    // Get longitude
+    equals(point.longitude(), 13.398889, "getting the longitude");
+
+    // Check JSON output
+    equals(JSON.stringify(point.toJSON()),
+           "{\"type\":\"georss:point\",\"value\":\"52.500556,13.398889\"}",
+           "checking JSON output for a geographical point");
+
+  });
+
   test("db.Entity", function()
   {
     expect(24);
