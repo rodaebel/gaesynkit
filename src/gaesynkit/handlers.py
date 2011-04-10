@@ -73,6 +73,7 @@ _PROPERTY_TYPES_MAP = {
     "user":         users.User,
     "gd:email":     datastore_types.Email,
     "georss:point": datastore_types.GeoPt,
+    "atom:link":    datastore_types.Link,
 }
 
 _PROPERTY_TYPES_STRINGS = {

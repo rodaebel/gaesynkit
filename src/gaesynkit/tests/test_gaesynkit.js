@@ -373,7 +373,7 @@ $(document).ready(function(){
   {
     expect(3);
 
-    // Create user
+    // Create email
     ok(email = new gaesynkit.db.Email("john@example.com"), "creating email")
 
     // Get email value
@@ -407,6 +407,23 @@ $(document).ready(function(){
     equals(JSON.stringify(point.toJSON()),
            "{\"type\":\"georss:point\",\"value\":\"52.500556,13.398889\"}",
            "checking JSON output for a geographical point");
+
+  });
+
+  test("db.Link", function()
+  {
+    expect(3);
+
+    // Create link
+    ok(link = new gaesynkit.db.Link("http://www.google.com"), "creating link")
+
+    // Get link value
+    equals(link.value(), "http://www.google.com", "getting link value");
+
+    // Check JSON output
+    equals(JSON.stringify(link.toJSON()),
+           "{\"type\":\"atom:link\",\"value\":\"http://www.google.com\"}",
+           "checking JSON output for link");
 
   });
 

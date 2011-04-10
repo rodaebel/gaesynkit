@@ -891,6 +891,19 @@
     return this.value()[1];
   };
 
+  // Link
+  gaesynkit.db.Link = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#Link
+    this._type = "atom:link"
+    this._value = value;
+  };
+
+  gaesynkit.db.Link.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Link.prototype.constructor = gaesynkit.db.Link;
+
   // TODO More types
 
   // Property value types
@@ -905,7 +918,8 @@
     "key": gaesynkit.db.Key,
     "user": gaesynkit.db.User,
     "gd:email": gaesynkit.db.Email,
-    "georss:point": gaesynkit.db.GeoPt
+    "georss:point": gaesynkit.db.GeoPt,
+    "atom:link": gaesynkit.db.Link
   };
 
   // Evaluate value type

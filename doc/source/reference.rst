@@ -220,6 +220,13 @@ GeoPt
 
    GeoPt object.
 
+Link
+++++
+
+.. js:class:: gaesynkit.db.Link(link)
+
+   Link object.
+
 Entities
 --------
 
