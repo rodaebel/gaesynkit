@@ -500,7 +500,7 @@ $(document).ready(function(){
 
   test("db.Storage", function()
   {
-    expect(44);
+    expect(45);
 
     // Create an entity
     ok(entity = new gaesynkit.db.Entity("Book"), "creating entity");
@@ -598,6 +598,9 @@ $(document).ready(function(){
     // Get the modified entity version
     equals(entity.version(), 2, "getting the modified entity version");
 
+    // Check modified value
+    equals(entity.pages, 287, "checking the modified value");
+
     // Delete entity
     ok(storage.deleteEntityWithKey(key), "deleting entity");
 
@@ -648,8 +651,7 @@ $(document).ready(function(){
 
     // Clean up local storage
     delete window.localStorage["_NextId"];
-    delete window.localStorage["_NextRpcId"];
-    
+
   });
 
 });
