@@ -47,6 +47,8 @@ class test(Command):
             os.path.join(gae_sdk, 'lib', 'ipaddr'),
             os.path.join(gae_sdk, 'lib', 'webob'),
             os.path.join(gae_sdk, 'lib', 'yaml', 'lib'),
+            os.path.join(gae_sdk, 'lib', 'simplejson'),
+            os.path.join(gae_sdk, 'lib', 'graphy'),
         ]
         sys.path.extend(extra_paths)
 
