@@ -92,7 +92,7 @@
   gaesynkit.api = {};
 
   // The API version string
-  gaesynkit.api.VERSION = '1.0.0a1';
+  gaesynkit.api.VERSION = '1.0.0a2';
 
   // The application id
   gaesynkit.api.APPLICATION_ID = "$APPLICATION_ID";
