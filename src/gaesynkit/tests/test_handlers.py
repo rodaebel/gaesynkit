@@ -71,12 +71,17 @@ class test_handlers(unittest.TestCase):
             "user": users.User("tester@example.com"),
             "email": db.Email("tester@example.com"),
             "location": db.GeoPt(52.500556, 13.398889),
+            "category": db.Category("coding"),
             "link": db.Link("http://www.google.com"),
+            "im": db.IM("sip", "foobar"),
+            "phone": db.PhoneNumber("1 (206) 555-1212"),
+            "address": db.PostalAddress("Address"),
+            "rating": db.Rating(99)
         })
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'link': {'type': 'atom:link', 'value': u'http://www.google.com'}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}, 'location': {'type': 'georss:point', 'value': datastore_types.GeoPt(52.500556000000003, 13.398889)}}, 'id': 2}
+            {'kind': u'Test', 'properties': {'category': {'type': 'atom:category', 'value': u'coding'}, 'rating': {'type': 'gd:rating', 'value': 99L}, 'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'link': {'type': 'atom:link', 'value': u'http://www.google.com'}, 'phone': {'type': 'gd:phonenumber', 'value': u'1 (206) 555-1212'}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'address': {'type': 'gd:postaladdress', 'value': u'Address'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'im': {'type': 'gd:im', 'value': datastore_types.IM('sip', 'foobar')}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}, 'location': {'type': 'georss:point', 'value': datastore_types.GeoPt(52.500556000000003, 13.398889)}}, 'id': 2}
         )
 
         entity = datastore.Entity("A", name="a")
@@ -106,7 +111,12 @@ class test_handlers(unittest.TestCase):
                 'list':{'type':'int','value':[1, 2, 3, 4]},
                 'email':{'type':'gd:email','value':u'tester@example.com'},
                 'location':{'type':'georss:point','value':u'52.5,13.3'},
+                'category':{'type':'atom:category','value':u'coding'},
                 'url':{'type':'atom:link','value':u'http://www.google.com'},
+                'im':{'type':'gd:im','value':u'sip foobar'},
+                'phone':{'type':'gd:phonenumber','value':u'1 (206) 555-1212'},
+                'address':{'type':'gd:postaladdress','value':u'Address'},
+                'rating':{'type':'gd:rating','value':99L}
             }
         }
 
@@ -126,7 +136,12 @@ class test_handlers(unittest.TestCase):
         self.assertEqual(
             entity['location'],
             datastore_types.GeoPt(52.5, 13.300000000000001))
+        self.assertEqual(entity['category'], u'coding')
         self.assertEqual(entity['url'], u'http://www.google.com')
+        self.assertEqual(entity['im'], datastore_types.IM(u'sip', u'foobar'))
+        self.assertEqual(entity['phone'], u'1 (206) 555-1212')
+        self.assertEqual(entity['address'], u'Address')
+        self.assertEqual(entity['rating'], 99)
 
     def test_main(self):
         """Testing the main application."""

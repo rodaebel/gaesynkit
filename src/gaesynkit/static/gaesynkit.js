@@ -891,6 +891,19 @@
     return this.value()[1];
   };
 
+  // Category
+  gaesynkit.db.Category = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#Category
+    this._type = "atom:category"
+    this._value = value;
+  };
+
+  gaesynkit.db.Category.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Category.prototype.constructor = gaesynkit.db.Category;
+
   // Link
   gaesynkit.db.Link = function(value) {
 
@@ -904,7 +917,72 @@
   // Declare constructor
   gaesynkit.db.Link.prototype.constructor = gaesynkit.db.Link;
 
-  // TODO More types
+  // IM
+  gaesynkit.db.IM = function(protocol, address) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#IM
+    this._type = "gd:im"
+    this._value = protocol + ' ' + address;
+  };
+
+  gaesynkit.db.IM.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.IM.prototype.constructor = gaesynkit.db.IM;
+
+  // Return the value
+  gaesynkit.db.IM.prototype.value = function() {
+    return this._value.split(' ');
+  };
+
+  // Return the protocol
+  gaesynkit.db.IM.prototype.protocol = function() {
+    return this.value()[0];
+  };
+
+  // Return the address
+  gaesynkit.db.IM.prototype.address = function() {
+    return this.value()[1];
+  };
+
+  // PhoneNumber
+  gaesynkit.db.PhoneNumber = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#PhoneNumber
+    this._type = "gd:phonenumber"
+    this._value = value;
+  };
+
+  gaesynkit.db.PhoneNumber.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.PhoneNumber.prototype.constructor = gaesynkit.db.PhoneNumber;
+
+  // PostalAddress
+  gaesynkit.db.PostalAddress = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#PostalAddress
+    this._type = "gd:postaladdress"
+    this._value = value;
+  };
+
+  gaesynkit.db.PostalAddress.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.PostalAddress.prototype.constructor = gaesynkit.db.PostalAddress;
+
+  // Rating
+  gaesynkit.db.Rating = function(value) {
+
+    // http://code.google.com/appengine/docs/python/datastore/typesandpropertyclasses.html#Rating
+    this._type = "gd:rating"
+    this._value = value;
+  };
+
+  gaesynkit.db.Rating.prototype = new gaesynkit.db.ValueType;
+
+  // Declare constructor
+  gaesynkit.db.Rating.prototype.constructor = gaesynkit.db.Rating;
 
   // Property value types
   var _PROPERTY_VALUE_TYPES = {
@@ -919,7 +997,12 @@
     "user": gaesynkit.db.User,
     "gd:email": gaesynkit.db.Email,
     "georss:point": gaesynkit.db.GeoPt,
-    "atom:link": gaesynkit.db.Link
+    "atom:category": gaesynkit.db.Category,
+    "atom:link": gaesynkit.db.Link,
+    "gd:im": gaesynkit.db.IM,
+    "gd:phonenumber": gaesynkit.db.PhoneNumber,
+    "gd:postaladdress": gaesynkit.db.PostalAddress,
+    "gd:rating": gaesynkit.db.Rating
   };
 
   // Evaluate value type

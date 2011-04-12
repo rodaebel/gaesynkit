@@ -63,17 +63,22 @@ _KIND_NAME_SEP = "\b"
 _PATH_SEP = "\t"
 
 _PROPERTY_TYPES_MAP = {
-    "string":       unicode,
-    "bool":         bool,
-    "int":          int,
-    "float":        float,
-    "key":          datastore_types.Key,
-    "byte_string":  datastore_types.ByteString,
-    "gd:when":      lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
-    "user":         users.User,
-    "gd:email":     datastore_types.Email,
-    "georss:point": datastore_types.GeoPt,
-    "atom:link":    datastore_types.Link,
+    "string":           unicode,
+    "bool":             bool,
+    "int":              int,
+    "float":            float,
+    "key":              datastore_types.Key,
+    "byte_string":      datastore_types.ByteString,
+    "gd:when":          lambda v: datetime.strptime(v, "%Y/%m/%d %H:%M:%S"),
+    "user":             users.User,
+    "gd:email":         datastore_types.Email,
+    "georss:point":     datastore_types.GeoPt,
+    "atom:category":    datastore_types.Category,
+    "atom:link":        datastore_types.Link,
+    "gd:im":            datastore_types.IM,
+    "gd:phonenumber":   datastore_types.PhoneNumber,
+    "gd:postaladdress": datastore_types.PostalAddress,
+    "gd:rating":        datastore_types.Rating
 }
 
 _PROPERTY_TYPES_STRINGS = {
@@ -96,7 +101,7 @@ _PROPERTY_TYPES_STRINGS = {
     datastore_types.GeoPt:          'georss:point',
     datastore_types.IM:             'gd:im',
     datastore_types.PhoneNumber:    'gd:phonenumber',
-    datastore_types.PostalAddress:  'gd:psotaladdress',
+    datastore_types.PostalAddress:  'gd:postaladdress',
     datastore_types.Rating:         'gd:rating',
     datastore_types.BlobKey:        'blobkey',
 }

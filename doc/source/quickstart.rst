@@ -56,7 +56,9 @@ entity in the client's Javascrtipt code::
 
   var entity = new gaesynkit.db.Entity("Person");
 
-  entity.update({"name": "Arthur Dent", "planet": "Earth"});
+  var phone = new gaesynkit.db.PhoneNumber("+4420260199");
+
+  entity.update({"name": "Arthur Dent", "planet": "Earth", "phone": phone});
 
   var storage = new gaesynkit.db.Storage;
 
@@ -66,11 +68,11 @@ entity in the client's Javascrtipt code::
 
 The entitie's properties are accessible as follows::
 
-  entity["name"];   // -> "Arthur Dent"
+  entity["name"];   // "Arthur Dent"
 
 It's also possible to directly access properties as they were attributes::
 
-  entity.name;      // -> "Arthur Dent"
+  entity.phone;     // "+4420260199"
 
 And both notations can be used to assign new values::
 

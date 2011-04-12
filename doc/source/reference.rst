@@ -220,12 +220,47 @@ GeoPt
 
    GeoPt object.
 
+Category
+++++++++
+
+.. js:class:: gaesynkit.db.Category(category)
+
+   Category object.
+
 Link
 ++++
 
 .. js:class:: gaesynkit.db.Link(link)
 
    Link object.
+
+IM
+++
+
+.. js:class:: gaesynkit.db.IM(protocol, address)
+
+   IM object.
+
+PhoneNumber
++++++++++++
+
+.. js:class:: gaesynkit.db.PhoneNumber(phonenumber)
+
+   PhoneNumber object.
+
+PostalAddress
++++++++++++++
+
+.. js:class:: gaesynkit.db.PostalAddress(address)
+
+   PostalAddress object.
+
+Rating
+++++++
+
+.. js:class:: gaesynkit.db.Rating(value)
+
+   Rating object.
 
 Entities
 --------

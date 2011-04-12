@@ -410,6 +410,23 @@ $(document).ready(function(){
 
   });
 
+  test("db.Category", function()
+  {
+    expect(3);
+
+    // Create category
+    ok(category = new gaesynkit.db.Category("coding"), "creating category")
+
+    // Get category value
+    equals(category.value(), "coding", "getting category value");
+
+    // Check JSON output
+    equals(JSON.stringify(category.toJSON()),
+           "{\"type\":\"atom:category\",\"value\":\"coding\"}",
+           "checking JSON output for category");
+
+  });
+
   test("db.Link", function()
   {
     expect(3);
@@ -424,6 +441,82 @@ $(document).ready(function(){
     equals(JSON.stringify(link.toJSON()),
            "{\"type\":\"atom:link\",\"value\":\"http://www.google.com\"}",
            "checking JSON output for link");
+
+  });
+
+  test("db.IM", function()
+  {
+    expect(5);
+
+    // Create a geographical point
+    ok(im = new gaesynkit.db.IM("sip", "foobar"), "creating an IM")
+
+    // Get IM value
+    equals(im.value().join(','), "sip,foobar", "getting the IM's value");
+
+    // Get protocol
+    equals(im.protocol(), "sip", "getting the protocol");
+
+    // Get address
+    equals(im.address(), "foobar", "getting the address");
+
+    // Check JSON output
+    equals(JSON.stringify(im.toJSON()),
+           "{\"type\":\"gd:im\",\"value\":\"sip foobar\"}",
+           "checking JSON output for an IM");
+
+  });
+
+  test("db.PhoneNumber", function()
+  {
+    expect(3);
+
+    // Create phone number
+    ok(phone = new gaesynkit.db.PhoneNumber("1 (206) 555-1212"),
+       "creating phone number")
+
+    // Get phone number value
+    equals(phone.value(), "1 (206) 555-1212", "getting phone number value");
+
+    // Check JSON output
+    equals(JSON.stringify(phone.toJSON()),
+           "{\"type\":\"gd:phonenumber\",\"value\":\"1 (206) 555-1212\"}",
+           "checking JSON output for phone number");
+
+  });
+
+  test("db.PostalAddress", function()
+  {
+    expect(3);
+
+    // Create postal address
+    ok(address = new gaesynkit.db.PostalAddress("Address"),
+       "creating postal address")
+
+    // Get postal address value
+    equals(address.value(), "Address", "getting postal address value");
+
+    // Check JSON output
+    equals(JSON.stringify(address.toJSON()),
+           "{\"type\":\"gd:postaladdress\",\"value\":\"Address\"}",
+           "checking JSON output for postal address");
+
+  });
+
+  test("db.Rating", function()
+  {
+    expect(3);
+
+    // Create rating
+    ok(rating = new gaesynkit.db.Rating(99), "creating rating")
+
+    // Get rating value
+    equals(rating.value(), 99, "getting rating value");
+
+    // Check JSON output
+    equals(JSON.stringify(rating.toJSON()),
+           "{\"type\":\"gd:rating\",\"value\":99}",
+           "checking JSON output for rating");
 
   });
 
