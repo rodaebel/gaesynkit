@@ -25,7 +25,7 @@ $(document).ready(function(){
     expect(2);
 
     // Check gaesynkit version
-    equals(gaesynkit.api.VERSION, "1.0.0a1", "getting gaesynkit version");
+    equals(gaesynkit.api.VERSION, "1.0.0a2", "getting gaesynkit version");
 
     //Configure application id
     equals(gaesynkit.api.APPLICATION_ID, "gaesynkit",
