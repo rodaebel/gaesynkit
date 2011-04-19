@@ -27,8 +27,8 @@ installed) to use::
 
   $ easy_install gaesynkit
 
-You can now make a symbolik link to it in the root directory of your Google App
-Engine Python application.
+You can now create a symbolic link to it in the root directory of your Google
+App Engine Python application.
 
 Usage
 =====
