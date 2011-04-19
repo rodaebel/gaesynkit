@@ -81,7 +81,7 @@ class test_handlers(unittest.TestCase):
         datastore.Put(entity)
         self.assertEqual(
             handlers.json_data_from_entity(entity),
-            {'kind': u'Test', 'properties': {'category': {'type': 'atom:category', 'value': u'coding'}, 'rating': {'type': 'gd:rating', 'value': 99L}, 'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'link': {'type': 'atom:link', 'value': u'http://www.google.com'}, 'phone': {'type': 'gd:phonenumber', 'value': u'1 (206) 555-1212'}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'address': {'type': 'gd:postaladdress', 'value': u'Address'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'im': {'type': 'gd:im', 'value': datastore_types.IM('sip', 'foobar')}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}, 'location': {'type': 'georss:point', 'value': datastore_types.GeoPt(52.500556000000003, 13.398889)}}, 'id': 2}
+            {'kind': u'Test', 'properties': {'category': {'type': 'atom:category', 'value': u'coding'}, 'rating': {'type': 'gd:rating', 'value': 99L}, 'string': {'type': 'string', 'value': 'A string.'}, 'int': {'type': 'int', 'value': 42}, 'float': {'type': 'float', 'value': 1.8200000000000001}, 'list': {'type': 'int', 'value': [1, 2, 3, 4]}, 'boolean': {'type': 'bool', 'value': True}, 'link': {'type': 'atom:link', 'value': u'http://www.google.com'}, 'phone': {'type': 'gd:phonenumber', 'value': u'1 (206) 555-1212'}, 'byte_string': {'type': 'byte_string', 'value': 'Byte String'}, 'key': {'type': 'key', 'value': 'agR0ZXN0cg4LEgRLaW5kIgRuYW1lDA'}, 'address': {'type': 'gd:postaladdress', 'value': u'Address'}, 'date': {'type': 'gd:when', 'value': '2011/01/06 00:00:00'}, 'im': {'type': 'gd:im', 'value': datastore_types.IM('sip', 'foobar')}, 'email': {'type': 'gd:email', 'value': u'tester@example.com'}, 'user': {'type': 'user', 'value': 'tester'}, 'location': {'type': 'georss:point', 'value': datastore_types.GeoPt(52.500556000000003, 13.398889)}}, 'id': 3}
         )
 
         entity = datastore.Entity("A", name="a")
@@ -156,6 +156,43 @@ class test_handlers(unittest.TestCase):
         self.assertEqual("200 OK", res.status)
 
         self.assertRaises(AppError, app.get, '/gaesynkit/unknown')
+
+    def test_compare_replace_sync(self):
+        """Testing the compare-replace-sync function."""
+
+        from gaesynkit import handlers
+        from gaesynkit import sync
+        from google.appengine.api import datastore
+        from google.appengine.api import users
+
+        remote_key = "dGVzdEBkZWZhdWx0ISFCb29rCjI="
+
+        entity_dict = {
+            "kind": "Book",
+            "key": remote_key,
+            "version": 0,
+            "id": 2,
+            "properties": {
+                "title": {"type":"string","value":"The Catcher in the Rye"},
+                "date": {"type":"gd:when","value":"1951/7/16 0:0:0"},
+                "classic": {"type":"bool","value":True},
+                "pages": {"type":"int","value":287},
+                "tags": {"type":"string","value":["novel","identity"]}
+            }
+        }
+
+        content_hash = "7ec49827a52b56fdd24b07410c9bf0d6"
+
+        user = users.User("jane@example.com")
+
+        entity = handlers.entity_from_json_data(entity_dict)
+
+        datastore.Put(entity)
+
+        sync_info = sync.SyncInfo.from_params(
+            remote_key, 1, content_hash, target_key=entity.key(), user=user)
+
+        handlers.compare_replace_sync(entity_dict, sync_info, content_hash)
 
     def test_SyncHandler(self):
         """Testing the synchronization JSON-RPC handler."""
