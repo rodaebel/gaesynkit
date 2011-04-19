@@ -1,0 +1,23 @@
+TODO
+====
+
+JavaScript Client API
+---------------------
+
+  - Syncing multiple entities at once.
+
+  - Implement handy storage methods for (bulk-)loading server-side entities.
+
+  - Event binding.
+
+
+Python Server API
+-----------------
+
+  - Synchronization of multiple entities in an efficient manner.
+
+
+Documentation
+-------------
+
+  - Comparison between gaesynkit and the backbone.js library.

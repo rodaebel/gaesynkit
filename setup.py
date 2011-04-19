@@ -76,6 +76,8 @@ setup(
     long_description=(
         read('README.txt')
         + '\n\n' +
+        read('TODO.txt')
+        + '\n\n' +
         read('CHANGES.txt')
         ),
     license="Apache License 2.0",
