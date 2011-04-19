@@ -27,8 +27,13 @@ installed) to use::
 
   $ easy_install gaesynkit
 
-You can now create a symbolic link to it in the root directory of your Google
-App Engine Python application.
+You can now create a symbolic link to it within the root directory of your
+Google App Engine Python application.
+
+If you don't want to use :command:`easy_install`, you can alternatively
+download the distribution archive from `PyPI
+<http://pypi.python.org/pypi/gaesynkit>`_ or from the `project page
+<http://gaesynkit.googlecode.com>`_.
 
 Usage
 =====
