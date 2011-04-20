@@ -37,6 +37,7 @@ import itertools
 import mimetypes
 import os
 import re
+import stat
 import time
 
 
@@ -377,17 +378,24 @@ class StaticHandler(webapp.RequestHandler):
         filename = os.path.join(os.path.dirname(__file__), 'static', filename)
         content_type, encoding = mimetypes.guess_type(filename)
 
+        etag = '"%s"' % base64.b64encode(str(os.stat(filename)[stat.ST_MTIME]))
+        expiration = email.Utils.formatdate(time.time()+18000, usegmt=True)
+
+        self.response.headers['Content-type'] = content_type
+        self.response.headers['Cache-Control'] = 'public, max-age=18000'
+        self.response.headers['Etag'] = etag
+        self.response.headers['Expires'] = expiration
+
+        if os.environ.get('HTTP_IF_NONE_MATCH') == etag:
+            self.response.set_status(304)
+            return
+
         try:
             assert content_type and '/' in content_type, repr(content_type)
             fp = open(filename, 'rb')
         except (IOError, AssertionError):
             self.response.set_status(404)
             return
-
-        expiration = email.Utils.formatdate(time.time()+3600, usegmt=True)
-        self.response.headers['Content-type'] = content_type
-        self.response.headers['Cache-Control'] = 'public, max-age=expiry'
-        self.response.headers['Expires'] = expiration
 
         try:
             data = fp.read().replace("$APPLICATION_ID",
