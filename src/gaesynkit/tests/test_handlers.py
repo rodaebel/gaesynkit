@@ -157,6 +157,32 @@ class test_handlers(unittest.TestCase):
 
         self.assertRaises(AppError, app.get, '/gaesynkit/unknown')
 
+    def test_caching(self):
+        """Testing the caching behaviour of our static handler."""
+
+        from gaesynkit import handlers
+        from webtest import AppError, TestApp
+        import base64
+        import stat
+
+        app = TestApp(handlers.app)
+
+        js = os.path.join(
+            os.path.dirname(handlers.__file__),
+            'static',
+            'gaesynkit.js'
+        )
+
+        etag = '"%s"' % base64.b64encode(str(os.stat(js)[stat.ST_MTIME]))
+
+        os.environ['HTTP_IF_NONE_MATCH'] = etag
+
+        res = app.get('/gaesynkit/gaesynkit.js')
+ 
+        self.assertEqual("304 Not Modified", res.status)
+
+        del os.environ['HTTP_IF_NONE_MATCH']
+
     def test_compare_replace_sync(self):
         """Testing the compare-replace-sync function."""
 
