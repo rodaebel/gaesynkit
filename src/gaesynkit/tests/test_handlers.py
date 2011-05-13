@@ -220,23 +220,6 @@ class test_handlers(unittest.TestCase):
 
         handlers.compare_replace_sync(entity_dict, sync_info, content_hash)
 
-    def test_SyncHandler(self):
-        """Testing the synchronization JSON-RPC handler."""
-
-        from gaesynkit import handlers
-        from webtest import AppError, TestApp
-
-        app = TestApp(handlers.app)
-
-        res = app.post(
-            '/gaesynkit/rpc/',
-            '{"jsonrpc": "2.0", "method": "test", "params": [true], "id": 1}')
- 
-        self.assertEqual("200 OK", res.status)
-        self.assertEqual(
-            '{"jsonrpc": "2.0", "result": true, "id": 1}',
-            res.body)
-
     def test_SyncEntity(self):
         """Synchronizing an entity."""
 

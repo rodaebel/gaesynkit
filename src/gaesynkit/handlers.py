@@ -358,16 +358,6 @@ class SyncHandler(rpc.JsonRpcHandler):
 
         return {"status": ENTITY_DELETED}
 
-    @rpc.ServiceMethod
-    def test(self, param):
-        """For testing only.
-
-        This method basically *echoes* the given parameter.
-
-        :param object param: Arbitrary parameter.
-        """
-        return param
-
 
 class StaticHandler(webapp.RequestHandler):
     """Request handler to serve static files."""
