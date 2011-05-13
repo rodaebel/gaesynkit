@@ -35,40 +35,13 @@ $(document).ready(function(){
 
   test("rpc", function()
   {
-    expect(7);
+    expect(3);
 
     ok(id = gaesynkit.rpc.getNextRpcId(), "getting next JSON-RPC id");
 
     // Get the JSON-RPC endpoint
     equals(gaesynkit.rpc.ENDPOINT, "/gaesynkit/rpc/",
            "JSON-RPC service endpoint");
-
-    stop();
-
-    // The callback function for our asynchronous JSON-RPC
-    function callback(response) {
-      equals(response.result, 42, "getting JSON-RPC result");
-      start();
-    }
-
-    // Make asynchronous JSON-RPC
-    ok(gaesynkit.rpc.makeRpc(
-         {"jsonrpc": "2.0", "method": "test", "params": [42], "id": 1},
-         callback, true),
-       "making asynchronous JSON-RPC"
-    )
-
-    // The callback function for our asynchronous JSON-RPC
-    function callback2(response) {
-      equals(response.result, "foo", "getting JSON-RPC result");
-    }
-
-    // Make synchronous JSON-RPC
-    ok(gaesynkit.rpc.makeRpc(
-         {"jsonrpc": "2.0", "method": "test", "params": ["foo"], "id": 2},
-         callback2),
-       "making synchronous JSON-RPC"
-    )
 
     // Try to make a JSON-RPC with invalid data
     raises(function() {gaesynkit.rpc.makeRpc(["foobar", 7], callback)},
@@ -753,11 +726,13 @@ $(document).ready(function(){
 
     ok(storage.deleteEntityWithKey(key_b), "deleting child entity");
 
-    // Synchronize deleted child entity
-    ok(storage.syncDeleted(key_b), "synchronizing deleted child entity");
+    // Asynchronously synchronize deleted child entity
+    equals(storage.syncDeleted(key_b, true), true,
+           "asynchronously synchronizing deleted child entity");
 
-    // Synchronize deleted root entity
-    ok(storage.syncDeleted(key_a), "synchronizing deleted root entity");
+    // Asynchronously synchronize deleted root entity
+    equals(storage.syncDeleted(key_a, true), true,
+           "asynchronously synchronizing deleted root entity");
 
     // Clean up local storage
     delete window.localStorage["_NextId"];
