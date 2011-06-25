@@ -16,7 +16,6 @@ syntax: regexp
 ^dist/
 ^doc/build/ *
 ^eggs/
-^google_appengine/
 ^htmlcov/
 ^parts/
 ^src/gaesynkit/docs
