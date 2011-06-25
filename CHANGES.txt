@@ -6,6 +6,8 @@ Version 1.0.0a3 (2011-??-??)
 
   - Improved static handler for caching.
 
+  - Fixed tests to run with the Google App Engine SDK 1.5.1 release.
+
 
 Version 1.0.0a2 (2011-04-12)
 ----------------------------
