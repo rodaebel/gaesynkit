@@ -45,11 +45,12 @@ class JSONRPCHandlerFunctionalTest(unittest.TestCase):
         def noServiceMethod():
             pass
             
-    def exec_handler(self, body = None):
+    def exec_handler(self, body=None):
         """Used by each test to execute the minimal Testhandler."""
         h = self.MyTestHandler()
         h.request = Request.blank('/test_rpc/')
         h.response = Response()
+        h.request.method = 'POST'
         h.request.body = body
         h.post()
         return (h.response._Response__status[0], h.response.out.getvalue())
